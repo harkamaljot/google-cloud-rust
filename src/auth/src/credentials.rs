@@ -14,6 +14,7 @@
 
 pub(crate) mod mds_credential;
 pub(crate) mod user_credential;
+pub mod mds_credential;
 
 use crate::Result;
 use http::header::{HeaderName, HeaderValue};
