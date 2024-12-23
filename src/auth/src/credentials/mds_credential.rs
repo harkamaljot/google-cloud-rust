@@ -125,7 +125,6 @@ mod test {
     use tokio::task::JoinHandle;
 
 impl MDSAccessTokenProvider {
-
     pub async fn get(
         &self,
         request: &Client,
@@ -134,36 +133,34 @@ impl MDSAccessTokenProvider {
         recursive: bool,
         headers: Option<HeaderMap>,
     ) -> Result<Value> {
-    
-        let base_url: Url = Url::parse(&_METADATA_ROOT)
-            .unwrap()
-            .join(path)
-            .unwrap();
-    
+        let base_url: Url = Url::parse(&_METADATA_ROOT).unwrap().join(path).unwrap();
+
         let mut query_params = params.unwrap_or_default();
-    
-    
+
         let mut headers_to_use = HeaderMap::new();
-        headers_to_use.insert(METADATA_FLAVOR, HeaderValue::from_static(METADATA_FLAVOR_VALUE));
-    
+        headers_to_use.insert(
+            METADATA_FLAVOR,
+            HeaderValue::from_static(METADATA_FLAVOR_VALUE),
+        );
+
         if let Some(custom_headers) = headers {
             headers_to_use.extend(custom_headers);
         }
-    
+
         if recursive {
             query_params.insert("recursive", "true");
         }
-    
-    
-        let url = reqwest::Url::parse_with_params(base_url.as_str(), query_params.iter()).map_err(|e| CredentialError::new(false, e.into()))?;     
-    
+
+        let url = reqwest::Url::parse_with_params(base_url.as_str(), query_params.iter())
+            .map_err(|e| CredentialError::new(false, e.into()))?;
+
         let response: Response = request
             .get(url.clone())
             .headers(headers_to_use.clone())
             .send()
             .await
-            .map_err(|e| CredentialError::new(false, e.into()))?;    
-    
+            .map_err(|e| CredentialError::new(false, e.into()))?;
+
         let status = response.status();
         let headers = response.headers().clone();
         let content = response
@@ -173,37 +170,34 @@ impl MDSAccessTokenProvider {
         if !status.is_success() {
             return Err(CredentialError::new(
                 is_retryable(status),
-                Box::from(format!("{content}")),
+                Box::from(content),
             ));
         }
-    
-        let content_type = headers
-            .get(CONTENT_TYPE)
-            .and_then(|v| v.to_str().ok());
-    
-        
+
+        let content_type = headers.get(CONTENT_TYPE).and_then(|v| v.to_str().ok());
+
         if let Some(ct) = content_type {
             if ct.contains("application/json") {
-                let value: Value = from_str(&content).map_err(|e| CredentialError::new(false, e.into()))?;
+                let value: Value =
+                    from_str(&content).map_err(|e| CredentialError::new(false, e.into()))?;
                 return Ok(value);
             } else {
-                return Err(CredentialError::new(
-                    false,
-                    Box::from(format!("{content}")),
-                ));
+                return Err(CredentialError::new(false, Box::from(content)));
             }
         }
-    
+
         Ok(Value::String(content))
-    }    
-    
+    }
+
     pub async fn get_service_account_info(
         &self,
         request: &Client,
         service_account_email: Option<String>,
     ) -> Result<Value> {
-        let service_account_email: String = service_account_email.clone().unwrap_or("default".to_string());
-        let path:String = format!("instance/service-accounts/{}/", service_account_email);
+        let service_account_email: String = service_account_email
+            .clone()
+            .unwrap_or("default".to_string());
+        let path: String = format!("instance/service-accounts/{}/", service_account_email);
         let mut params = HashMap::new();
         params.insert("recursive", "true");
         self.get(request, &path, Some(params), false, None).await
@@ -305,5 +299,3 @@ impl TokenProvider for MDSAccessTokenProvider {
         assert!(result.is_err());
     }
 }
-
-
