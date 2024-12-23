@@ -200,7 +200,7 @@ impl MDSAccessTokenProvider {
     pub async fn get_service_account_info(
         &self,
         request: &Client,
-        service_account_email: &Option<String>,
+        service_account_email: Option<String>,
     ) -> Result<Value> {
         let service_account_email: String = service_account_email.clone().unwrap_or("default".to_string());
         let path:String = format!("instance/service-accounts/{}/", service_account_email);
@@ -208,33 +208,6 @@ impl MDSAccessTokenProvider {
         params.insert("recursive", "true");
         self.get(request, &path, Some(params), false, None).await
     }
-
-    // async fn retrieve_info(&mut self) {
-    //     // Construct metadata URL for service account info.
-    //     let url = format!(
-    //         "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/{}/info",
-    //         self.service_account_email
-    //     );
-
-    //     let response = self
-    //         .client
-    //         .get(&url)
-    //         .header("Metadata-Flavor", "Google")
-    //         .send()
-    //         .map_err(CredentialsError::MetadataRequestFailed)?;
-
-    //     let info: ServiceAccountInfo = response
-    //         .json()
-    //         .map_err(CredentialsError::InvalidJsonResponse)?;
-
-    //     self.service_account_email = info.email;
-
-    //     // Don't override scopes requested by the user.
-    //     if self.scopes.is_none() {
-    //         self.scopes = Some(info.scopes);
-    //     }
-    //     Ok(())
-    // }
 }
 
 #[async_trait]
