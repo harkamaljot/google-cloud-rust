@@ -132,7 +132,6 @@ impl MDSAccessTokenProvider {
         service_account_email: Option<String>,
     ) -> Result<ServiceAccountInfo> {
         let service_account_email: String = service_account_email
-            .clone()
             .unwrap_or("default".to_string());
         let path: String = format!(
             "{}/instance/service-accounts/{}/",
