@@ -20,7 +20,7 @@ use async_trait::async_trait;
 use http::header::{HeaderName, HeaderValue, AUTHORIZATION};
 use reqwest::header::HeaderMap;
 use reqwest::Client;
-use std::cell::LazyCell;
+use std::sync::LazyLock;
 use std::collections::HashMap;
 
 const METADATA_FLAVOR_VALUE: &str = "Google";
