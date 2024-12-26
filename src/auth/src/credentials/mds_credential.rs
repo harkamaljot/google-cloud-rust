@@ -18,6 +18,7 @@ use crate::errors::CredentialError;
 use crate::token::{Token, TokenProvider};
 use async_trait::async_trait;
 use http::header::{HeaderName, HeaderValue, AUTHORIZATION};
+use http::request;
 use lazy_static::lazy_static;
 use reqwest::header::HeaderMap;
 use reqwest::Client;
@@ -86,7 +87,8 @@ impl MDSAccessTokenProvider {
         metadata_service_endpoint: String,
         service_account_email: Option<String>,
     ) -> Result<ServiceAccountInfo> {
-        let service_account_email: String = service_account_email.unwrap_or("default".to_string());
+        let service_account_email: String = service_account_email
+            .unwrap_or("default".to_string());
         let path: String = format!(
             "{}/instance/service-accounts/{}/",
             metadata_service_endpoint, service_account_email
@@ -113,6 +115,11 @@ impl MDSAccessTokenProvider {
             .json::<ServiceAccountInfo>()
             .await
             .map_err(|e| CredentialError::new(false, e.into()))
+        
+    }
+
+    fn get_token_request_header(self) -> String {
+            "".to_string()
     }
 }
 
@@ -120,7 +127,44 @@ impl MDSAccessTokenProvider {
 #[allow(dead_code)]
 impl TokenProvider for MDSAccessTokenProvider {
     async fn get_token(&mut self) -> Result<Token> {
-        todo!()
+        let request = Client::new();
+        let service_account = MDSAccessTokenProvider::get_service_account_info(&request, self.token_endpoint.clone(), Option::None).await?;
+        let mut params = HashMap::new();
+        if service_account.scopes.is_some() {
+            params.insert("scopes", service_account.scopes.unwrap().join(","));
+        }
+        let path = format!("instance/service-accounts/{}/token", service_account.service_account_email);
+        let mut headers = HeaderMap::new();
+        headers.insert(
+            "x-goog-api-client",
+            self.get_token_request_header().parse().unwrap(),
+        );
+
+        let url = reqwest::Url::parse_with_params(path.as_str(), params.iter())
+            .map_err(|e| CredentialError::new(false, e.into()))?;
+
+        let response = request
+            .get(url.clone())
+            .headers(headers)
+            .send()
+            .await
+            .map_err(|e| CredentialError::new(false, e.into()))?;
+
+        // Process the response
+
+        if !response.status().is_success() {
+            let status = resp.status();
+            let body = resp
+                .text()
+                .await
+                .map_err(|e| CredentialError::new(false, e.into()))?;
+            return Err(CredentialError::new(
+                is_retryable(status),
+                Box::from(format!("Failed to fetch token. {body}")),
+            ));
+        }
+        println!()
+
     }
 }
 
