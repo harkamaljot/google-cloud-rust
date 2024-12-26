@@ -14,7 +14,7 @@
 
 use crate::credentials::traits::dynamic::Credential;
 use crate::credentials::Result;
-use crate::errors::{is_retryable, CredentialError};
+use crate::errors::CredentialError;
 use crate::token::{Token, TokenProvider};
 use async_trait::async_trait;
 use http::header::{HeaderName, HeaderValue, AUTHORIZATION};
@@ -56,7 +56,6 @@ where
         Some("googleapis.com".to_string())
     }
 }
-
 
 #[allow(dead_code)] // TODO(#442) - implementation in progress
 #[derive(serde::Deserialize, serde::Serialize, PartialEq, Debug, Clone)]
@@ -135,7 +134,10 @@ impl MDSAccessTokenProvider {
         let service_account_email: String = service_account_email
             .clone()
             .unwrap_or("default".to_string());
-        let path: String = format!("{}/instance/service-accounts/{}/", metadata_service_endpoint, service_account_email);
+        let path: String = format!(
+            "{}/instance/service-accounts/{}/",
+            metadata_service_endpoint, service_account_email
+        );
         let params = HashMap::from([("recursive", "true")]);
 
         let mut headers = HeaderMap::new();
@@ -143,7 +145,6 @@ impl MDSAccessTokenProvider {
             METADATA_FLAVOR,
             HeaderValue::from_static(METADATA_FLAVOR_VALUE),
         );
-
 
         let url = reqwest::Url::parse_with_params(path.as_str(), params.iter())
             .map_err(|e| CredentialError::new(false, e.into()))?;
@@ -155,8 +156,10 @@ impl MDSAccessTokenProvider {
             .await
             .map_err(|e| CredentialError::new(false, e.into()))?;
 
-        response.json::<ServiceAccountInfo>().await.map_err(|e| CredentialError::new(false, e.into()))
-
+        response
+            .json::<ServiceAccountInfo>()
+            .await
+            .map_err(|e| CredentialError::new(false, e.into()))
     }
 }
 
@@ -262,29 +265,26 @@ mod test {
     use std::fmt::format;
 
     use super::*;
-    use axum::response::{IntoResponse};
+    use axum::response::IntoResponse;
     use http::request;
     use reqwest::StatusCode;
-    use tokio::task::JoinHandle;
     use serde_json::json;
-
+    use tokio::task::JoinHandle;
 
     fn handle_token_factory(
         response_code: StatusCode,
         response_headers: HeaderMap,
         response_body: Value,
     ) -> impl IntoResponse {
-        (
-            response_code,
-            response_headers,
-            response_body.to_string(), 
-        )
-        .into_response() 
-
+        (response_code, response_headers, response_body.to_string()).into_response()
     }
 
     // Starts a server running locally. Returns an (endpoint, handler) pair.
-    async fn start(response_code: StatusCode, response_body: Value, path: String) -> (String, String, JoinHandle<()>) {
+    async fn start(
+        response_code: StatusCode,
+        response_body: Value,
+        path: String,
+    ) -> (String, String, JoinHandle<()>) {
         let code = response_code.clone();
         let body = response_body.clone();
         let header_map = HeaderMap::new();
@@ -303,7 +303,6 @@ mod test {
         )
     }
 
-
     #[tokio::test]
     async fn get_default_service_account_info_success() {
         let service_account = "default";
@@ -314,12 +313,14 @@ mod test {
             aliases: None,
         };
         let service_account_info_json = serde_json::to_value(service_account_info.clone()).unwrap();
-        let (endpoint, _path, _server) = start(StatusCode::OK, service_account_info_json, path).await;
+        let (endpoint, _path, _server) =
+            start(StatusCode::OK, service_account_info_json, path).await;
         let request = Client::new();
-        let result = MDSAccessTokenProvider::get_service_account_info(&request, endpoint, Option::None).await;
+        let result =
+            MDSAccessTokenProvider::get_service_account_info(&request, endpoint, Option::None)
+                .await;
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), service_account_info);
-
     }
 
     #[tokio::test]
@@ -332,21 +333,36 @@ mod test {
             aliases: None,
         };
         let service_account_info_json = serde_json::to_value(service_account_info.clone()).unwrap();
-        let (endpoint, _path, _server) = start(StatusCode::OK, service_account_info_json, path).await;
+        let (endpoint, _path, _server) =
+            start(StatusCode::OK, service_account_info_json, path).await;
         let request = Client::new();
-        let result = MDSAccessTokenProvider::get_service_account_info(&request, endpoint, Some(service_account.to_string())).await;
+        let result = MDSAccessTokenProvider::get_service_account_info(
+            &request,
+            endpoint,
+            Some(service_account.to_string()),
+        )
+        .await;
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), service_account_info);
     }
 
     #[tokio::test]
-    async fn get_service_account_info_server_error() { 
+    async fn get_service_account_info_server_error() {
         let service_account = "test@test";
         let path = format!("/instance/service-accounts/{}/", service_account);
-        let (endpoint, _path, _server) =
-            start(StatusCode::SERVICE_UNAVAILABLE, serde_json::to_value("try again").unwrap(), path).await;
+        let (endpoint, _path, _server) = start(
+            StatusCode::SERVICE_UNAVAILABLE,
+            serde_json::to_value("try again").unwrap(),
+            path,
+        )
+        .await;
         let request = Client::new();
-        let result = MDSAccessTokenProvider::get_service_account_info(&request, endpoint, Some(service_account.to_string())).await;
+        let result = MDSAccessTokenProvider::get_service_account_info(
+            &request,
+            endpoint,
+            Some(service_account.to_string()),
+        )
+        .await;
         println!("{:?}", result);
         assert!(result.is_err());
     }

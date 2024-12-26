@@ -2176,6 +2176,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "test-mds"
+version = "0.1.0"
+dependencies = [
+ "gcp-sdk-auth",
+ "reqwest",
+ "tokio",
+]
+
+[[package]]
 name = "thiserror"
 version = "2.0.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
