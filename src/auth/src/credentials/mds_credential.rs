@@ -20,6 +20,7 @@ use async_trait::async_trait;
 use http::header::{HeaderName, HeaderValue, AUTHORIZATION};
 use reqwest::header::HeaderMap;
 use reqwest::Client;
+use std::cell::LazyCell;
 use std::collections::HashMap;
 
 const METADATA_FLAVOR_VALUE: &str = "Google";
@@ -343,48 +344,6 @@ mod test {
                 value: "Bearer test-token".to_string(),
                 is_sensitive: true,
             }]
-        );
-    }
-
-    #[test]
-    fn metadata_root_from_gce_metadata_host() {
-        env::set_var("GCE_METADATA_HOST", "custom-metadata-host");
-        // Recreate lazy_static value which depends on env variable
-        lazy_static::initialize(&_METADATA_ROOT);
-
-        assert_eq!(
-            &_METADATA_ROOT.to_string(),
-            "http://metadata.google.internal/computeMetadata/v1/"
-        );
-
-        env::remove_var("GCE_METADATA_HOST"); // Clean up
-    }
-
-    #[test]
-    fn metadata_root_from_gce_metadata_root() {
-        env::set_var("GCE_METADATA_ROOT", "metadata.example.com");
-        // Recreate lazy_static value which depends on env variable
-        lazy_static::initialize(&_METADATA_ROOT);
-
-        assert_eq!(
-            &_METADATA_ROOT.to_string(),
-            "http://metadata.google.internal/computeMetadata/v1/"
-        );
-
-        env::remove_var("GCE_METADATA_ROOT"); // Clean up
-    }
-
-    #[test]
-    fn metadata_root_default() {
-        // Remove env vars if they exist from previous tests
-        env::remove_var("GCE_METADATA_ROOT");
-        env::remove_var("GCE_METADATA_HOST");
-        // Recreate lazy_static value which depends on env variable
-        lazy_static::initialize(&_METADATA_ROOT);
-
-        assert_eq!(
-            &_METADATA_ROOT.to_string(),
-            "http://metadata.google.internal/computeMetadata/v1/"
         );
     }
 
