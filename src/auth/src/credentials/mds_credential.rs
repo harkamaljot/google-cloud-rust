@@ -78,8 +78,8 @@ struct MDSRefreshResponse {
 }
 
 #[allow(dead_code)] // TODO(#442) - implementation in progress
-struct MDSAccessTokenProvider {
-    token_endpoint: String,
+pub struct MDSAccessTokenProvider {
+    pub token_endpoint: String,
 }
 
 #[allow(dead_code)]
@@ -124,15 +124,17 @@ impl MDSAccessTokenProvider {
 impl TokenProvider for MDSAccessTokenProvider {
     async fn get_token(&mut self) -> Result<Token> {
         let request = Client::new();
-        let service_account = "default";
-        let params: HashMap<String, String> = HashMap::new();
-        let path = format!("instance/service-accounts/{}/token", service_account);
+        let service_account_email = "default";
+        let path: String = format!(
+            "{}/instance/service-accounts/{}/token",
+            self.token_endpoint, service_account_email
+        );
         let mut headers = HeaderMap::new();
         headers.insert(
             METADATA_FLAVOR,
             HeaderValue::from_static(METADATA_FLAVOR_VALUE),
         );
-        let url = reqwest::Url::parse_with_params(path.as_str(), params.iter())
+        let url = reqwest::Url::parse(path.as_str())
             .map_err(|e| CredentialError::new(false, e.into()))?;
         let response = request
             .get(url.clone())
