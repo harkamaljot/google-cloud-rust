@@ -14,7 +14,7 @@
 
 use crate::credentials::traits::dynamic::Credential;
 use crate::credentials::Result;
-use crate::errors::{is_retryable, {is_retryable, CredentialError}};
+use crate::errors::{is_retryable, CredentialError};
 use crate::token::{Token, TokenProvider};
 use async_trait::async_trait;
 use http::header::{HeaderName, HeaderValue, AUTHORIZATION};
@@ -131,12 +131,9 @@ impl MDSAccessTokenProvider {
 impl TokenProvider for MDSAccessTokenProvider {
     async fn get_token(&mut self) -> Result<Token> {
         let request = Client::new();
-        let service_account = MDSAccessTokenProvider::get_service_account_info(&request, self.token_endpoint.clone(), Option::None).await?;
-        let mut params = HashMap::new();
-        if service_account.scopes.is_some() {
-            params.insert("scopes", service_account.scopes.unwrap().join(","));
-        }
-        let path = format!("instance/service-accounts/{}/token", service_account.email);
+        let service_account = "default";
+        let params: HashMap<String, String> = HashMap::new();
+        let path = format!("instance/service-accounts/{}/token", service_account);
         let mut headers = HeaderMap::new();
         headers.insert(
             METADATA_FLAVOR,
