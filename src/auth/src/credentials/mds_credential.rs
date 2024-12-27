@@ -21,8 +21,8 @@ use http::header::{HeaderName, HeaderValue, AUTHORIZATION};
 use reqwest::header::HeaderMap;
 use reqwest::Client;
 use std::collections::HashMap;
-use time::OffsetDateTime;
 use std::time::Duration;
+use time::OffsetDateTime;
 
 const METADATA_FLAVOR_VALUE: &str = "Google";
 const METADATA_FLAVOR: &str = "metadata-flavor";
