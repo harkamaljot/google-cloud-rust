@@ -77,7 +77,7 @@ struct MDSRefreshResponse {
 
 #[allow(dead_code)] // TODO(#442) - implementation in progress
 pub struct MDSAccessTokenProvider {
-    pub token_endpoint: String,
+    pub endpoint: String,
 }
 
 #[allow(dead_code)]
@@ -125,7 +125,7 @@ impl TokenProvider for MDSAccessTokenProvider {
         let service_account_email = "default";
         let path: String = format!(
             "{}/instance/service-accounts/{}/token",
-            self.token_endpoint, service_account_email
+            self.endpoint, service_account_email
         );
         let mut headers = HeaderMap::new();
         headers.insert(
@@ -176,6 +176,10 @@ mod test {
     use reqwest::StatusCode;
     use serde_json::Value;
     use tokio::task::JoinHandle;
+    use std::error::Error;
+
+
+    type TestResult = std::result::Result<(), Box<dyn std::error::Error>>;
 
 impl MDSAccessTokenProvider {
     pub async fn get(
@@ -500,4 +504,90 @@ mod test {
         .await;
         assert!(result.is_err());
     }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn token_provider_full() -> TestResult {
+        let response = MDSRefreshResponse {
+            access_token: "test-access-token".to_string(),
+            expires_in: Some(3600),
+            token_type: "test-token-type".to_string(),
+        };
+        let response_body = serde_json::to_value(&response).unwrap();
+        let path = "/instance/service-accounts/default/token";
+        let (endpoint, _server) = start(StatusCode::OK, response_body, path.to_string()).await;
+        println!("endpoint = {endpoint}");
+
+        let tp = MDSAccessTokenProvider {
+            endpoint: endpoint,
+        };
+        let mut uc = MDSCredential { token_provider: tp };
+        let now = OffsetDateTime::now_utc();
+        let token = uc.get_token().await?;
+        assert_eq!(token.token, "test-access-token");
+        assert_eq!(token.token_type, "test-token-type");
+        assert!(token
+            .expires_at
+            .is_some_and(|d| d >= now + Duration::from_secs(3600)));
+
+        Ok(())
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn token_provider_partial() -> TestResult {
+        let response = MDSRefreshResponse {
+            access_token: "test-access-token".to_string(),
+            expires_in: None,
+            token_type: "test-token-type".to_string(),
+        };
+        let response_body = serde_json::to_value(&response).unwrap();
+        let path = "/instance/service-accounts/default/token";
+        let (endpoint, _server) = start(StatusCode::OK, response_body, path.to_string()).await;
+        println!("endpoint = {endpoint}");
+
+        let tp = MDSAccessTokenProvider {
+            endpoint: endpoint,
+        };
+        let mut uc = MDSCredential { token_provider: tp };
+        let token = uc.get_token().await?;
+        assert_eq!(token.token, "test-access-token");
+        assert_eq!(token.token_type, "test-token-type");
+        assert_eq!(token.expires_at, None);
+
+        Ok(())
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn token_provider_retryable_error() -> TestResult {
+        let path = "/instance/service-accounts/default/token";
+        let (endpoint, _server) =
+            start(StatusCode::SERVICE_UNAVAILABLE, serde_json::to_value("try again")?, path.to_string()).await;
+
+        let tp = MDSAccessTokenProvider {
+            endpoint: endpoint,
+        };
+        let mut uc = MDSCredential { token_provider: tp };
+        let e = uc.get_token().await.err().unwrap();
+        assert!(e.is_retryable());
+        assert!(e.source().unwrap().to_string().contains("try again"));
+
+        Ok(())
+    }
+
+    // #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    // async fn token_provider_nonretryable_error() -> TestResult {
+    //     let (endpoint, _server) = start(StatusCode::UNAUTHORIZED, "epic fail".to_string()).await;
+
+    //     let tp = UserTokenProvider {
+    //         client_id: "test-client-id".to_string(),
+    //         client_secret: "test-client-secret".to_string(),
+    //         refresh_token: "test-refresh-token".to_string(),
+    //         endpoint: endpoint,
+    //     };
+    //     let mut uc = UserCredential { token_provider: tp };
+    //     let e = uc.get_token().await.err().unwrap();
+    //     assert!(!e.is_retryable());
+    //     assert!(e.source().unwrap().to_string().contains("epic fail"));
+
+    //     Ok(())
+    // }
 }
