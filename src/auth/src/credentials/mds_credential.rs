@@ -77,7 +77,6 @@ struct MDSRefreshResponse {
     token_type: String,    
 }
 
-
 #[allow(dead_code)] // TODO(#442) - implementation in progress
 struct MDSAccessTokenProvider {
     token_endpoint: String,
