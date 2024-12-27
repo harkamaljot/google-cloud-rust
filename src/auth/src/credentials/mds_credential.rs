@@ -367,12 +367,12 @@ mod test {
         (response_code, response_headers, response_body.to_string()).into_response()
     }
 
-    // Starts a server running locally. Returns an (endpoint, path, handler) pair.
+    // Starts a server running locally. Returns an (endpoint, server) pair.
     async fn start(
         response_code: StatusCode,
         response_body: Value,
         path: String,
-    ) -> (String, String, JoinHandle<()>) {
+    ) -> (String, JoinHandle<()>) {
         let code = response_code.clone();
         let body = response_body.clone();
         let header_map = HeaderMap::new();
@@ -384,11 +384,7 @@ mod test {
             axum::serve(listener, app).await.unwrap();
         });
 
-        (
-            format!("http://{}:{}", addr.ip(), addr.port()),
-            path,
-            server,
-        )
+        (format!("http://{}:{}", addr.ip(), addr.port()), server)
     }
 
     #[tokio::test]
@@ -401,8 +397,7 @@ mod test {
             aliases: None,
         };
         let service_account_info_json = serde_json::to_value(service_account_info.clone()).unwrap();
-        let (endpoint, _path, _server) =
-            start(StatusCode::OK, service_account_info_json, path).await;
+        let (endpoint, _server) = start(StatusCode::OK, service_account_info_json, path).await;
         let request = Client::new();
         let result =
             MDSAccessTokenProvider::get_service_account_info(&request, endpoint, Option::None)
@@ -421,8 +416,7 @@ mod test {
             aliases: None,
         };
         let service_account_info_json = serde_json::to_value(service_account_info.clone()).unwrap();
-        let (endpoint, _path, _server) =
-            start(StatusCode::OK, service_account_info_json, path).await;
+        let (endpoint, _server) = start(StatusCode::OK, service_account_info_json, path).await;
         let request = Client::new();
         let result = MDSAccessTokenProvider::get_service_account_info(
             &request,
@@ -438,7 +432,7 @@ mod test {
     async fn get_service_account_info_server_error() {
         let service_account = "test@test";
         let path = format!("/instance/service-accounts/{}/", service_account);
-        let (endpoint, _path, _server) = start(
+        let (endpoint, _server) = start(
             StatusCode::SERVICE_UNAVAILABLE,
             serde_json::to_value("try again").unwrap(),
             path,
