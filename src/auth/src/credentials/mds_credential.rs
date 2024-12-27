@@ -14,7 +14,7 @@
 
 use crate::credentials::traits::dynamic::Credential;
 use crate::credentials::Result;
-use crate::errors::CredentialError;
+use crate::errors::{is_retryable, CredentialError};
 use crate::token::{Token, TokenProvider};
 use async_trait::async_trait;
 use http::header::{HeaderName, HeaderValue, AUTHORIZATION};
@@ -22,7 +22,9 @@ use reqwest::header::HeaderMap;
 use reqwest::Client;
 use std::collections::HashMap;
 use std::env;
+use time::OffsetDateTime;
 use std::sync::LazyLock;
+use std::time::Duration;
 
 const METADATA_FLAVOR_VALUE: &str = "Google";
 const METADATA_FLAVOR: &str = "metadata-flavor";
@@ -74,6 +76,15 @@ struct ServiceAccountInfo {
     aliases: Option<Vec<String>>,
 }
 
+#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize)]
+struct MDSRefreshResponse {
+    access_token: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    expires_in: Option<u64>,
+    token_type: String,    
+}
+
+
 #[allow(dead_code)] // TODO(#442) - implementation in progress
 struct MDSAccessTokenProvider {
     token_endpoint: String,
@@ -120,7 +131,51 @@ impl MDSAccessTokenProvider {
 #[allow(dead_code)]
 impl TokenProvider for MDSAccessTokenProvider {
     async fn get_token(&mut self) -> Result<Token> {
-        todo!()
+        let request = Client::new();
+        let service_account = MDSAccessTokenProvider::get_service_account_info(&request, self.token_endpoint.clone(), Option::None).await?;
+        let mut params = HashMap::new();
+        if service_account.scopes.is_some() {
+            params.insert("scopes", service_account.scopes.unwrap().join(","));
+        }
+        let path = format!("instance/service-accounts/{}/token", service_account.email);
+        let mut headers = HeaderMap::new();
+        headers.insert(
+            METADATA_FLAVOR,
+            HeaderValue::from_static(METADATA_FLAVOR_VALUE),
+        );
+        let url = reqwest::Url::parse_with_params(path.as_str(), params.iter())
+            .map_err(|e| CredentialError::new(false, e.into()))?;
+        let response = request
+            .get(url.clone())
+            .headers(headers)
+            .send()
+            .await
+            .map_err(|e| CredentialError::new(false, e.into()))?;
+        // Process the response
+        if !response.status().is_success() {
+            let status = response.status();
+            let body = response
+                .text()
+                .await
+                .map_err(|e| CredentialError::new(false, e.into()))?;
+            return Err(CredentialError::new(
+                is_retryable(status),
+                Box::from(format!("Failed to fetch token. {body}")),
+            ));
+        }
+        let response = response
+            .json::<MDSRefreshResponse>()
+            .await
+            .map_err(|e| CredentialError::new(false, e.into()))?;
+        let token = Token {
+            token: response.access_token,
+            token_type: response.token_type,
+            expires_at: response
+                .expires_in
+                .map(|d| OffsetDateTime::now_utc() + Duration::from_secs(d)),
+            metadata: None,
+        };
+        Ok(token)
     }
 }
 
