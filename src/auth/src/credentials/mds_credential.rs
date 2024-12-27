@@ -14,7 +14,7 @@
 
 use crate::credentials::traits::dynamic::Credential;
 use crate::credentials::Result;
-use crate::errors::{is_retryable, CredentialError};
+use crate::errors::{is_retryable, {is_retryable, CredentialError}};
 use crate::token::{Token, TokenProvider};
 use async_trait::async_trait;
 use http::header::{HeaderName, HeaderValue, AUTHORIZATION};
@@ -83,7 +83,6 @@ struct MDSRefreshResponse {
     expires_in: Option<u64>,
     token_type: String,    
 }
-
 
 #[allow(dead_code)] // TODO(#442) - implementation in progress
 struct MDSAccessTokenProvider {
