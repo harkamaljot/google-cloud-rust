@@ -178,7 +178,6 @@ mod test {
     use tokio::task::JoinHandle;
     use std::error::Error;
 
-
     type TestResult = std::result::Result<(), Box<dyn std::error::Error>>;
 
     #[tokio::test]
