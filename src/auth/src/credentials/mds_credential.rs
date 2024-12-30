@@ -168,19 +168,6 @@ impl TokenProvider for MDSAccessTokenProvider {
     }
 }
 
-#[cfg(test)]
-mod test {
-    use super::*;
-    use crate::token::test::MockTokenProvider;
-    use axum::response::IntoResponse;
-    use reqwest::StatusCode;
-    use serde_json::Value;
-    use tokio::task::JoinHandle;
-    use std::error::Error;
-
-
-    type TestResult = std::result::Result<(), Box<dyn std::error::Error>>;
-
 impl MDSAccessTokenProvider {
     pub async fn get(
         &self,
@@ -188,7 +175,7 @@ impl MDSAccessTokenProvider {
         metadata_service_endpoint: String,
         service_account_email: Option<String>,
     ) -> Result<ServiceAccountInfo> {
-        let email: String = email.unwrap_or("default".to_string());
+        let email: String = service_account_email.unwrap_or("default".to_string());
         let path: String = format!(
             "{}/instance/service-accounts/{}/",
             metadata_service_endpoint, email
@@ -218,12 +205,18 @@ impl MDSAccessTokenProvider {
     }
 }
 
-#[async_trait]
-#[allow(dead_code)]
-impl TokenProvider for MDSAccessTokenProvider {
-    async fn get_token(&mut self) -> Result<Token> {
-        todo!()
-    }
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::token::test::MockTokenProvider;
+    use axum::response::IntoResponse;
+    use reqwest::StatusCode;
+    use serde_json::Value;
+    use tokio::task::JoinHandle;
+    use std::error::Error;
+
+
+    type TestResult = std::result::Result<(), Box<dyn std::error::Error>>;
 
     fn handle_token_factory(
         response_code: StatusCode,
@@ -313,16 +306,6 @@ impl TokenProvider for MDSAccessTokenProvider {
         .await;
         assert!(result.is_err());
     }
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-    use crate::token::test::MockTokenProvider;
-    use axum::response::IntoResponse;
-    use reqwest::StatusCode;
-    use serde_json::Value;
-    use tokio::task::JoinHandle;
 
     #[tokio::test]
     async fn get_token_success() {
