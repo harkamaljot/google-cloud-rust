@@ -32,16 +32,22 @@ pub(crate) fn new() -> Credential {
         .endpoint(METADATA_ROOT)
         .build()
         .unwrap();
+    let mds = MDSCredentialBuilder:default().token_provider(token_provider).build().unwrap();
     Credential {
-        inner: Arc::new(MDSCredential { token_provider }),
+        inner: Arc::new(mds),
     }
 }
 
-#[derive(Debug)]
+#[derive(Builder, Debug, Default)]
+#[builder(setter(into))]
 struct MDSCredential<T>
 where
     T: TokenProvider,
 {
+    service_account_email: Option<String>,
+    scopes: Option<Vec<String>>,
+    universe_domain: Option<String>,
+    quota_project_id: Option<String>,
     token_provider: T,
 }
 
@@ -79,7 +85,7 @@ struct MDSTokenResponse {
 }
 
 #[derive(Debug, Clone, Default, Builder)]
-#[builder(setter(into), default)]
+#[builder(setter(into))]
 struct MDSAccessTokenProvider {
     #[builder(default = "default".to_string())]
     service_account_email: String,
@@ -189,7 +195,9 @@ mod test {
             .times(1)
             .return_once(|| Ok(expected_clone));
 
-        let mdsc = MDSCredential {
+        let mdsc = MDSCredentialBuilder
+        
+        MDSCredential {
             token_provider: mock,
         };
         let actual = mdsc.get_token().await.unwrap();
