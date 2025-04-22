@@ -18,7 +18,7 @@ use google_cloud_auth::credentials::testing::test_credentials;
 use google_cloud_auth::credentials::user_account::Builder as UserAccountCredentialBuilder;
 use google_cloud_auth::credentials::{
     ApiKeyOptions, Builder as AccessTokenCredentialBuilder, Credentials, CredentialsTrait,
-    create_access_token_credentials, create_api_key_credentials,
+    create_api_key_credentials,
 };
 use google_cloud_auth::errors::CredentialsError;
 use google_cloud_auth::token::Token;
@@ -40,7 +40,7 @@ mod test {
         let _e2 = ScopedEnv::remove("HOME"); // For posix
         let _e3 = ScopedEnv::remove("APPDATA"); // For windows
 
-        let mds = create_access_token_credentials().await.unwrap();
+        let mds = AccessTokenCredentialBuilder::default().build().unwrap();
         let fmt = format!("{:?}", mds);
         assert!(fmt.contains("MDSCredentials"));
     }
@@ -49,7 +49,7 @@ mod test {
     #[serial_test::serial]
     async fn create_access_token_credentials_errors_if_adc_env_is_not_a_file() {
         let _e = ScopedEnv::set("GOOGLE_APPLICATION_CREDENTIALS", "file-does-not-exist.json");
-        let err = create_access_token_credentials().await.err().unwrap();
+        let err = AccessTokenCredentialBuilder::default().build().err().unwrap();        
         let msg = err.source().unwrap().to_string();
         assert!(msg.contains("Failed to load Application Default Credentials"));
         assert!(msg.contains("file-does-not-exist.json"));
