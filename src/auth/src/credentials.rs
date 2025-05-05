@@ -22,7 +22,7 @@ pub mod user_account;
 
 use crate::Result;
 use crate::errors::{self, CredentialsError};
-use http::header::{HeaderName, HeaderValue};
+use http::header::{HeaderName, HeaderValue, HeaderMap};
 use serde_json::Value;
 use std::future::Future;
 use std::sync::Arc;
@@ -92,7 +92,7 @@ impl Credentials {
         self.inner.token().await
     }
 
-    pub async fn headers(&self) -> Result<Vec<(HeaderName, HeaderValue)>> {
+    pub async fn headers(&self) -> Result<> {
         self.inner.headers().await
     }
 
@@ -155,11 +155,20 @@ pub trait CredentialsProvider: std::fmt::Debug {
     /// sent with a request.
     ///
     /// The underlying implementation refreshes the token as needed.
-    fn headers(&self) -> impl Future<Output = Result<Vec<(HeaderName, HeaderValue)>>> + Send;
+    fn headers(&self) -> impl Future<Output = Result<CacheableResource<HeaderMap>> + Send;
 
     /// Retrieves the universe domain associated with the credentials, if any.
     fn universe_domain(&self) -> impl Future<Output = Option<String>> + Send;
 }
+
+pub struct EntityTag(pub String);
+
+//TODO: ADD documentation here
+pub enum CacheableResource<T> {
+    NotModified,
+    New {entity_tag: EntityTag, data: T},
+  }
+  
 
 pub(crate) mod dynamic {
     use super::Result;
