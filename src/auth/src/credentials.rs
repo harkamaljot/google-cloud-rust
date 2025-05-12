@@ -87,12 +87,22 @@ where
     }
 }
 
+#[derive(Clone, PartialEq, Debug)]
+pub struct EntityTag(pub(crate) String);
+
+#[derive(Clone, PartialEq, Debug)]
+pub enum CacheableResource<T> {
+    NotModified,
+    New {entity_tag: EntityTag, data: T},
+  }
+  
+
 impl Credentials {
     pub async fn token(&self, extensions: Extensions) -> Result<crate::token::Token> {
         self.inner.token(extensions).await
     }
 
-    pub async fn headers(&self, extensions: Extensions) -> Result<HeaderMap> {
+    pub async fn headers(&self, extensions: Extensions) -> Result<CacheableResource<HeaderMap>> {
         self.inner.headers(extensions).await
     }
 
@@ -162,7 +172,7 @@ pub trait CredentialsProvider: std::fmt::Debug {
     /// The underlying implementation refreshes the token as needed.
     // TODO(#2036): After the return type is updated to return a cacheable resource
     // update Rustdoc to fully explain the `extensions: http::Extensions` parameter.
-    fn headers(&self, extensions: Extensions) -> impl Future<Output = Result<HeaderMap>> + Send;
+    fn headers(&self, extensions: Extensions) -> impl Future<Output = Result<CacheableResource<HeaderMap>>> + Send;
 
     /// Retrieves the universe domain associated with the credentials, if any.
     fn universe_domain(&self) -> impl Future<Output = Option<String>> + Send;
@@ -170,7 +180,7 @@ pub trait CredentialsProvider: std::fmt::Debug {
 
 pub(crate) mod dynamic {
     use super::Result;
-    use super::{Extensions, HeaderMap};
+    use super::{Extensions, HeaderMap, CacheableResource};
 
     /// A dyn-compatible, crate-private version of `CredentialsProvider`.
     #[async_trait::async_trait]
@@ -192,7 +202,7 @@ pub(crate) mod dynamic {
         /// The underlying implementation refreshes the token as needed.
         // TODO(#2036): After the return type is updated to return cacheable resource
         // update Rustdoc to fully explain the `extensions: Option<http::Extensions>` parameter.
-        async fn headers(&self, extensions: Extensions) -> Result<HeaderMap>;
+        async fn headers(&self, extensions: Extensions) -> Result<CacheableResource<HeaderMap>>;
 
         /// Retrieves the universe domain associated with the credentials, if any.
         async fn universe_domain(&self) -> Option<String> {
@@ -209,7 +219,7 @@ pub(crate) mod dynamic {
         async fn token(&self, extensions: Extensions) -> Result<crate::token::Token> {
             T::token(self, extensions).await
         }
-        async fn headers(&self, extensions: Extensions) -> Result<HeaderMap> {
+        async fn headers(&self, extensions: Extensions) -> Result<CacheableResource<HeaderMap>> {
             T::headers(self, extensions).await
         }
         async fn universe_domain(&self) -> Option<String> {
@@ -572,6 +582,7 @@ pub mod testing {
     use crate::token::Token;
     use http::{Extensions, HeaderMap};
     use std::sync::Arc;
+    use super::{CacheableResource, EntityTag};
 
     /// A simple credentials implementation to use in tests where authentication does not matter.
     ///
@@ -596,8 +607,8 @@ pub mod testing {
             })
         }
 
-        async fn headers(&self, _extensions: Extensions) -> Result<HeaderMap> {
-            Ok(HeaderMap::new())
+        async fn headers(&self, _extensions: Extensions) -> Result<CacheableResource<HeaderMap>> {
+            Ok(CacheableResource::New{entity_tag: EntityTag("test-only-etag".to_string()), data: HeaderMap::new()})
         }
 
         async fn universe_domain(&self) -> Option<String> {
@@ -623,7 +634,7 @@ pub mod testing {
             Err(super::CredentialsError::from_str(self.0, "test-only"))
         }
 
-        async fn headers(&self, _extensions: Extensions) -> Result<HeaderMap> {
+        async fn headers(&self, _extensions: Extensions) -> Result<CacheableResource<HeaderMap>> {
             Err(super::CredentialsError::from_str(self.0, "test-only"))
         }
 

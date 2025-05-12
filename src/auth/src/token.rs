@@ -16,6 +16,7 @@ use crate::Result;
 use http::Extensions;
 use std::collections::HashMap;
 use std::time::Instant;
+use crate::credentials::CacheableResource;
 
 /// Represents an auth token.
 #[derive(Clone, PartialEq)]
@@ -71,7 +72,7 @@ pub(crate) trait TokenProvider: std::fmt::Debug + Send + Sync {
 
 #[async_trait::async_trait]
 pub(crate) trait CachedTokenProvider: std::fmt::Debug + Send + Sync {
-    async fn token(&self, extensions: Extensions) -> Result<Token>;
+    async fn token(&self, extensions: Extensions) -> Result<CacheableResource<Token>>;
 }
 
 #[cfg(test)]

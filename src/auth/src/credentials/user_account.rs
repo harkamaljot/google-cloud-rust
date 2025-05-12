@@ -68,7 +68,7 @@
 //! [Workforce Identity Federation]: https://cloud.google.com/iam/docs/workforce-identity-federation
 
 use crate::credentials::dynamic::CredentialsProvider;
-use crate::credentials::{Credentials, Result};
+use crate::credentials::{Credentials, Result, EntityTag, CacheableResource};
 use crate::errors::{self, CredentialsError, is_retryable};
 use crate::headers_util::build_bearer_headers;
 use crate::token::{CachedTokenProvider, Token, TokenProvider};
@@ -316,8 +316,8 @@ where
         self.token_provider.token(extensions).await
     }
 
-    async fn headers(&self, extensions: Extensions) -> Result<HeaderMap> {
-        let token = self.token(extensions).await?;
+    async fn headers(&self, extensions: Extensions) -> Result<CacheableResource<HeaderMap>> {
+        let token = self.token_provider.token(extensions).await?;
         build_bearer_headers(&token, &self.quota_project_id)
     }
 }

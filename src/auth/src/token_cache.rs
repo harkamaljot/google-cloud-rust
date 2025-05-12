@@ -14,6 +14,9 @@
 
 use crate::Result;
 use crate::token::{CachedTokenProvider, Token, TokenProvider};
+use crate::credentials::{CacheableResource, EntityTag};
+use etag::EntityTag as EntityTagGenerator;
+use gax::error::CredentialsError;
 use http::Extensions;
 use tokio::sync::watch;
 use tokio::time::{Duration, Instant, sleep};
@@ -27,7 +30,7 @@ const SHORT_REFRESH_SLACK: Duration = Duration::from_secs(10);
 
 #[derive(Debug, Clone)]
 pub(crate) struct TokenCache {
-    rx_token: watch::Receiver<Option<Result<Token>>>,
+    rx_token: watch::Receiver<Option<Result<CacheableResource<Token>>>>,
 }
 
 impl TokenCache {
@@ -35,7 +38,7 @@ impl TokenCache {
     where
         T: TokenProvider + Send + Sync + 'static,
     {
-        let (tx_token, rx_token) = watch::channel::<Option<Result<Token>>>(None);
+        let (tx_token, rx_token) = watch::channel::<Option<Result<CacheableResource<Token>>>>(None);
 
         tokio::spawn(async move {
             refresh_task(inner, tx_token).await;
@@ -47,26 +50,18 @@ impl TokenCache {
 
 #[async_trait::async_trait]
 impl CachedTokenProvider for TokenCache {
-    async fn token(&self, _extensions: Extensions) -> Result<Token> {
+    async fn token(&self, extensions: Extensions) -> Result<CacheableResource<Token>> {
         let mut rx = self.rx_token.clone();
         let token_result = rx.borrow_and_update().clone();
-
+        
         if let Some(token_result) = token_result {
             match token_result {
-                Ok(token) => match token.expires_at {
-                    None => return Ok(token),
-                    Some(e) => {
-                        if e < Instant::now().into_std() {
-                            // Expired token, wait for refresh
-                            return wait_for_next_token(rx).await;
-                        } else {
-                            // valid token
-                            return Ok(token);
-                        }
-                    }
-                },
-                // An error in the result is still a valid result to propagate to the client library
-                Err(e) => Err(e),
+                CacheableResource::NotModified => {
+                    CredentialsError::from_str(true, "DId not find a token")
+                }
+                CacheableResource::New { entity_tag, data } {
+                    
+                }
             }
         } else {
             wait_for_next_token(rx).await
@@ -74,23 +69,50 @@ impl CachedTokenProvider for TokenCache {
     }
 }
 
+async fn get_latest_token(token: Result<Token>) -> Result<CacheableResource<Token>>{
+    match token {
+        Ok(token) => match token.expires_at {
+            None => return Ok(token),
+            Some(e) => {
+                if e < Instant::now().into_std() {
+                    // Expired token, wait for refresh
+                    return wait_for_next_token(rx).await;
+                } else {
+                    // valid token
+                    return Ok(token);
+                }
+            }
+        },
+        // An error in the result is still a valid result to propagate to the client library
+        Err(e) => Err(e),
+    }
+}
+
 async fn wait_for_next_token(
-    mut rx_token: watch::Receiver<Option<Result<Token>>>,
-) -> Result<Token> {
+    mut rx_token: watch::Receiver<Option<Result<CacheableResource<Token>>>>,
+) -> Result<CacheableResource<Token>> {
     rx_token.changed().await.unwrap();
     let token_result = rx_token.borrow().clone();
 
     token_result.expect("There should always be a token or error in the channel after changed()")
 }
 
-async fn refresh_task<T>(token_provider: T, tx_token: watch::Sender<Option<Result<Token>>>)
+async fn refresh_task<T>(token_provider: T, tx_token: watch::Sender<Option<Result<CacheableResource<Token>>>>)
 where
     T: TokenProvider + Send + Sync + 'static,
 {
     loop {
-        let token_result = token_provider.token().await;
+        let token_result: std::result::Result<Token, gax::error::CredentialsError> = token_provider.token().await;
+        let cachable_token_result = token_result.clone().map(|token| {
+            let entity_tag = EntityTagGenerator::strong(&token.token);
+            CacheableResource::New {
+                entity_tag: EntityTag(entity_tag.to_string()),
+                data: token,
+            }
+        });
+        
 
-        let _ = tx_token.send(Some(token_result.clone()));
+        let _ = tx_token.send(Some(cachable_token_result.clone()));
 
         match token_result {
             Ok(new_token) => {
