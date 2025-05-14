@@ -56,12 +56,29 @@ impl CachedTokenProvider for TokenCache {
         
         if let Some(token_result) = token_result {
             match token_result {
+<<<<<<< HEAD
                 CacheableResource::NotModified => {
                     CredentialsError::from_str(true, "DId not find a token")
                 }
                 CacheableResource::New { entity_tag, data } {
                     
                 }
+=======
+                Ok(token) => match token.expires_at {
+                    None => return Ok(token),
+                    Some(e) => {
+                        if e < Instant::now() {
+                            // Expired token, wait for refresh
+                            return wait_for_next_token(rx).await;
+                        } else {
+                            // valid token
+                            return Ok(token);
+                        }
+                    }
+                },
+                // An error in the result is still a valid result to propagate to the client library
+                Err(e) => Err(e),
+>>>>>>> b91271935122caf2a159df3e06e32abe138b7a9e
             }
         } else {
             wait_for_next_token(rx).await
@@ -117,8 +134,7 @@ where
         match token_result {
             Ok(new_token) => {
                 if let Some(expiry) = new_token.expires_at {
-                    let time_until_expiry =
-                        expiry.checked_duration_since(Instant::now().into_std());
+                    let time_until_expiry = expiry.checked_duration_since(Instant::now());
 
                     match time_until_expiry {
                         None => {
@@ -208,7 +224,7 @@ mod test {
         let initial = Token {
             token: "initial-token".to_string(),
             token_type: "Bearer".to_string(),
-            expires_at: Some((now + TOKEN_VALID_DURATION).into_std()),
+            expires_at: Some(now + TOKEN_VALID_DURATION),
             metadata: None,
         };
         let initial_clone = initial.clone();
@@ -216,7 +232,7 @@ mod test {
         let refresh = Token {
             token: "refreshed-token".to_string(),
             token_type: "Bearer".to_string(),
-            expires_at: Some((now + 2 * TOKEN_VALID_DURATION).into_std()),
+            expires_at: Some(now + 2 * TOKEN_VALID_DURATION),
             metadata: None,
         };
         let refresh_clone = refresh.clone();
@@ -252,7 +268,7 @@ mod test {
         let initial = Token {
             token: "initial-token".to_string(),
             token_type: "Bearer".to_string(),
-            expires_at: Some((now + TOKEN_VALID_DURATION).into_std()),
+            expires_at: Some(now + TOKEN_VALID_DURATION),
             metadata: None,
         };
         let initial_clone = initial.clone();
@@ -286,7 +302,7 @@ mod test {
         let token = Token {
             token: "initial-token".to_string(),
             token_type: "Bearer".to_string(),
-            expires_at: Some((now + TOKEN_VALID_DURATION).into_std()),
+            expires_at: Some(now + TOKEN_VALID_DURATION),
             metadata: None,
         };
         let token_clone = token.clone();
@@ -322,7 +338,7 @@ mod test {
         let token1 = Token {
             token: "token1".to_string(),
             token_type: "Bearer".to_string(),
-            expires_at: Some(now.into_std()),
+            expires_at: Some(now),
             metadata: None,
         };
         let token1_clone = token1.clone();
@@ -330,7 +346,7 @@ mod test {
         let token2 = Token {
             token: "token2".to_string(),
             token_type: "Bearer".to_string(),
-            expires_at: Some((now + TOKEN_VALID_DURATION).into_std()),
+            expires_at: Some(now + TOKEN_VALID_DURATION),
             metadata: None,
         };
         let token2_clone = token2.clone();
@@ -369,7 +385,7 @@ mod test {
         let token1 = Token {
             token: "token1".to_string(),
             token_type: "Bearer".to_string(),
-            expires_at: Some((now + TOKEN_VALID_DURATION).into_std()),
+            expires_at: Some(now + TOKEN_VALID_DURATION),
             metadata: None,
         };
         let token1_clone = token1.clone();
@@ -377,7 +393,7 @@ mod test {
         let token2 = Token {
             token: "token2".to_string(),
             token_type: "Bearer".to_string(),
-            expires_at: Some((now + 2 * TOKEN_VALID_DURATION).into_std()),
+            expires_at: Some(now + 2 * TOKEN_VALID_DURATION),
             metadata: None,
         };
         let token2_clone = token2.clone();
@@ -385,7 +401,7 @@ mod test {
         let token3 = Token {
             token: "token3".to_string(),
             token_type: "Bearer".to_string(),
-            expires_at: Some((now + 3 * TOKEN_VALID_DURATION).into_std()),
+            expires_at: Some(now + 3 * TOKEN_VALID_DURATION),
             metadata: None,
         };
         let token3_clone = token3.clone();
@@ -450,7 +466,7 @@ mod test {
         let token1 = Token {
             token: "token1".to_string(),
             token_type: "Bearer".to_string(),
-            expires_at: Some((now + Duration::from_secs(120)).into_std()),
+            expires_at: Some(now + Duration::from_secs(120)),
             metadata: None,
         };
         let token1_clone = token1.clone();
@@ -459,7 +475,7 @@ mod test {
         let token2 = Token {
             token: "token2".to_string(),
             token_type: "Bearer".to_string(),
-            expires_at: Some((now + 2 * TOKEN_VALID_DURATION).into_std()),
+            expires_at: Some(now + 2 * TOKEN_VALID_DURATION),
             metadata: None,
         };
         let token2_clone = token2.clone();
@@ -520,7 +536,7 @@ mod test {
         let token1 = Token {
             token: "token1".to_string(),
             token_type: "Bearer".to_string(),
-            expires_at: Some((now + 3 * NORMAL_REFRESH_SLACK).into_std()),
+            expires_at: Some(now + 3 * NORMAL_REFRESH_SLACK),
             metadata: None,
         };
         let token1_clone = token1.clone();
@@ -528,7 +544,7 @@ mod test {
         let token2 = Token {
             token: "token2".to_string(),
             token_type: "Bearer".to_string(),
-            expires_at: Some((now + 2 * TOKEN_VALID_DURATION).into_std()),
+            expires_at: Some(now + 2 * TOKEN_VALID_DURATION),
             metadata: None,
         };
         let token2_clone = token2.clone();
@@ -606,7 +622,7 @@ mod test {
         let token = Token {
             token: "delayed-token".to_string(),
             token_type: "Bearer".to_string(),
-            expires_at: Some(std::time::Instant::now()),
+            expires_at: Some(Instant::now()),
             metadata: None,
         };
 

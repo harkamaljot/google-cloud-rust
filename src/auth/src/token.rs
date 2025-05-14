@@ -15,7 +15,7 @@
 use crate::Result;
 use http::Extensions;
 use std::collections::HashMap;
-use std::time::Instant;
+use tokio::time::Instant;
 use crate::credentials::CacheableResource;
 
 /// Represents an auth token.

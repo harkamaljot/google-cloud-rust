@@ -12,10 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-mod api_key_credentials;
-// Export API Key factory function and options
-pub use api_key_credentials::{ApiKeyOptions, create_api_key_credentials};
-
+pub mod api_key_credentials;
 pub mod mds;
 pub mod service_account;
 pub mod user_account;
@@ -32,8 +29,7 @@ pub(crate) const DEFAULT_UNIVERSE_DOMAIN: &str = "googleapis.com";
 
 /// An implementation of [crate::credentials::CredentialsProvider].
 ///
-/// Represents a [Credentials] used to obtain auth [Token][crate::token::Token]s
-/// and the corresponding request headers.
+/// Represents a [Credentials] used to obtain the auth request headers.
 ///
 /// In general, [Credentials][credentials-link] are "digital object that provide
 /// proof of identity", the archetype may be a username and password
@@ -98,11 +94,15 @@ pub enum CacheableResource<T> {
   
 
 impl Credentials {
+<<<<<<< HEAD
     pub async fn token(&self, extensions: Extensions) -> Result<crate::token::Token> {
         self.inner.token(extensions).await
     }
 
     pub async fn headers(&self, extensions: Extensions) -> Result<CacheableResource<HeaderMap>> {
+=======
+    pub async fn headers(&self, extensions: Extensions) -> Result<HeaderMap> {
+>>>>>>> b91271935122caf2a159df3e06e32abe138b7a9e
         self.inner.headers(extensions).await
     }
 
@@ -111,8 +111,7 @@ impl Credentials {
     }
 }
 
-/// Represents a [Credentials] used to obtain auth
-/// [Token][crate::token::Token]s and the corresponding request headers.
+/// Represents a [Credentials] used to obtain auth request headers.
 ///
 /// In general, [Credentials][credentials-link] are "digital object that
 /// provide proof of identity", the archetype may be a username and password
@@ -152,17 +151,6 @@ impl Credentials {
 /// [Google Compute Engine]: https://cloud.google.com/products/compute
 /// [Google Kubernetes Engine]: https://cloud.google.com/kubernetes-engine
 pub trait CredentialsProvider: std::fmt::Debug {
-    /// Asynchronously retrieves a token.
-    ///
-    /// Returns a [Token][crate::token::Token] for the current credentials.
-    /// The underlying implementation refreshes the token as needed.
-    // TODO(#2036): After the return type is updated to return a cacheable resource
-    // update Rustdoc to fully explain the `extensions: http::Extensions` parameter.
-    fn token(
-        &self,
-        extensions: Extensions,
-    ) -> impl Future<Output = Result<crate::token::Token>> + Send;
-
     /// Asynchronously constructs the auth headers.
     ///
     /// Different auth tokens are sent via different headers. The
@@ -185,14 +173,6 @@ pub(crate) mod dynamic {
     /// A dyn-compatible, crate-private version of `CredentialsProvider`.
     #[async_trait::async_trait]
     pub trait CredentialsProvider: Send + Sync + std::fmt::Debug {
-        /// Asynchronously retrieves a token.
-        ///
-        /// Returns a [Token][crate::token::Token] for the current credentials.
-        /// The underlying implementation refreshes the token as needed.
-        // TODO(#2036): After the return type is updated to return cacheable resource
-        // update Rustdoc to fully explain the `extensions: Option<http::Extensions>` parameter.
-        async fn token(&self, extensions: Extensions) -> Result<crate::token::Token>;
-
         /// Asynchronously constructs the auth headers.
         ///
         /// Different auth tokens are sent via different headers. The
@@ -216,10 +196,14 @@ pub(crate) mod dynamic {
     where
         T: super::CredentialsProvider + Send + Sync,
     {
+<<<<<<< HEAD
         async fn token(&self, extensions: Extensions) -> Result<crate::token::Token> {
             T::token(self, extensions).await
         }
         async fn headers(&self, extensions: Extensions) -> Result<CacheableResource<HeaderMap>> {
+=======
+        async fn headers(&self, extensions: Extensions) -> Result<HeaderMap> {
+>>>>>>> b91271935122caf2a159df3e06e32abe138b7a9e
             T::headers(self, extensions).await
         }
         async fn universe_domain(&self) -> Option<String> {
@@ -259,7 +243,7 @@ enum CredentialsSource {
 ///   service account key file, or a JSON object describing your user
 ///   credentials.
 ///
-/// The access tokens returned by these credentials should be used in the
+/// The headers returned by these credentials should be used in the
 /// Authorization HTTP header.
 ///
 /// The Google Cloud client libraries for Rust will typically find and use these
@@ -271,22 +255,22 @@ enum CredentialsSource {
 ///
 /// Example usage:
 ///
-/// Fetching token using ADC
+/// Fetching headers using ADC
 /// ```
 /// # use google_cloud_auth::credentials::Builder;
 /// # use google_cloud_auth::errors::CredentialsError;
 /// # use http::Extensions;
 /// # tokio_test::block_on(async {
-/// let creds = Builder::default()
+/// let credentials = Builder::default()
 ///     .with_quota_project_id("my-project")
 ///     .build()?;
-/// let token = creds.token(Extensions::new()).await?;
-/// println!("Token: {}", token.token);
+/// let headers = credentials.headers(Extensions::new()).await?;
+/// println!("Headers: {headers:?}");
 /// # Ok::<(), CredentialsError>(())
 /// # });
 /// ```
 ///
-/// Fetching token using custom JSON
+/// Fetching headers using custom JSON
 /// ```
 /// # use google_cloud_auth::credentials::Builder;
 /// # use google_cloud_auth::errors::CredentialsError;
@@ -305,8 +289,8 @@ enum CredentialsSource {
 /// let creds = Builder::new(authorized_user)
 ///     .with_quota_project_id("my-project")
 ///     .build()?;
-/// let token = creds.token(Extensions::new()).await?;
-/// println!("Token: {}", token.token);
+/// let headers = creds.headers(Extensions::new()).await?;
+/// println!("Headers: {headers:?}");
 /// # Ok::<(), CredentialsError>(())
 /// # });
 /// ```
@@ -473,13 +457,15 @@ fn extract_credential_type(json: &Value) -> Result<&str> {
 /// `mds::Builder`, `service_account::Builder`, etc.) before calling `.build()`.
 /// It helps avoid repetitive code in the `build_credentials` function.
 macro_rules! config_builder {
-    ($builder_instance:expr, $quota_project_id:expr, $scopes:expr) => {{
+    ($builder_instance:expr, $quota_project_id_option:expr, $scopes_option:expr, $apply_scopes_closure:expr) => {{
         let builder = $builder_instance;
-        let builder = $quota_project_id
+        let builder = $quota_project_id_option
             .into_iter()
             .fold(builder, |b, qp| b.with_quota_project_id(qp));
 
-        let builder = $scopes.into_iter().fold(builder, |b, s| b.with_scopes(s));
+        let builder = $scopes_option
+            .into_iter()
+            .fold(builder, |b, s| $apply_scopes_closure(b, s));
 
         builder.build()
     }};
@@ -491,17 +477,29 @@ fn build_credentials(
     scopes: Option<Vec<String>>,
 ) -> Result<Credentials> {
     match json {
-        None => config_builder!(mds::Builder::default(), quota_project_id, scopes),
+        None => config_builder!(
+            mds::Builder::default(),
+            quota_project_id,
+            scopes,
+            |b: mds::Builder, s: Vec<String>| b.with_scopes(s)
+        ),
         Some(json) => {
             let cred_type = extract_credential_type(&json)?;
             match cred_type {
                 "authorized_user" => {
-                    config_builder!(user_account::Builder::new(json), quota_project_id, scopes)
+                    config_builder!(
+                        user_account::Builder::new(json),
+                        quota_project_id,
+                        scopes,
+                        |b: user_account::Builder, s: Vec<String>| b.with_scopes(s)
+                    )
                 }
                 "service_account" => config_builder!(
                     service_account::Builder::new(json),
                     quota_project_id,
-                    scopes
+                    scopes,
+                    |b: service_account::Builder, s: Vec<String>| b
+                        .with_access_specifier(service_account::AccessSpecifier::from_scopes(s))
                 ),
                 _ => Err(errors::non_retryable_from_str(format!(
                     "Invalid or unsupported credentials type found in JSON: {cred_type}"
@@ -579,7 +577,6 @@ pub mod testing {
     use crate::Result;
     use crate::credentials::Credentials;
     use crate::credentials::dynamic::CredentialsProvider;
-    use crate::token::Token;
     use http::{Extensions, HeaderMap};
     use std::sync::Arc;
     use super::{CacheableResource, EntityTag};
@@ -598,6 +595,7 @@ pub mod testing {
 
     #[async_trait::async_trait]
     impl CredentialsProvider for TestCredentials {
+<<<<<<< HEAD
         async fn token(&self, _extensions: Extensions) -> Result<Token> {
             Ok(Token {
                 token: "test-only-token".to_string(),
@@ -609,6 +607,10 @@ pub mod testing {
 
         async fn headers(&self, _extensions: Extensions) -> Result<CacheableResource<HeaderMap>> {
             Ok(CacheableResource::New{entity_tag: EntityTag("test-only-etag".to_string()), data: HeaderMap::new()})
+=======
+        async fn headers(&self, _extensions: Extensions) -> Result<HeaderMap> {
+            Ok(HeaderMap::new())
+>>>>>>> b91271935122caf2a159df3e06e32abe138b7a9e
         }
 
         async fn universe_domain(&self) -> Option<String> {
@@ -618,7 +620,7 @@ pub mod testing {
 
     /// A simple credentials implementation to use in tests.
     ///
-    /// Always return an error in `token()` and `headers()`.
+    /// Always return an error in `headers()`.
     pub fn error_credentials(retryable: bool) -> Credentials {
         Credentials {
             inner: Arc::from(ErrorCredentials(retryable)),
@@ -630,14 +632,10 @@ pub mod testing {
 
     #[async_trait::async_trait]
     impl CredentialsProvider for ErrorCredentials {
-        async fn token(&self, _extensions: Extensions) -> Result<Token> {
+        async fn headers(&self, _extensions: Extensions) -> Result<HeaderMap> {
             Err(super::CredentialsError::from_str(self.0, "test-only"))
         }
-
-        async fn headers(&self, _extensions: Extensions) -> Result<CacheableResource<HeaderMap>> {
-            Err(super::CredentialsError::from_str(self.0, "test-only"))
-        }
-
+xxxxxx
         async fn universe_domain(&self) -> Option<String> {
             None
         }
@@ -648,15 +646,33 @@ pub mod testing {
 mod test {
     use super::*;
     use base64::Engine;
+    use reqwest::header::AUTHORIZATION;
     use rsa::RsaPrivateKey;
     use rsa::pkcs8::{EncodePrivateKey, LineEnding};
     use scoped_env::ScopedEnv;
     use std::error::Error;
+    use std::sync::LazyLock;
     use test_case::test_case;
 
     type TestResult = std::result::Result<(), Box<dyn std::error::Error>>;
 
-    pub fn generate_pkcs8_private_key() -> String {
+    pub(crate) fn get_token_from_headers(headers: &HeaderMap) -> Option<String> {
+        headers
+            .get(AUTHORIZATION)
+            .and_then(|token_value| token_value.to_str().ok())
+            .and_then(|s| s.split_whitespace().nth(1))
+            .map(|s| s.to_string())
+    }
+
+    pub(crate) fn get_token_type_from_headers(headers: &HeaderMap) -> Option<String> {
+        headers
+            .get(AUTHORIZATION)
+            .and_then(|token_value| token_value.to_str().ok())
+            .and_then(|s| s.split_whitespace().next())
+            .map(|s| s.to_string())
+    }
+
+    pub static PKCS8_PK: LazyLock<String> = LazyLock::new(|| {
         let mut rng = rand::thread_rng();
         let bits = 2048;
         let priv_key = RsaPrivateKey::new(&mut rng, bits).expect("failed to generate a key");
@@ -664,7 +680,7 @@ mod test {
             .to_pkcs8_pem(LineEnding::LF)
             .expect("Failed to encode key to PKCS#8 PEM")
             .to_string()
-    }
+    });
 
     pub fn b64_decode_to_json(s: String) -> serde_json::Value {
         let decoded = String::from_utf8(
@@ -802,7 +818,7 @@ mod test {
             credentials.universe_domain().await.is_none(),
             "{credentials:?}"
         );
-        let err = credentials.token(Extensions::new()).await.err().unwrap();
+        let err = credentials.headers(Extensions::new()).await.err().unwrap();
         assert_eq!(err.is_retryable(), retryable, "{err:?}");
         let err = credentials.headers(Extensions::new()).await.err().unwrap();
         assert_eq!(err.is_retryable(), retryable, "{err:?}");
@@ -838,7 +854,7 @@ mod test {
         let scopes =
             ["https://www.googleapis.com/auth/pubsub, https://www.googleapis.com/auth/translate"];
 
-        service_account_key["private_key"] = Value::from(generate_pkcs8_private_key());
+        service_account_key["private_key"] = Value::from(PKCS8_PK.clone());
 
         let sac = Builder::new(service_account_key)
             .with_quota_project_id("test-quota-project")
@@ -846,8 +862,9 @@ mod test {
             .build()
             .unwrap();
 
-        let token = sac.token(Extensions::new()).await?;
-        let parts: Vec<_> = token.token.split('.').collect();
+        let headers = sac.headers(Extensions::new()).await?;
+        let token = get_token_from_headers(&headers).unwrap();
+        let parts: Vec<_> = token.split('.').collect();
         assert_eq!(parts.len(), 3);
         let claims = b64_decode_to_json(parts.get(1).unwrap().to_string());
 
