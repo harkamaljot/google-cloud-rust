@@ -312,15 +312,7 @@ impl<T> CredentialsProvider for UserCredentials<T>
 where
     T: CachedTokenProvider,
 {
-<<<<<<< HEAD
-    async fn token(&self, extensions: Extensions) -> Result<Token> {
-        self.token_provider.token(extensions).await
-    }
-
-    async fn headers(&self, extensions: Extensions) -> Result<CacheableResource<HeaderMap>> {
-=======
     async fn headers(&self, extensions: Extensions) -> Result<HeaderMap> {
->>>>>>> b91271935122caf2a159df3e06e32abe138b7a9e
         let token = self.token_provider.token(extensions).await?;
         build_bearer_headers(&token, &self.quota_project_id)
     }
