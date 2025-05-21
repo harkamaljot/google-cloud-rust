@@ -236,7 +236,12 @@ struct MDSAccessTokenProvider {
 #[async_trait]
 impl TokenProvider for MDSAccessTokenProvider {
     async fn token(&self) -> Result<Token> {
-        let client = Client::new();
+        #[cfg(feature = "rustls-tls")]
+        let client = reqwest::Client::builder().use_rustls_tls().build().map_err(errors::retryable)?;
+
+        #[cfg(feature = "openssl-tls")]
+        let client = reqwest::Client::builder().use_native_tls().build().map_err(errors::retryable)?;
+
         let request = client
             .get(format!("{}{}/token", self.endpoint, MDS_DEFAULT_URI))
             .header(
