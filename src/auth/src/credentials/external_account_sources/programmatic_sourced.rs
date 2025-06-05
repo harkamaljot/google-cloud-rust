@@ -12,5 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub mod url_sourced;
-pub mod programmatic_sourced;
+use crate::Result;
+use crate::credentials::external_account::SubjectTokenProvider;
+
+#[derive(Debug)]
+pub(crate) struct ProgrammaticSourcedCredentials<T> where T: SubjectTokenProvider {
+    pub subject_token_provider: T,
+}
+
+// #[async_trait::async_trait]
+// impl<T> SubjectTokenProvider for ProgrammaticSourcedCredentials<T> {
+//     async fn subject_token(&self) -> Result<String> {
+//         return self.subject_token_provider.subject_token().await;
+//     }
+// }

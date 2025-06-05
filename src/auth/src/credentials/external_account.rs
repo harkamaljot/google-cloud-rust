@@ -25,11 +25,12 @@ use crate::{BuildResult, Result};
 use http::{Extensions, HeaderMap};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use super::external_account_sources::programmatic_sourced::ProgrammaticSourcedCredentials;
 use std::sync::Arc;
 use tokio::time::{Duration, Instant};
 
 #[async_trait::async_trait]
-pub(crate) trait SubjectTokenProvider: std::fmt::Debug + Send + Sync {
+pub trait SubjectTokenProvider: std::fmt::Debug + Send + Sync {
     /// Generate subject token that will be used on STS exchange.
     async fn subject_token(&self) -> Result<String>;
 }
@@ -50,6 +51,24 @@ enum CredentialSource {
     Executable {},
 }
 
+fn make_credentials_from_provider<T: SubjectTokenProvider + 'static>(
+    subject_token_provider: T,
+    config: ExternalAccountConfig,
+    quota_project_id: Option<String>,
+) -> Credentials {
+    let token_provider = ExternalAccountTokenProvider {
+        subject_token_provider,
+        config,
+    };
+    let cache = TokenCache::new(token_provider);
+    Credentials {
+        inner: Arc::new(ExternalAccountCredentials {
+            token_provider: cache,
+            quota_project_id,
+        }),
+    }
+}
+
 impl CredentialSource {
     fn make_credentials(
         self,
@@ -57,19 +76,7 @@ impl CredentialSource {
         quota_project_id: Option<String>,
     ) -> Credentials {
         match self {
-            Self::Url(source) => {
-                let token_provider = ExternalAccountTokenProvider {
-                    subject_token_provider: source,
-                    config,
-                };
-                let cache = TokenCache::new(token_provider);
-                Credentials {
-                    inner: Arc::new(ExternalAccountCredentials {
-                        token_provider: cache,
-                        quota_project_id,
-                    }),
-                }
-            }
+            Self::Url(source) => make_credentials_from_provider(source, config, quota_project_id),
             Self::Executable { .. } => {
                 unimplemented!("executable sourced credential not supported yet")
             }
@@ -198,13 +205,14 @@ where
 /// #     "test-only".to_string()
 /// # }
 /// ```
-pub struct Builder {
+pub struct Builder<T> where T:SubjectTokenProvider {
     external_account_config: Value,
     quota_project_id: Option<String>,
     scopes: Option<Vec<String>>,
+    subject_token_provider: Option<T>,
 }
 
-impl Builder {
+impl<T> Builder<T> where T: SubjectTokenProvider {
     /// Creates a new builder using [external_account_credentials] JSON value.
     ///
     /// [external_account_credentials]: https://google.aip.dev/auth/4117#configuration-file-generation-and-usage
@@ -213,6 +221,7 @@ impl Builder {
             external_account_config,
             quota_project_id: None,
             scopes: None,
+            subject_token_provider: None,
         }
     }
 
@@ -241,6 +250,16 @@ impl Builder {
         self
     }
 
+        /// bring your own custom implementation of
+    /// SubjectTokenProvider for OIDC/SAML credentials.
+    pub fn with_subject_token_provider(
+        mut self,
+        subject_token_provider: T,
+    ) -> Self {
+        self.subject_token_provider = Some(subject_token_provider);
+        self
+    }
+
     /// Returns a [Credentials] instance with the configured settings.
     ///
     /// # Errors
@@ -260,6 +279,17 @@ impl Builder {
         let mut config = external_account_config.clone();
         if let Some(scopes) = self.scopes {
             config.scopes = Some(scopes);
+        }
+
+        if let Some(subject_token_provider) = self.subject_token_provider {
+            let source = ProgrammaticSourcedCredentials {
+                subject_token_provider,
+            };
+            return Ok(make_credentials_from_provider(
+                source,
+                config,
+                self.quota_project_id,
+            ));
         }
 
         Ok(external_account_config
