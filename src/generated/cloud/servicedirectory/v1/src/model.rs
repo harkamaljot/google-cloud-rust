@@ -45,6 +45,7 @@ pub struct Endpoint {
     /// Immutable. The resource name for the endpoint in the format
     /// `projects/*/locations/*/namespaces/*/services/*/endpoints/*`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Optional. An IPv4 or IPv6 address. Service Directory rejects bad addresses
@@ -58,10 +59,12 @@ pub struct Endpoint {
     ///
     /// Limited to 45 characters.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub address: std::string::String,
 
     /// Optional. Service Directory rejects values outside of `[0, 65535]`.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub port: i32,
 
     /// Optional. Annotations for the endpoint. This data can be consumed by
@@ -85,6 +88,7 @@ pub struct Endpoint {
     /// They have the same syntax and read/write to the same location in Service
     /// Directory.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub annotations: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// Immutable. The Google Compute Engine network (VPC) of the endpoint in the
@@ -95,11 +99,13 @@ pub struct Endpoint {
     /// that you have the servicedirectory.networks.attach permission on the
     /// project specified.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub network: std::string::String,
 
     /// Output only. The globally unique identifier of the endpoint in the UUID4
     /// format.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub uid: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -172,12 +178,14 @@ impl wkt::message::Message for Endpoint {
 pub struct ResolveServiceRequest {
     /// Required. The name of the service to resolve.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Optional. The maximum number of endpoints to return. Defaults to 25.
     /// Maximum is 100. If a value less than one is specified, the Default is used.
     /// If a value greater than the Maximum is specified, the Maximum is used.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub max_endpoints: i32,
 
     /// Optional. The filter applied to the endpoints of the resolved service.
@@ -218,6 +226,7 @@ pub struct ResolveServiceRequest {
     /// For more information about filtering, see
     /// [API Filtering](https://aip.dev/160).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub endpoint_filter: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -313,17 +322,20 @@ pub struct Namespace {
     /// Immutable. The resource name for the namespace in the format
     /// `projects/*/locations/*/namespaces/*`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Optional. Resource labels associated with this namespace.
     /// No more than 64 user labels can be associated with a given resource. Label
     /// keys and values can be no longer than 63 characters.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub labels: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// Output only. The globally unique identifier of the namespace in the UUID4
     /// format.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub uid: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -378,6 +390,7 @@ pub struct CreateNamespaceRequest {
     /// Required. The resource name of the project and location the namespace
     /// will be created in.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Required. The Resource ID must be 1-63 characters long, and comply with
@@ -388,6 +401,7 @@ pub struct CreateNamespaceRequest {
     /// be a dash, lowercase letter, or digit, except the last character, which
     /// cannot be a dash.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub namespace_id: std::string::String,
 
     /// Required. A namespace with initial fields set.
@@ -452,15 +466,18 @@ pub struct ListNamespacesRequest {
     /// Required. The resource name of the project and location whose namespaces
     /// you'd like to list.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Optional. The maximum number of items to return.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// Optional. The next_page_token value returned from a previous List request,
     /// if any.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     /// Optional. The filter to list results by.
@@ -492,6 +509,7 @@ pub struct ListNamespacesRequest {
     /// For more information about filtering, see
     /// [API Filtering](https://aip.dev/160).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub filter: std::string::String,
 
     /// Optional. The order to list results by.
@@ -505,6 +523,7 @@ pub struct ListNamespacesRequest {
     /// Note that an empty `order_by` string results in default order, which is
     /// order by `name` in ascending order.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub order_by: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -564,11 +583,13 @@ impl wkt::message::Message for ListNamespacesRequest {
 pub struct ListNamespacesResponse {
     /// The list of namespaces.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub namespaces: std::vec::Vec<crate::model::Namespace>,
 
     /// Token to retrieve the next page of results, or empty if there are no
     /// more results in the list.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -629,6 +650,7 @@ impl gax::paginator::internal::PageableResponse for ListNamespacesResponse {
 pub struct GetNamespaceRequest {
     /// Required. The name of the namespace to retrieve.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -733,6 +755,7 @@ impl wkt::message::Message for UpdateNamespaceRequest {
 pub struct DeleteNamespaceRequest {
     /// Required. The name of the namespace to delete.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -768,6 +791,7 @@ impl wkt::message::Message for DeleteNamespaceRequest {
 pub struct CreateServiceRequest {
     /// Required. The resource name of the namespace this service will belong to.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Required. The Resource ID must be 1-63 characters long, and comply with
@@ -778,6 +802,7 @@ pub struct CreateServiceRequest {
     /// be a dash, lowercase letter, or digit, except the last character, which
     /// cannot be a dash.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub service_id: std::string::String,
 
     /// Required. A service  with initial fields set.
@@ -842,15 +867,18 @@ pub struct ListServicesRequest {
     /// Required. The resource name of the namespace whose services you'd
     /// like to list.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Optional. The maximum number of items to return.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// Optional. The next_page_token value returned from a previous List request,
     /// if any.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     /// Optional. The filter to list results by.
@@ -885,6 +913,7 @@ pub struct ListServicesRequest {
     /// For more information about filtering, see
     /// [API Filtering](https://aip.dev/160).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub filter: std::string::String,
 
     /// Optional. The order to list results by.
@@ -898,6 +927,7 @@ pub struct ListServicesRequest {
     /// Note that an empty `order_by` string results in default order, which is
     /// order by `name` in ascending order.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub order_by: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -957,11 +987,13 @@ impl wkt::message::Message for ListServicesRequest {
 pub struct ListServicesResponse {
     /// The list of services.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub services: std::vec::Vec<crate::model::Service>,
 
     /// Token to retrieve the next page of results, or empty if there are no
     /// more results in the list.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1024,6 +1056,7 @@ impl gax::paginator::internal::PageableResponse for ListServicesResponse {
 pub struct GetServiceRequest {
     /// Required. The name of the service to get.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1128,6 +1161,7 @@ impl wkt::message::Message for UpdateServiceRequest {
 pub struct DeleteServiceRequest {
     /// Required. The name of the service to delete.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1163,6 +1197,7 @@ impl wkt::message::Message for DeleteServiceRequest {
 pub struct CreateEndpointRequest {
     /// Required. The resource name of the service that this endpoint provides.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Required. The Resource ID must be 1-63 characters long, and comply with
@@ -1173,6 +1208,7 @@ pub struct CreateEndpointRequest {
     /// be a dash, lowercase letter, or digit, except the last character, which
     /// cannot be a dash.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub endpoint_id: std::string::String,
 
     /// Required. A endpoint with initial fields set.
@@ -1237,15 +1273,18 @@ pub struct ListEndpointsRequest {
     /// Required. The resource name of the service whose endpoints you'd like to
     /// list.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Optional. The maximum number of items to return.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// Optional. The next_page_token value returned from a previous List request,
     /// if any.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     /// Optional. The filter to list results by.
@@ -1283,6 +1322,7 @@ pub struct ListEndpointsRequest {
     /// For more information about filtering, see
     /// [API Filtering](https://aip.dev/160).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub filter: std::string::String,
 
     /// Optional. The order to list results by.
@@ -1296,6 +1336,7 @@ pub struct ListEndpointsRequest {
     /// Note that an empty `order_by` string results in default order, which is
     /// order by `name` in ascending order.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub order_by: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1355,11 +1396,13 @@ impl wkt::message::Message for ListEndpointsRequest {
 pub struct ListEndpointsResponse {
     /// The list of endpoints.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub endpoints: std::vec::Vec<crate::model::Endpoint>,
 
     /// Token to retrieve the next page of results, or empty if there are no
     /// more results in the list.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1422,6 +1465,7 @@ impl gax::paginator::internal::PageableResponse for ListEndpointsResponse {
 pub struct GetEndpointRequest {
     /// Required. The name of the endpoint to get.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1526,6 +1570,7 @@ impl wkt::message::Message for UpdateEndpointRequest {
 pub struct DeleteEndpointRequest {
     /// Required. The name of the endpoint to delete.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1564,6 +1609,7 @@ pub struct Service {
     /// Immutable. The resource name for the service in the format
     /// `projects/*/locations/*/namespaces/*/services/*`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Optional. Annotations for the service. This data can be consumed by service
@@ -1587,6 +1633,7 @@ pub struct Service {
     /// They have the same syntax and read/write to the same location in Service
     /// Directory.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub annotations: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// Output only. Endpoints associated with this service. Returned on
@@ -1597,11 +1644,13 @@ pub struct Service {
     /// [google.cloud.servicedirectory.v1.LookupService.ResolveService]: crate::client::LookupService::resolve_service
     /// [google.cloud.servicedirectory.v1.RegistrationService.ListEndpoints]: crate::client::RegistrationService::list_endpoints
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub endpoints: std::vec::Vec<crate::model::Endpoint>,
 
     /// Output only. The globally unique identifier of the service in the UUID4
     /// format.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub uid: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]

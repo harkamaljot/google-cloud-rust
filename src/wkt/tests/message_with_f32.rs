@@ -14,27 +14,16 @@
 
 #[cfg(test)]
 mod test {
-    use serde_json::json;
-    type Result = std::result::Result<(), Box<dyn std::error::Error>>;
+    use serde_json::{Value, json};
     use test_case::test_case;
+    type Result = anyhow::Result<()>;
 
-    #[serde_with::serde_as]
-    #[derive(Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize)]
-    #[serde(default, rename_all = "camelCase")]
-    pub struct MessageWithF32 {
-        #[serde(skip_serializing_if = "google_cloud_wkt::internal::is_default")]
-        #[serde_as(as = "google_cloud_wkt::internal::F32")]
-        pub singular: f32,
-        #[serde(skip_serializing_if = "std::option::Option::is_none")]
-        #[serde_as(as = "Option<google_cloud_wkt::internal::F32>")]
-        pub optional: Option<f32>,
-        #[serde(skip_serializing_if = "Vec::is_empty")]
-        #[serde_as(as = "Vec<google_cloud_wkt::internal::F32>")]
-        pub repeated: Vec<f32>,
-        #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
-        #[serde_as(as = "std::collections::HashMap<_, google_cloud_wkt::internal::F32>")]
-        pub hashmap: std::collections::HashMap<String, f32>,
+    #[allow(dead_code)]
+    mod protos {
+        use google_cloud_wkt as wkt;
+        include!("generated/mod.rs");
     }
+    use protos::MessageWithF32;
 
     #[test_case(9876.5, 9876.5)]
     #[test_case(f32::INFINITY, "Infinity")]
@@ -44,10 +33,7 @@ mod test {
     where
         T: serde::ser::Serialize,
     {
-        let msg = MessageWithF32 {
-            singular: input,
-            ..Default::default()
-        };
+        let msg = MessageWithF32::new().set_singular(input);
         let got = serde_json::to_value(&msg)?;
         let want = json!({"singular": want});
         assert_eq!(want, got);
@@ -68,6 +54,33 @@ mod test {
         Ok(())
     }
 
+    #[test_case("-1", -1.0)]
+    #[test_case("-2", -2.0)]
+    #[test_case("3", 3.0)]
+    #[test_case("4", 4.0)]
+    fn test_singular_as_string(input: &str, want: f32) -> Result {
+        let input = json!({"singular": input});
+        let got = serde_json::from_value::<MessageWithF32>(input)?;
+        assert_eq!(got.singular, want);
+        Ok(())
+    }
+
+    #[test_case(json!({}))]
+    #[test_case(json!({"singular": null}))]
+    #[test_case(json!({"singular": 0}))]
+    #[test_case(json!({"singular": 0.0}))]
+    #[test_case(json!({"singular": 0e0}))]
+    #[test_case(json!({"singular": "0"}); "0 string")]
+    #[test_case(json!({"singular": "0.0"}); "0.0 string")]
+    #[test_case(json!({"singular": "0e0"}); "0e0 string")]
+    fn test_singular_default(input: Value) -> Result {
+        let got = serde_json::from_value::<MessageWithF32>(input)?;
+        assert_eq!(got, MessageWithF32::default());
+        let output = serde_json::to_value(&got)?;
+        assert_eq!(output, json!({}));
+        Ok(())
+    }
+
     #[test_case(9876.5, 9876.5)]
     #[test_case(f32::INFINITY, "Infinity")]
     #[test_case(f32::NEG_INFINITY, "-Infinity")]
@@ -76,10 +89,7 @@ mod test {
     where
         T: serde::ser::Serialize,
     {
-        let msg = MessageWithF32 {
-            optional: Some(input),
-            ..Default::default()
-        };
+        let msg = MessageWithF32::new().set_optional(input);
         let got = serde_json::to_value(&msg)?;
         let want = json!({"optional": want});
         assert_eq!(want, got);
@@ -89,12 +99,24 @@ mod test {
         Ok(())
     }
 
+    #[test_case(json!({}))]
+    #[test_case(json!({"optional": null}))]
+    fn test_optional_default(input: Value) -> Result {
+        let got = serde_json::from_value::<MessageWithF32>(input)?;
+        assert_eq!(got, MessageWithF32::default());
+        let output = serde_json::to_value(&got)?;
+        assert_eq!(output, json!({}));
+        Ok(())
+    }
+
     #[test]
     fn test_repeated() -> Result {
-        let msg = MessageWithF32 {
-            repeated: vec![f32::INFINITY, f32::NEG_INFINITY, f32::NAN, 9876.5_f32],
-            ..Default::default()
-        };
+        let msg = MessageWithF32::new().set_repeated([
+            f32::INFINITY,
+            f32::NEG_INFINITY,
+            f32::NAN,
+            9876.5_f32,
+        ]);
         let got = serde_json::to_value(&msg)?;
         let want = json!({"repeated": ["Infinity", "-Infinity", "NaN", 9876.5]});
         assert_eq!(want, got);
@@ -106,35 +128,63 @@ mod test {
         Ok(())
     }
 
+    #[test_case(json!({}))]
+    #[test_case(json!({"repeated": []}))]
+    #[test_case(json!({"repeated": null}))]
+    fn test_repeated_default(input: Value) -> Result {
+        let got = serde_json::from_value::<MessageWithF32>(input)?;
+        assert_eq!(got, MessageWithF32::default());
+        let output = serde_json::to_value(&got)?;
+        assert_eq!(output, json!({}));
+        Ok(())
+    }
+
     #[test]
-    fn test_hashmap() -> Result {
-        let mut hashmap = std::collections::HashMap::new();
-        hashmap.insert("number".to_string(), 9876.5);
-        hashmap.insert("inf".to_string(), f32::INFINITY);
-        hashmap.insert("-inf".to_string(), f32::NEG_INFINITY);
-        hashmap.insert("nan".to_string(), f32::NAN);
+    fn test_map() -> Result {
+        let want = MessageWithF32::new().set_map([
+            ("number", 9876.5),
+            ("inf", f32::INFINITY),
+            ("-inf", f32::NEG_INFINITY),
+            ("nan", f32::NAN),
+            ("int", 1.0),
+            ("str", 2.0),
+            ("str_int", 3.0),
+        ]);
 
-        let msg = MessageWithF32 {
-            hashmap,
-            ..Default::default()
-        };
-
-        let got = serde_json::to_value(&msg)?;
-        let want = json!({
-            "hashmap": {
+        let input = json!({
+            "map": {
                 "number": 9876.5,
                 "inf": "Infinity",
                 "-inf": "-Infinity",
-                "nan": "NaN"
+                "nan": "NaN",
+                "int": 1,
+                "str": "2.0",
+                "str_int": "3",
             }
         });
-        assert_eq!(want, got);
-
-        let roundtrip = serde_json::from_value::<MessageWithF32>(got)?;
-        for (k, roundtrip) in roundtrip.hashmap.iter() {
-            let msg = msg.hashmap.get(k).unwrap();
-            assert_float_eq(*roundtrip, *msg);
+        let got = serde_json::from_value::<MessageWithF32>(input.clone())?;
+        for (k, v) in want.map.iter() {
+            let w = got
+                .map
+                .get(k)
+                .unwrap_or_else(|| panic!("missing {k} in got.map"));
+            assert_float_eq(*v, *w);
         }
+
+        let want_value = serde_json::to_value(&want)?;
+        let got_value = serde_json::to_value(&got)?;
+        assert_eq!(got_value, want_value);
+        Ok(())
+    }
+
+    #[test_case(json!({}))]
+    #[test_case(json!({"map": {}}))]
+    #[test_case(json!({"map": null}))]
+    fn test_map_default(input: Value) -> Result {
+        let got = serde_json::from_value::<MessageWithF32>(input)?;
+        assert_eq!(got, MessageWithF32::default());
+        let output = serde_json::to_value(&got)?;
+        assert_eq!(output, json!({}));
         Ok(())
     }
 

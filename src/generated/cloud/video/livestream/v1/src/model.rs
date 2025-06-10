@@ -47,6 +47,7 @@ pub struct ElementaryStream {
     /// characters in length. The key must begin and end with a letter (regardless
     /// of case) or a number, but can contain dashes or underscores in between.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub key: std::string::String,
 
     /// Required. Encoding of an audio, video, or text track.
@@ -203,6 +204,7 @@ pub struct MuxStream {
     /// characters in length. The key must begin and end with a letter (regardless
     /// of case) or a number, but can contain dashes or underscores in between.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub key: std::string::String,
 
     /// The container format. The default is `fmp4`.
@@ -212,6 +214,7 @@ pub struct MuxStream {
     /// - `fmp4` - the corresponding file extension is `.m4s`
     /// - `ts` - the corresponding file extension is `.ts`
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub container: std::string::String,
 
     /// List of `ElementaryStream`
@@ -224,6 +227,7 @@ pub struct MuxStream {
     ///
     /// [google.cloud.video.livestream.v1.ElementaryStream.key]: crate::model::ElementaryStream::key
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub elementary_streams: std::vec::Vec<std::string::String>,
 
     /// Segment settings for `fmp4` and `ts`.
@@ -233,6 +237,7 @@ pub struct MuxStream {
     /// Identifier of the encryption configuration to use. If omitted, output
     /// will be unencrypted.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub encryption_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -311,10 +316,13 @@ pub struct Manifest {
     ///
     /// [google.cloud.video.livestream.v1.Manifest.type]: crate::model::Manifest::type
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub file_name: std::string::String,
 
     /// Required. Type of the manifest, can be `HLS` or `DASH`.
     #[serde(rename = "type")]
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub r#type: crate::model::manifest::ManifestType,
 
     /// Required. List of `MuxStream`
@@ -327,6 +335,7 @@ pub struct Manifest {
     ///
     /// [google.cloud.video.livestream.v1.MuxStream.key]: crate::model::MuxStream::key
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub mux_streams: std::vec::Vec<std::string::String>,
 
     /// Maximum number of segments that this manifest holds. Once the manifest
@@ -334,6 +343,7 @@ pub struct Manifest {
     /// the manifest, the oldest segment will be removed from the manifest.
     /// The minimum value is 3 and the default value is 5.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub max_segment_count: i32,
 
     /// How long to keep a segment on the output Google Cloud Storage bucket after
@@ -361,10 +371,12 @@ pub struct Manifest {
     /// If false, ignore the input timecode and use the time from system clock
     /// when the manifest is first generated. This is the default behavior.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub use_timecode_as_timeline: bool,
 
     /// Optional. A unique key for this manifest.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub key: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -595,6 +607,7 @@ pub struct SpriteSheet {
     ///
     /// - `jpeg`
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub format: std::string::String,
 
     /// Required. File name prefix for the generated sprite sheets. If multiple
@@ -603,25 +616,30 @@ pub struct SpriteSheet {
     /// Each sprite sheet has an incremental 10-digit zero-padded suffix starting
     /// from 0 before the extension, such as `sprite_sheet0000000123.jpeg`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub file_prefix: std::string::String,
 
     /// Required. The width of the sprite in pixels. Must be an even integer.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub sprite_width_pixels: i32,
 
     /// Required. The height of the sprite in pixels. Must be an even integer.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub sprite_height_pixels: i32,
 
     /// The maximum number of sprites per row in a sprite sheet. Valid range is
     /// [1, 10] and the default value is 1.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub column_count: i32,
 
     /// The maximum number of rows per sprite sheet. When the sprite sheet is full,
     /// a new sprite sheet is created. Valid range is [1, 10] and the default value
     /// is 1.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub row_count: i32,
 
     /// Create sprites at regular intervals. Valid range is [1 second, 1 hour] and
@@ -634,6 +652,7 @@ pub struct SpriteSheet {
     /// The default is 100. A high quality value corresponds to a low image data
     /// compression ratio.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub quality: i32,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -823,7 +842,7 @@ pub mod preprocessing_config {
         ///   Amazon Echo
         /// - 0 disables normalization. The default is 0.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
-        #[serde_as(as = "wkt::internal::F64")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::F64>")]
         pub lufs: f64,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -857,18 +876,22 @@ pub mod preprocessing_config {
     pub struct Crop {
         /// The number of pixels to crop from the top. The default is 0.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
         pub top_pixels: i32,
 
         /// The number of pixels to crop from the bottom. The default is 0.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
         pub bottom_pixels: i32,
 
         /// The number of pixels to crop from the left. The default is 0.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
         pub left_pixels: i32,
 
         /// The number of pixels to crop from the right. The default is 0.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
         pub right_pixels: i32,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -920,18 +943,22 @@ pub mod preprocessing_config {
     pub struct Pad {
         /// The number of pixels to add to the top. The default is 0.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
         pub top_pixels: i32,
 
         /// The number of pixels to add to the bottom. The default is 0.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
         pub bottom_pixels: i32,
 
         /// The number of pixels to add to the left. The default is 0.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
         pub left_pixels: i32,
 
         /// The number of pixels to add to the right. The default is 0.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
         pub right_pixels: i32,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1058,11 +1085,13 @@ pub mod video_stream {
         /// Required. The width of the video in pixels. Must be an even integer.
         /// Valid range is [320, 1920].
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
         pub width_pixels: i32,
 
         /// Required. The height of the video in pixels. Must be an even integer.
         /// Valid range is [180, 1080].
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
         pub height_pixels: i32,
 
         /// Required. The target video frame rate in frames per second (FPS). Must be
@@ -1073,7 +1102,7 @@ pub mod video_stream {
         /// rate](https://cloud.google.com/transcoder/docs/concepts/frame-rate) for
         /// more information.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
-        #[serde_as(as = "wkt::internal::F64")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::F64>")]
         pub frame_rate: f64,
 
         /// Required. The video bitrate in bits per second. Minimum value is 10,000.
@@ -1081,11 +1110,13 @@ pub mod video_stream {
         /// - For SD resolution (< 720p), must be <= 3,000,000 (3 Mbps).
         /// - For HD resolution (<= 1080p), must be <= 15,000,000 (15 Mbps).
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
         pub bitrate_bps: i32,
 
         /// Specifies whether an open Group of Pictures (GOP) structure should be
         /// allowed or not. The default is `false`.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub allow_open_gop: bool,
 
         /// Size of the Video Buffering Verifier (VBV) buffer in bits. Must be
@@ -1094,6 +1125,7 @@ pub mod video_stream {
         ///
         /// [google.cloud.video.livestream.v1.VideoStream.H264CodecSettings.bitrate_bps]: crate::model::video_stream::H264CodecSettings::bitrate_bps
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
         pub vbv_size_bits: i32,
 
         /// Initial fullness of the Video Buffering Verifier (VBV) buffer in bits.
@@ -1102,6 +1134,7 @@ pub mod video_stream {
         ///
         /// [google.cloud.video.livestream.v1.VideoStream.H264CodecSettings.vbv_size_bits]: crate::model::video_stream::H264CodecSettings::vbv_size_bits
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
         pub vbv_fullness_bits: i32,
 
         /// The entropy coder to use. The default is `cabac`.
@@ -1111,11 +1144,13 @@ pub mod video_stream {
         /// - `cavlc`
         /// - `cabac`
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub entropy_coder: std::string::String,
 
         /// Allow B-pyramid for reference frame selection. This may not be supported
         /// on all decoders. The default is `false`.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub b_pyramid: bool,
 
         /// The number of consecutive B-frames. Must be greater than or equal to
@@ -1125,13 +1160,14 @@ pub mod video_stream {
         ///
         /// [google.cloud.video.livestream.v1.VideoStream.H264CodecSettings.gop_frame_count]: crate::model::video_stream::H264CodecSettings::gop_mode
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
         pub b_frame_count: i32,
 
         /// Specify the intensity of the adaptive quantizer (AQ). Must be between 0
         /// and 1, where 0 disables the quantizer and 1 maximizes the quantizer. A
         /// higher value equals a lower bitrate but smoother image. The default is 0.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
-        #[serde_as(as = "wkt::internal::F64")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::F64>")]
         pub aq_strength: f64,
 
         /// Enforces the specified codec profile. The following profiles are
@@ -1150,6 +1186,7 @@ pub mod video_stream {
         ///
         /// [google.cloud.video.livestream.v1.VideoStream.H264CodecSettings]: crate::model::video_stream::H264CodecSettings
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub profile: std::string::String,
 
         /// Enforces the specified codec tune. The available options are
@@ -1162,6 +1199,7 @@ pub mod video_stream {
         ///
         /// [google.cloud.video.livestream.v1.VideoStream.H264CodecSettings]: crate::model::video_stream::H264CodecSettings
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub tune: std::string::String,
 
         /// GOP mode can be either by frame count or duration.
@@ -1351,7 +1389,7 @@ pub mod video_stream {
             /// calculated by `gopFrameCount`/`frameRate`. The calculated GOP duration
             /// must satisfy the limitations on `gopDuration` as well.
             /// Valid range is [60, 600].
-            GopFrameCount(i32),
+            GopFrameCount(#[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")] i32),
             /// Select the GOP size based on the specified duration. The default is
             /// `2s`. Note that `gopDuration` must be less than or equal to
             /// [segment_duration][google.cloud.video.livestream.v1.SegmentSettings.segment_duration],
@@ -1387,6 +1425,7 @@ pub struct AudioStream {
     /// If set to `true`, the rest of the settings, other than `mapping`, will be
     /// ignored. The default is `false`.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub transmux: bool,
 
     /// The codec for this audio stream. The default is `aac`.
@@ -1395,15 +1434,18 @@ pub struct AudioStream {
     ///
     /// - `aac`
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub codec: std::string::String,
 
     /// Required. Audio bitrate in bits per second. Must be between 1 and
     /// 10,000,000.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub bitrate_bps: i32,
 
     /// Number of audio channels. Must be between 1 and 6. The default is 2.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub channel_count: i32,
 
     /// A list of channel names specifying layout of the audio channels.
@@ -1419,14 +1461,17 @@ pub struct AudioStream {
     /// - `fc` - Front center channel
     /// - `lfe` - Low frequency
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub channel_layout: std::vec::Vec<std::string::String>,
 
     /// The mapping for the input streams and audio channels.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub mapping: std::vec::Vec<crate::model::audio_stream::AudioMapping>,
 
     /// The audio sample rate in Hertz. The default is 48000 Hertz.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub sample_rate_hertz: i32,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1516,6 +1561,7 @@ pub mod audio_stream {
         ///
         /// [google.cloud.video.livestream.v1.InputAttachment.key]: crate::model::InputAttachment::key
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub input_key: std::string::String,
 
         /// Required. The zero-based index of the track in the input stream.
@@ -1526,10 +1572,12 @@ pub mod audio_stream {
         /// [google.cloud.video.livestream.v1.AudioStream]: crate::model::AudioStream
         /// [google.cloud.video.livestream.v1.AudioStream.mapping]: crate::model::AudioStream::mapping
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
         pub input_track: i32,
 
         /// Required. The zero-based index of the channel in the input stream.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
         pub input_channel: i32,
 
         /// Required. The zero-based index of the channel in the output audio stream.
@@ -1538,12 +1586,13 @@ pub mod audio_stream {
         ///
         /// [google.cloud.video.livestream.v1.AudioStream.AudioMapping.input_channel]: crate::model::audio_stream::AudioMapping::input_channel
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
         pub output_channel: i32,
 
         /// Audio volume control in dB. Negative values decrease volume,
         /// positive values increase. The default is 0.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
-        #[serde_as(as = "wkt::internal::F64")]
+        #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::F64>")]
         pub gain_db: f64,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1606,6 +1655,7 @@ pub struct TextStream {
     /// - `cea608`
     /// - `cea708`
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub codec: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1694,6 +1744,8 @@ pub struct TimecodeConfig {
     /// The source of the timecode that will later be used in outputs/manifests.
     /// It determines the initial timecode/timestamp (first frame) of output
     /// streams.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub source: crate::model::timecode_config::TimecodeSource,
 
     /// For EMBEDDED_TIMECODE source only.
@@ -1955,6 +2007,7 @@ pub struct Input {
     /// The resource name of the input, in the form of:
     /// `projects/{project}/locations/{location}/inputs/{inputId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Output only. The creation time.
@@ -1967,16 +2020,21 @@ pub struct Input {
 
     /// User-defined key/value metadata.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub labels: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// Source type.
     #[serde(rename = "type")]
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub r#type: crate::model::input::Type,
 
     /// Tier defines the maximum input specification that is accepted by the
     /// video pipeline. The billing is charged based on the tier specified here.
     /// See [Pricing](https://cloud.google.com/livestream/pricing) for more detail.
     /// The default is `HD`.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub tier: crate::model::input::Tier,
 
     /// Output only. URI to push the input stream to.
@@ -1988,6 +2046,7 @@ pub struct Input {
     ///
     /// [google.cloud.video.livestream.v1.Input.type]: crate::model::Input::type
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub uri: std::string::String,
 
     /// Preprocessing configurations.
@@ -2162,6 +2221,7 @@ pub mod input {
         /// defined by CIDR block: for example, `192.0.1.0/24` for a range and
         /// `192.0.1.0/32` for a single IP address.
         #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
         pub ip_ranges: std::vec::Vec<std::string::String>,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2476,6 +2536,7 @@ pub struct Channel {
     /// The resource name of the channel, in the form of:
     /// `projects/{project}/locations/{location}/channels/{channelId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Output only. The creation time.
@@ -2488,12 +2549,14 @@ pub struct Channel {
 
     /// User-defined key/value metadata.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub labels: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// A list of input attachments that this channel uses.
     /// One channel can have multiple inputs as the input sources. Only one
     /// input can be selected as the input source at one time.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub input_attachments: std::vec::Vec<crate::model::InputAttachment>,
 
     /// Output only. The
@@ -2505,6 +2568,7 @@ pub struct Channel {
     /// [google.cloud.video.livestream.v1.Channel.input_attachments]: crate::model::Channel::input_attachments
     /// [google.cloud.video.livestream.v1.InputAttachment.key]: crate::model::InputAttachment::key
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub active_input: std::string::String,
 
     /// Required. Information about the output (that is, the Cloud Storage bucket
@@ -2514,21 +2578,27 @@ pub struct Channel {
 
     /// List of elementary streams.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub elementary_streams: std::vec::Vec<crate::model::ElementaryStream>,
 
     /// List of multiplexing settings for output streams.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub mux_streams: std::vec::Vec<crate::model::MuxStream>,
 
     /// List of output manifests.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub manifests: std::vec::Vec<crate::model::Manifest>,
 
     /// List of output sprite sheets.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub sprite_sheets: std::vec::Vec<crate::model::SpriteSheet>,
 
     /// Output only. State of the streaming operation.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub streaming_state: crate::model::channel::StreamingState,
 
     /// Output only. A description of the reason for the streaming error. This
@@ -2554,6 +2624,7 @@ pub struct Channel {
     /// which is referred to by each MuxStream to indicate which configuration is
     /// used for that output.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub encryptions: std::vec::Vec<crate::model::Encryption>,
 
     /// The configuration for input sources defined in
@@ -2570,6 +2641,7 @@ pub struct Channel {
     /// Optional. List of static overlay images. Those images display over the
     /// output content for the whole duration of the live stream.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub static_overlays: std::vec::Vec<crate::model::StaticOverlay>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2855,6 +2927,7 @@ pub mod channel {
     pub struct Output {
         /// URI for the output file(s). For example, `gs://my-bucket/outputs/`.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub uri: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3060,12 +3133,12 @@ pub mod channel {
 pub struct NormalizedCoordinate {
     /// Optional. Normalized x coordinate. Valid range is [0.0, 1.0]. Default is 0.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "wkt::internal::F64")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::F64>")]
     pub x: f64,
 
     /// Optional. Normalized y coordinate. Valid range is [0.0, 1.0]. Default is 0.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "wkt::internal::F64")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::F64>")]
     pub y: f64,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3104,12 +3177,12 @@ impl wkt::message::Message for NormalizedCoordinate {
 pub struct NormalizedResolution {
     /// Optional. Normalized width. Valid range is [0.0, 1.0]. Default is 0.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "wkt::internal::F64")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::F64>")]
     pub w: f64,
 
     /// Optional. Normalized height. Valid range is [0.0, 1.0]. Default is 0.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "wkt::internal::F64")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::F64>")]
     pub h: f64,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3151,6 +3224,7 @@ pub struct StaticOverlay {
     /// `projects/{project}/locations/{location}/assets/{assetId}`.
     /// The asset's resource type must be image.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub asset: std::string::String,
 
     /// Optional. Normalized image resolution, based on output video resolution.
@@ -3171,7 +3245,7 @@ pub struct StaticOverlay {
     /// default) to `0.0` (transparent), exclusive. Set this to a value greater
     /// than `0.0`.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "wkt::internal::F64")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::F64>")]
     pub opacity: f64,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3245,6 +3319,8 @@ impl wkt::message::Message for StaticOverlay {
 #[non_exhaustive]
 pub struct InputConfig {
     /// Input switch mode. Default mode is `FAILOVER_PREFER_PRIMARY`.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub input_switch_mode: crate::model::input_config::InputSwitchMode,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3435,6 +3511,8 @@ pub mod input_config {
 #[non_exhaustive]
 pub struct LogConfig {
     /// The severity level of platform logging for this resource.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub log_severity: crate::model::log_config::LogSeverity,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3703,10 +3781,12 @@ pub struct InputStreamProperty {
 
     /// Properties of the video streams.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub video_streams: std::vec::Vec<crate::model::VideoStreamProperty>,
 
     /// Properties of the audio streams.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub audio_streams: std::vec::Vec<crate::model::AudioStreamProperty>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3773,6 +3853,7 @@ impl wkt::message::Message for InputStreamProperty {
 pub struct VideoStreamProperty {
     /// Index of this video stream.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub index: i32,
 
     /// Properties of the video format.
@@ -3827,19 +3908,22 @@ impl wkt::message::Message for VideoStreamProperty {
 pub struct VideoFormat {
     /// Video codec used in this video stream.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub codec: std::string::String,
 
     /// The width of the video stream in pixels.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub width_pixels: i32,
 
     /// The height of the video stream in pixels.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub height_pixels: i32,
 
     /// The frame rate of the input video stream.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "wkt::internal::F64")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::F64>")]
     pub frame_rate: f64,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3890,6 +3974,7 @@ impl wkt::message::Message for VideoFormat {
 pub struct AudioStreamProperty {
     /// Index of this audio stream.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub index: i32,
 
     /// Properties of the audio format.
@@ -3944,14 +4029,17 @@ impl wkt::message::Message for AudioStreamProperty {
 pub struct AudioFormat {
     /// Audio codec used in this audio stream.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub codec: std::string::String,
 
     /// The number of audio channels.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub channel_count: i32,
 
     /// A list of channel names specifying the layout of the audio channels.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub channel_layout: std::vec::Vec<std::string::String>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4003,11 +4091,13 @@ pub struct InputAttachment {
     /// characters in length. The key must begin and end with a letter (regardless
     /// of case) or a number, but can contain dashes or underscores in between.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub key: std::string::String,
 
     /// The resource name of an existing input, in the form of:
     /// `projects/{project}/locations/{location}/inputs/{inputId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub input: std::string::String,
 
     /// Automatic failover configurations.
@@ -4078,6 +4168,7 @@ pub mod input_attachment {
         ///
         /// [google.cloud.video.livestream.v1.InputAttachment.key]: crate::model::InputAttachment::key
         #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
         pub input_keys: std::vec::Vec<std::string::String>,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4118,6 +4209,7 @@ pub struct Event {
     /// The resource name of the event, in the form of:
     /// `projects/{project}/locations/{location}/channels/{channelId}/events/{eventId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Output only. The creation time.
@@ -4130,6 +4222,7 @@ pub struct Event {
 
     /// User-defined key/value metadata.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub labels: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// When this field is set to true, the event will be executed at the earliest
@@ -4140,6 +4233,7 @@ pub struct Event {
     ///
     /// [google.cloud.video.livestream.v1.Event.execution_time]: crate::model::Event::execution_time
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub execute_now: bool,
 
     /// The time to execute the event. If you set
@@ -4155,6 +4249,8 @@ pub struct Event {
     pub execution_time: std::option::Option<wkt::Timestamp>,
 
     /// Output only. The state of the event.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub state: crate::model::event::State,
 
     /// Output only. An error object that describes the reason for the failure.
@@ -4469,6 +4565,7 @@ pub mod event {
         ///
         /// [google.cloud.video.livestream.v1.InputAttachment.key]: crate::model::InputAttachment::key
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub input_key: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4553,6 +4650,7 @@ pub mod event {
         /// represented in the form of:
         /// `projects/{project}/locations/{location}/assets/{assetId}`.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub asset: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4882,6 +4980,7 @@ pub struct Clip {
     /// . 1 character minimum, 63 characters maximum
     /// . Only contains letters, digits, underscores, and hyphens
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Output only. The creation timestamp of the clip resource.
@@ -4898,9 +4997,12 @@ pub struct Clip {
 
     /// The labels associated with this resource. Each label is a key-value pair.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub labels: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// Output only. The state of the clip.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub state: crate::model::clip::State,
 
     /// Specify the `output_uri` to determine where to place the clip segments and
@@ -4912,6 +5014,7 @@ pub struct Clip {
     /// "output_uri": "gs://my-bucket/clip-outputs"
     /// "clip_manifests.output_uri": "gs://my-bucket/clip-outputs/main.m3u8"
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub output_uri: std::string::String,
 
     /// Output only. An error object that describes the reason for the failure.
@@ -4921,15 +5024,19 @@ pub struct Clip {
 
     /// The specified ranges of segments to generate a clip.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub slices: std::vec::Vec<crate::model::clip::Slice>,
 
     /// Required. A list of clip manifests. Currently only one clip manifest is
     /// allowed.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub clip_manifests: std::vec::Vec<crate::model::clip::ClipManifest>,
 
     /// Optional. OutputType of the clip. If not specified, the default value is
     /// MANIFEST.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub output_type: crate::model::clip::OutputType,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5248,6 +5355,7 @@ pub mod clip {
         /// channel. This key is the same as `channel.manifests.key` for the selected
         /// manifest.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub manifest_key: std::string::String,
 
         /// Output only. The output URI of the generated clip manifest. This field
@@ -5257,6 +5365,7 @@ pub mod clip {
         /// {clip.output_uri}/{channel.manifest.fileName} Example:
         /// gs://my-bucket/clip-outputs/main.m3u8
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub output_uri: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5653,6 +5762,7 @@ pub struct DvrSession {
     /// . 1 character minimum, 63 characters maximum
     /// . Only contains letters, digits, underscores, and hyphens
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Output only. The creation time.
@@ -5665,9 +5775,12 @@ pub struct DvrSession {
 
     /// Optional. User-defined key/value metadata.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub labels: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// Output only. The state of the clip.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub state: crate::model::dvr_session::State,
 
     /// Output only. An error object that describes the reason for the failure.
@@ -5678,10 +5791,12 @@ pub struct DvrSession {
     /// Required. A list of DVR manifests. Currently only one DVR manifest is
     /// allowed.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub dvr_manifests: std::vec::Vec<crate::model::dvr_session::DvrManifest>,
 
     /// Required. The specified ranges of segments to generate a DVR recording.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub dvr_windows: std::vec::Vec<crate::model::dvr_session::DvrWindow>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5819,6 +5934,7 @@ pub mod dvr_session {
         /// channel. This key is the same as `channel.manifests.key` for the selected
         /// manifest.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub manifest_key: std::string::String,
 
         /// Output only. The output URI of the DVR manifest. The DVR output will be
@@ -5827,6 +5943,7 @@ pub mod dvr_session {
         /// {channel.output.uri}/dvr/{dvrSessionId}/{channel.manifests.fileName}
         /// Example: gs://my-bucket/outputs/dvr/my-dvr-session/main.m3u8
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub output_uri: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -6157,6 +6274,7 @@ pub struct Asset {
     /// The resource name of the asset, in the form of:
     /// `projects/{project}/locations/{location}/assets/{assetId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Output only. The creation time.
@@ -6169,6 +6287,7 @@ pub struct Asset {
 
     /// User-defined key/value metadata.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub labels: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// Based64-encoded CRC32c checksum of the asset file. For more information,
@@ -6187,9 +6306,12 @@ pub struct Asset {
     /// [google.cloud.video.livestream.v1.Asset.VideoAsset.uri]: crate::model::asset::VideoAsset::uri
     #[serde(rename = "crc32c")]
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub crc32c: std::string::String,
 
     /// Output only. The state of the asset resource.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub state: crate::model::asset::State,
 
     /// Output only. Only present when `state` is `ERROR`. The reason for the error
@@ -6379,6 +6501,7 @@ pub mod asset {
     pub struct VideoAsset {
         /// Cloud Storage URI of the video. The format is `gs://my-bucket/my-object`.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub uri: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -6411,6 +6534,7 @@ pub mod asset {
     pub struct ImageAsset {
         /// Cloud Storage URI of the image. The format is `gs://my-bucket/my-object`.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub uri: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -6606,6 +6730,7 @@ pub struct Encryption {
     /// (regardless of case) or a number, but can contain dashes or underscores in
     /// between.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub id: std::string::String,
 
     /// Required. Configuration for DRM systems.
@@ -6822,6 +6947,7 @@ pub mod encryption {
         /// Required. The name of the Secret Version containing the encryption key.
         /// `projects/{project}/secrets/{secret_id}/versions/{version_number}`
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub secret_version: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7103,6 +7229,7 @@ pub mod encryption {
         /// - `cenc` - AES-CTR subsample
         /// - `cbcs`- AES-CBC subsample pattern
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub scheme: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7164,6 +7291,7 @@ pub struct Pool {
     /// The resource name of the pool, in the form of:
     /// `projects/{project}/locations/{location}/pools/{poolId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Output only. The creation time.
@@ -7176,6 +7304,7 @@ pub struct Pool {
 
     /// User-defined key/value metadata.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub labels: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// Network configuration for the pool.
@@ -7289,6 +7418,7 @@ pub mod pool {
         /// If peered_network is omitted or empty, the pool will use endpoints that
         /// are publicly available.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub peered_network: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7326,6 +7456,7 @@ pub struct CreateAssetRequest {
     /// Required. The parent location for the resource, in the form of:
     /// `projects/{project}/locations/{location}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Required. The asset resource to be created.
@@ -7336,6 +7467,7 @@ pub struct CreateAssetRequest {
     /// This value must be 1-63 characters, begin and end with `[a-z0-9]`,
     /// could contain dashes (-) in between.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub asset_id: std::string::String,
 
     /// A request ID to identify requests. Specify a unique request ID
@@ -7352,6 +7484,7 @@ pub struct CreateAssetRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported `(00000000-0000-0000-0000-000000000000)`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7415,6 +7548,7 @@ pub struct DeleteAssetRequest {
     /// Required. The name of the asset resource, in the form of:
     /// `projects/{project}/locations/{location}/assets/{assetId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// A request ID to identify requests. Specify a unique request ID
@@ -7431,6 +7565,7 @@ pub struct DeleteAssetRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported `(00000000-0000-0000-0000-000000000000)`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7470,23 +7605,28 @@ pub struct ListAssetsRequest {
     /// Required. The parent location for the resource, in the form of:
     /// `projects/{project}/locations/{location}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Requested page size. Server may return fewer items than requested.
     /// If unspecified, server will pick an appropriate default.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// A token identifying a page of results the server should return.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     /// Filtering results
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub filter: std::string::String,
 
     /// Hint for how to order the results
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub order_by: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7543,14 +7683,17 @@ impl wkt::message::Message for ListAssetsRequest {
 pub struct ListAssetsResponse {
     /// The list of Assets
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub assets: std::vec::Vec<crate::model::Asset>,
 
     /// The next_page_token value returned from a previous List request, if any.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     /// Locations that could not be reached.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub unreachable: std::vec::Vec<std::string::String>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7620,6 +7763,7 @@ pub struct GetAssetRequest {
     /// Required. Name of the resource, in the following form:
     /// `projects/{project}/locations/{location}/assets/{asset}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7653,6 +7797,7 @@ pub struct CreateChannelRequest {
     /// Required. The parent location for the resource, in the form of:
     /// `projects/{project}/locations/{location}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Required. The channel resource to be created.
@@ -7663,6 +7808,7 @@ pub struct CreateChannelRequest {
     /// This value must be 1-63 characters, begin and end with `[a-z0-9]`,
     /// could contain dashes (-) in between.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub channel_id: std::string::String,
 
     /// A request ID to identify requests. Specify a unique request ID
@@ -7679,6 +7825,7 @@ pub struct CreateChannelRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported `(00000000-0000-0000-0000-000000000000)`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7742,6 +7889,7 @@ pub struct ListChannelsRequest {
     /// Required. The parent location for the resource, in the form of:
     /// `projects/{project}/locations/{location}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// The maximum number of items to return. If unspecified, server
@@ -7752,19 +7900,23 @@ pub struct ListChannelsRequest {
     ///
     /// [google.cloud.video.livestream.v1.ListChannelsResponse.next_page_token]: crate::model::ListChannelsResponse::next_page_token
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// The next_page_token value returned from a previous List request, if any.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     /// The filter to apply to list results.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub filter: std::string::String,
 
     /// Specifies the ordering of results following syntax at
     /// <https://cloud.google.com/apis/design/design_patterns#sorting_order>.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub order_by: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7821,15 +7973,18 @@ impl wkt::message::Message for ListChannelsRequest {
 pub struct ListChannelsResponse {
     /// A list of channels.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub channels: std::vec::Vec<crate::model::Channel>,
 
     /// Token to retrieve the next page of results, or empty if there are no more
     /// results in the list.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     /// Locations that could not be reached.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub unreachable: std::vec::Vec<std::string::String>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7899,6 +8054,7 @@ pub struct GetChannelRequest {
     /// Required. The name of the channel resource, in the form of:
     /// `projects/{project}/locations/{location}/channels/{channelId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7932,6 +8088,7 @@ pub struct DeleteChannelRequest {
     /// Required. The name of the channel resource, in the form of:
     /// `projects/{project}/locations/{location}/channels/{channelId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// A request ID to identify requests. Specify a unique request ID
@@ -7948,6 +8105,7 @@ pub struct DeleteChannelRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported `(00000000-0000-0000-0000-000000000000)`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     /// If the `force` field is set to the default value of `false`, you must
@@ -7955,6 +8113,7 @@ pub struct DeleteChannelRequest {
     /// If the field is set to `true`, requests to delete a channel also delete
     /// associated channel events.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub force: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8038,6 +8197,7 @@ pub struct UpdateChannelRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported `(00000000-0000-0000-0000-000000000000)`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8107,6 +8267,7 @@ pub struct StartChannelRequest {
     /// Required. The name of the channel resource, in the form of:
     /// `projects/{project}/locations/{location}/channels/{channelId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// A request ID to identify requests. Specify a unique request ID
@@ -8123,6 +8284,7 @@ pub struct StartChannelRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported `(00000000-0000-0000-0000-000000000000)`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8162,6 +8324,7 @@ pub struct StopChannelRequest {
     /// Required. The name of the channel resource, in the form of:
     /// `projects/{project}/locations/{location}/channels/{channelId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// A request ID to identify requests. Specify a unique request ID
@@ -8178,6 +8341,7 @@ pub struct StopChannelRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported `(00000000-0000-0000-0000-000000000000)`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8217,6 +8381,7 @@ pub struct CreateInputRequest {
     /// Required. The parent location for the resource, in the form of:
     /// `projects/{project}/locations/{location}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Required. The input resource to be created.
@@ -8227,6 +8392,7 @@ pub struct CreateInputRequest {
     /// This value must be 1-63 characters, begin and end with `[a-z0-9]`,
     /// could contain dashes (-) in between.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub input_id: std::string::String,
 
     /// A request ID to identify requests. Specify a unique request ID
@@ -8243,6 +8409,7 @@ pub struct CreateInputRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported `(00000000-0000-0000-0000-000000000000)`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8306,6 +8473,7 @@ pub struct ListInputsRequest {
     /// Required. The parent location for the resource, in the form of:
     /// `projects/{project}/locations/{location}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// The maximum number of items to return. If unspecified, server
@@ -8316,19 +8484,23 @@ pub struct ListInputsRequest {
     ///
     /// [google.cloud.video.livestream.v1.ListInputsResponse.next_page_token]: crate::model::ListInputsResponse::next_page_token
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// The next_page_token value returned from a previous List request, if any.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     /// The filter to apply to list results.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub filter: std::string::String,
 
     /// Specifies the ordering of results following syntax at [Sorting
     /// Order](https://cloud.google.com/apis/design/design_patterns#sorting_order).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub order_by: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8385,15 +8557,18 @@ impl wkt::message::Message for ListInputsRequest {
 pub struct ListInputsResponse {
     /// A list of inputs.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub inputs: std::vec::Vec<crate::model::Input>,
 
     /// Token to retrieve the next page of results, or empty if there are no more
     /// results in the list.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     /// Locations that could not be reached.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub unreachable: std::vec::Vec<std::string::String>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8463,6 +8638,7 @@ pub struct GetInputRequest {
     /// Required. The name of the input resource, in the form of:
     /// `projects/{project}/locations/{location}/inputs/{inputId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8496,6 +8672,7 @@ pub struct DeleteInputRequest {
     /// Required. The name of the input resource, in the form of:
     /// `projects/{project}/locations/{location}/inputs/{inputId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// A request ID to identify requests. Specify a unique request ID
@@ -8512,6 +8689,7 @@ pub struct DeleteInputRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported `(00000000-0000-0000-0000-000000000000)`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8582,6 +8760,7 @@ pub struct UpdateInputRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported `(00000000-0000-0000-0000-000000000000)`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8651,6 +8830,7 @@ pub struct CreateEventRequest {
     /// Required. The parent channel for the resource, in the form of:
     /// `projects/{project}/locations/{location}/channels/{channelId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Required. The event resource to be created.
@@ -8661,6 +8841,7 @@ pub struct CreateEventRequest {
     /// This value must be 1-63 characters, begin and end with `[a-z0-9]`,
     /// could contain dashes (-) in between.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub event_id: std::string::String,
 
     /// A request ID to identify requests. Specify a unique request ID
@@ -8677,6 +8858,7 @@ pub struct CreateEventRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported `(00000000-0000-0000-0000-000000000000)`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8740,6 +8922,7 @@ pub struct ListEventsRequest {
     /// Required. The parent channel for the resource, in the form of:
     /// `projects/{project}/locations/{location}/channels/{channelId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// The maximum number of items to return. If unspecified, server
@@ -8750,19 +8933,23 @@ pub struct ListEventsRequest {
     ///
     /// [google.cloud.video.livestream.v1.ListEventsResponse.next_page_token]: crate::model::ListEventsResponse::next_page_token
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// The next_page_token value returned from a previous List request, if any.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     /// The filter to apply to list results.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub filter: std::string::String,
 
     /// Specifies the ordering of results following syntax at
     /// <https://cloud.google.com/apis/design/design_patterns#sorting_order>.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub order_by: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8819,15 +9006,18 @@ impl wkt::message::Message for ListEventsRequest {
 pub struct ListEventsResponse {
     /// A list of events.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub events: std::vec::Vec<crate::model::Event>,
 
     /// Token to retrieve the next page of results, or empty if there are no more
     /// results in the list.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     /// Locations that could not be reached.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub unreachable: std::vec::Vec<std::string::String>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8897,6 +9087,7 @@ pub struct GetEventRequest {
     /// Required. The name of the event resource, in the form of:
     /// `projects/{project}/locations/{location}/channels/{channelId}/events/{eventId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8930,6 +9121,7 @@ pub struct DeleteEventRequest {
     /// Required. The name of the event resource, in the form of:
     /// `projects/{project}/locations/{location}/channels/{channelId}/events/{eventId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// A request ID to identify requests. Specify a unique request ID
@@ -8946,6 +9138,7 @@ pub struct DeleteEventRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported `(00000000-0000-0000-0000-000000000000)`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9006,23 +9199,28 @@ impl wkt::message::Message for ChannelOperationResponse {
 pub struct ListClipsRequest {
     /// Required. Parent value for ListClipsRequest
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Requested page size. Server may return fewer items than requested.
     /// If unspecified, server will pick an appropriate default.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// A token identifying a page of results the server should return.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     /// Filtering results
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub filter: std::string::String,
 
     /// Hint for how to order the results
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub order_by: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9079,14 +9277,17 @@ impl wkt::message::Message for ListClipsRequest {
 pub struct ListClipsResponse {
     /// The list of Clip
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub clips: std::vec::Vec<crate::model::Clip>,
 
     /// A token identifying a page of results the server should return.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     /// Locations that could not be reached.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub unreachable: std::vec::Vec<std::string::String>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9156,6 +9357,7 @@ pub struct GetClipRequest {
     /// Required. Name of the resource, in the following form:
     /// `projects/{project}/locations/{location}/channels/{channel}/clips/{clip}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9189,6 +9391,7 @@ pub struct CreateClipRequest {
     /// Required. The parent resource name, in the following form:
     /// `projects/{project}/locations/{location}/channels/{channel}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Required. Id of the requesting object in the following form:
@@ -9196,6 +9399,7 @@ pub struct CreateClipRequest {
     /// . 1 character minimum, 63 characters maximum
     /// . Only contains letters, digits, underscores, and hyphens
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub clip_id: std::string::String,
 
     /// Required. The resource being created
@@ -9216,6 +9420,7 @@ pub struct CreateClipRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported (00000000-0000-0000-0000-000000000000).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9279,6 +9484,7 @@ pub struct DeleteClipRequest {
     /// Required. The name of the clip resource, in the form of:
     /// `projects/{project}/locations/{location}/channels/{channelId}/clips/{clipId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Optional. A request ID to identify requests. Specify a unique request ID
@@ -9295,6 +9501,7 @@ pub struct DeleteClipRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported `(00000000-0000-0000-0000-000000000000)`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9333,23 +9540,28 @@ impl wkt::message::Message for DeleteClipRequest {
 pub struct ListDvrSessionsRequest {
     /// Required. Parent value for ListDvrSessionsRequest
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Optional. Requested page size. Server may return fewer items than
     /// requested. If unspecified, server will pick an appropriate default.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// Optional. A token identifying a page of results the server should return.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     /// Optional. Filtering results
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub filter: std::string::String,
 
     /// Optional. Hint for how to order the results
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub order_by: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9406,14 +9618,17 @@ impl wkt::message::Message for ListDvrSessionsRequest {
 pub struct ListDvrSessionsResponse {
     /// The list of DVR sessions
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub dvr_sessions: std::vec::Vec<crate::model::DvrSession>,
 
     /// A token identifying a page of results the server should return.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     /// Locations that could not be reached.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub unreachable: std::vec::Vec<std::string::String>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9483,6 +9698,7 @@ pub struct GetDvrSessionRequest {
     /// Required. Name of the resource, in the following form:
     /// `projects/{project}/locations/{location}/channels/{channelId}/dvrSessions/{dvrSessionId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9516,6 +9732,7 @@ pub struct CreateDvrSessionRequest {
     /// Required. The parent resource name, in the following form:
     /// `projects/{project}/locations/{location}/channels/{channelId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Required. Id of the requesting object in the following form:
@@ -9523,6 +9740,7 @@ pub struct CreateDvrSessionRequest {
     /// . 1 character minimum, 63 characters maximum
     /// . Only contains letters, digits, underscores, and hyphens
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub dvr_session_id: std::string::String,
 
     /// Required. The resource being created
@@ -9543,6 +9761,7 @@ pub struct CreateDvrSessionRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported (00000000-0000-0000-0000-000000000000).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9606,6 +9825,7 @@ pub struct DeleteDvrSessionRequest {
     /// Required. The name of the event resource, in the form of:
     /// `projects/{project}/locations/{location}/channels/{channelId}/dvrSessions/{dvrSessionId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Optional. A request ID to identify requests. Specify a unique request ID
@@ -9622,6 +9842,7 @@ pub struct DeleteDvrSessionRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported `(00000000-0000-0000-0000-000000000000)`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9687,6 +9908,7 @@ pub struct UpdateDvrSessionRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported `(00000000-0000-0000-0000-000000000000)`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9763,10 +9985,12 @@ pub struct OperationMetadata {
 
     /// Output only. Server-defined resource path for the target of the operation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub target: std::string::String,
 
     /// Output only. Name of the verb executed by the operation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub verb: std::string::String,
 
     /// Output only. Identifies whether the user has requested cancellation
@@ -9779,10 +10003,12 @@ pub struct OperationMetadata {
     /// [google.longrunning.Operation.error]: longrunning::model::Operation::result
     /// [google.rpc.Status.code]: rpc::model::Status::code
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub requested_cancellation: bool,
 
     /// Output only. API version used to start the operation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub api_version: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9870,6 +10096,7 @@ pub struct GetPoolRequest {
     /// Required. The name of the pool resource, in the form of:
     /// `projects/{project}/locations/{location}/pools/{poolId}`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9928,6 +10155,7 @@ pub struct UpdatePoolRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported `(00000000-0000-0000-0000-000000000000)`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]

@@ -37,14 +37,18 @@ extern crate wkt;
 pub struct MetadataExchangeRequest {
     /// Optional. Connector information.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub user_agent: std::string::String,
 
     /// Authentication type.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub auth_type: crate::model::metadata_exchange_request::AuthType,
 
     /// IAM token used for both IAM user authentiation and
     /// `alloydb.instances.connect` permission check.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub oauth2_token: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -233,10 +237,13 @@ pub mod metadata_exchange_request {
 #[non_exhaustive]
 pub struct MetadataExchangeResponse {
     /// Response code.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub response_code: crate::model::metadata_exchange_response::ResponseCode,
 
     /// Optional. Error message.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub error: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]

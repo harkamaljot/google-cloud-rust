@@ -128,9 +128,13 @@ impl super::stub::DatasetService for DatasetService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -164,9 +168,13 @@ impl super::stub::DatasetService for DatasetService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.dataset), options)
             .await
@@ -199,9 +207,13 @@ impl super::stub::DatasetService for DatasetService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         let builder = builder.query(&[("orderBy", &req.order_by)]);
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
@@ -336,9 +348,13 @@ impl super::stub::DatasetService for DatasetService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.dataset_version), options)
             .await
@@ -394,9 +410,13 @@ impl super::stub::DatasetService for DatasetService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -429,9 +449,13 @@ impl super::stub::DatasetService for DatasetService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         let builder = builder.query(&[("orderBy", &req.order_by)]);
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
@@ -491,9 +515,13 @@ impl super::stub::DatasetService for DatasetService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         let builder = builder.query(&[("orderBy", &req.order_by)]);
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
@@ -526,7 +554,7 @@ impl super::stub::DatasetService for DatasetService {
         });
         let builder = req
             .order_by_annotation()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, p| {
@@ -543,9 +571,13 @@ impl super::stub::DatasetService for DatasetService {
         let builder = req
             .field_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("fieldMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "fieldMask")
+            });
         let builder = builder.query(&[("annotationsLimit", &req.annotations_limit)]);
         let builder = builder.query(&[("pageSize", &req.page_size)]);
         let builder = builder.query(&[("orderBy", &req.order_by)]);
@@ -582,9 +614,13 @@ impl super::stub::DatasetService for DatasetService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         let builder = builder.query(&[("orderBy", &req.order_by)]);
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
@@ -641,9 +677,13 @@ impl super::stub::DatasetService for DatasetService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -676,9 +716,13 @@ impl super::stub::DatasetService for DatasetService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         let builder = builder.query(&[("orderBy", &req.order_by)]);
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
@@ -788,7 +832,7 @@ impl super::stub::DatasetService for DatasetService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -969,7 +1013,7 @@ impl super::stub::DatasetService for DatasetService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -1130,9 +1174,13 @@ impl super::stub::DeploymentResourcePoolService for DeploymentResourcePoolServic
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.deployment_resource_pool), options)
             .await
@@ -1295,7 +1343,7 @@ impl super::stub::DeploymentResourcePoolService for DeploymentResourcePoolServic
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -1476,7 +1524,7 @@ impl super::stub::DeploymentResourcePoolService for DeploymentResourcePoolServic
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -1609,9 +1657,13 @@ impl super::stub::EndpointService for EndpointService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         let builder = builder.query(&[("orderBy", &req.order_by)]);
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
@@ -1646,9 +1698,13 @@ impl super::stub::EndpointService for EndpointService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.endpoint), options)
             .await
@@ -1883,7 +1939,7 @@ impl super::stub::EndpointService for EndpointService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -2064,7 +2120,7 @@ impl super::stub::EndpointService for EndpointService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -2244,7 +2300,7 @@ impl super::stub::EvaluationService for EvaluationService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -2425,7 +2481,7 @@ impl super::stub::EvaluationService for EvaluationService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -2575,9 +2631,13 @@ impl super::stub::FeatureOnlineStoreAdminService for FeatureOnlineStoreAdminServ
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.feature_online_store), options)
             .await
@@ -2722,9 +2782,13 @@ impl super::stub::FeatureOnlineStoreAdminService for FeatureOnlineStoreAdminServ
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.feature_view), options)
             .await
@@ -2939,7 +3003,7 @@ impl super::stub::FeatureOnlineStoreAdminService for FeatureOnlineStoreAdminServ
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -3120,7 +3184,7 @@ impl super::stub::FeatureOnlineStoreAdminService for FeatureOnlineStoreAdminServ
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -3324,7 +3388,7 @@ impl super::stub::FeatureOnlineStoreService for FeatureOnlineStoreService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -3505,7 +3569,7 @@ impl super::stub::FeatureOnlineStoreService for FeatureOnlineStoreService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -3655,9 +3719,13 @@ impl super::stub::FeatureRegistryService for FeatureRegistryService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.feature_group), options)
             .await
@@ -3795,9 +3863,13 @@ impl super::stub::FeatureRegistryService for FeatureRegistryService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         let builder = builder.query(&[("latestStatsCount", &req.latest_stats_count)]);
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
@@ -3832,9 +3904,13 @@ impl super::stub::FeatureRegistryService for FeatureRegistryService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.feature), options)
             .await
@@ -3969,7 +4045,7 @@ impl super::stub::FeatureRegistryService for FeatureRegistryService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -4150,7 +4226,7 @@ impl super::stub::FeatureRegistryService for FeatureRegistryService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -4354,7 +4430,7 @@ impl super::stub::FeaturestoreOnlineServingService for FeaturestoreOnlineServing
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -4535,7 +4611,7 @@ impl super::stub::FeaturestoreOnlineServingService for FeaturestoreOnlineServing
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -4655,9 +4731,13 @@ impl super::stub::FeaturestoreService for FeaturestoreService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -4691,9 +4771,13 @@ impl super::stub::FeaturestoreService for FeaturestoreService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.featurestore), options)
             .await
@@ -4807,9 +4891,13 @@ impl super::stub::FeaturestoreService for FeaturestoreService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -4843,9 +4931,13 @@ impl super::stub::FeaturestoreService for FeaturestoreService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.entity_type), options)
             .await
@@ -4983,9 +5075,13 @@ impl super::stub::FeaturestoreService for FeaturestoreService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         let builder = builder.query(&[("latestStatsCount", &req.latest_stats_count)]);
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
@@ -5020,9 +5116,13 @@ impl super::stub::FeaturestoreService for FeaturestoreService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.feature), options)
             .await
@@ -5282,7 +5382,7 @@ impl super::stub::FeaturestoreService for FeaturestoreService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -5463,7 +5563,7 @@ impl super::stub::FeaturestoreService for FeaturestoreService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -5596,9 +5696,13 @@ impl super::stub::GenAiCacheService for GenAiCacheService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.cached_content), options)
             .await
@@ -5765,7 +5869,7 @@ impl super::stub::GenAiCacheService for GenAiCacheService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -5946,7 +6050,7 @@ impl super::stub::GenAiCacheService for GenAiCacheService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -6222,7 +6326,7 @@ impl super::stub::GenAiTuningService for GenAiTuningService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -6403,7 +6507,7 @@ impl super::stub::GenAiTuningService for GenAiTuningService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -6535,9 +6639,13 @@ impl super::stub::IndexEndpointService for IndexEndpointService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -6571,9 +6679,13 @@ impl super::stub::IndexEndpointService for IndexEndpointService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.index_endpoint), options)
             .await
@@ -6782,7 +6894,7 @@ impl super::stub::IndexEndpointService for IndexEndpointService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -6963,7 +7075,7 @@ impl super::stub::IndexEndpointService for IndexEndpointService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -7093,9 +7205,13 @@ impl super::stub::IndexService for IndexService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -7129,9 +7245,13 @@ impl super::stub::IndexService for IndexService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner.execute(builder, Some(req.index), options).await
     }
 
@@ -7312,7 +7432,7 @@ impl super::stub::IndexService for IndexService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -7493,7 +7613,7 @@ impl super::stub::IndexService for IndexService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -7625,9 +7745,13 @@ impl super::stub::JobService for JobService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -7767,9 +7891,13 @@ impl super::stub::JobService for JobService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         let builder = builder.query(&[("orderBy", &req.order_by)]);
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
@@ -7910,9 +8038,13 @@ impl super::stub::JobService for JobService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -8052,9 +8184,13 @@ impl super::stub::JobService for JobService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -8248,9 +8384,13 @@ impl super::stub::JobService for JobService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -8421,9 +8561,13 @@ impl super::stub::JobService for JobService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -8459,9 +8603,13 @@ impl super::stub::JobService for JobService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.model_deployment_monitoring_job), options)
             .await
@@ -8654,7 +8802,7 @@ impl super::stub::JobService for JobService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -8835,7 +8983,7 @@ impl super::stub::JobService for JobService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -9039,7 +9187,7 @@ impl super::stub::LlmUtilityService for LlmUtilityService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -9220,7 +9368,7 @@ impl super::stub::LlmUtilityService for LlmUtilityService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -9410,7 +9558,7 @@ impl super::stub::MatchService for MatchService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -9591,7 +9739,7 @@ impl super::stub::MatchService for MatchService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -9849,9 +9997,13 @@ impl super::stub::MetadataService for MetadataService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         let builder = builder.query(&[("allowMissing", &req.allow_missing)]);
         self.inner
             .execute(builder, Some(req.artifact), options)
@@ -10020,9 +10172,13 @@ impl super::stub::MetadataService for MetadataService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         let builder = builder.query(&[("allowMissing", &req.allow_missing)]);
         self.inner
             .execute(builder, Some(req.context), options)
@@ -10291,9 +10447,13 @@ impl super::stub::MetadataService for MetadataService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         let builder = builder.query(&[("allowMissing", &req.allow_missing)]);
         self.inner
             .execute(builder, Some(req.execution), options)
@@ -10614,7 +10774,7 @@ impl super::stub::MetadataService for MetadataService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -10795,7 +10955,7 @@ impl super::stub::MetadataService for MetadataService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -10999,7 +11159,7 @@ impl super::stub::MigrationService for MigrationService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -11180,7 +11340,7 @@ impl super::stub::MigrationService for MigrationService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -11366,7 +11526,7 @@ impl super::stub::ModelGardenService for ModelGardenService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -11547,7 +11707,7 @@ impl super::stub::ModelGardenService for ModelGardenService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -11663,9 +11823,13 @@ impl super::stub::ModelService for ModelService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         let builder = builder.query(&[("orderBy", &req.order_by)]);
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
@@ -11699,9 +11863,13 @@ impl super::stub::ModelService for ModelService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         let builder = builder.query(&[("orderBy", &req.order_by)]);
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
@@ -11764,9 +11932,13 @@ impl super::stub::ModelService for ModelService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner.execute(builder, Some(req.model), options).await
     }
 
@@ -12045,9 +12217,13 @@ impl super::stub::ModelService for ModelService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -12106,9 +12282,13 @@ impl super::stub::ModelService for ModelService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -12217,7 +12397,7 @@ impl super::stub::ModelService for ModelService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -12398,7 +12578,7 @@ impl super::stub::ModelService for ModelService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -12534,9 +12714,13 @@ impl super::stub::NotebookService for NotebookService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         let builder = builder.query(&[("orderBy", &req.order_by)]);
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
@@ -12599,9 +12783,13 @@ impl super::stub::NotebookService for NotebookService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.notebook_runtime_template), options)
             .await
@@ -12684,9 +12872,13 @@ impl super::stub::NotebookService for NotebookService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         let builder = builder.query(&[("orderBy", &req.order_by)]);
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
@@ -13005,7 +13197,7 @@ impl super::stub::NotebookService for NotebookService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -13186,7 +13378,7 @@ impl super::stub::NotebookService for NotebookService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -13374,9 +13566,13 @@ impl super::stub::PersistentResourceService for PersistentResourceService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.persistent_resource), options)
             .await
@@ -13509,7 +13705,7 @@ impl super::stub::PersistentResourceService for PersistentResourceService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -13690,7 +13886,7 @@ impl super::stub::PersistentResourceService for PersistentResourceService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -13822,9 +14018,13 @@ impl super::stub::PipelineService for PipelineService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -13966,9 +14166,13 @@ impl super::stub::PipelineService for PipelineService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -14180,7 +14384,7 @@ impl super::stub::PipelineService for PipelineService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -14361,7 +14565,7 @@ impl super::stub::PipelineService for PipelineService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -14661,7 +14865,7 @@ impl super::stub::PredictionService for PredictionService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -14842,7 +15046,7 @@ impl super::stub::PredictionService for PredictionService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -15008,7 +15212,7 @@ impl super::stub::ReasoningEngineExecutionService for ReasoningEngineExecutionSe
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -15189,7 +15393,7 @@ impl super::stub::ReasoningEngineExecutionService for ReasoningEngineExecutionSe
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -15337,9 +15541,13 @@ impl super::stub::ReasoningEngineService for ReasoningEngineService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.reasoning_engine), options)
             .await
@@ -15475,7 +15683,7 @@ impl super::stub::ReasoningEngineService for ReasoningEngineService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -15656,7 +15864,7 @@ impl super::stub::ReasoningEngineService for ReasoningEngineService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -15903,9 +16111,13 @@ impl super::stub::ScheduleService for ScheduleService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.schedule), options)
             .await
@@ -16014,7 +16226,7 @@ impl super::stub::ScheduleService for ScheduleService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -16195,7 +16407,7 @@ impl super::stub::ScheduleService for ScheduleService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -16326,9 +16538,13 @@ impl super::stub::SpecialistPoolService for SpecialistPoolService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -16389,9 +16605,13 @@ impl super::stub::SpecialistPoolService for SpecialistPoolService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.specialist_pool), options)
             .await
@@ -16500,7 +16720,7 @@ impl super::stub::SpecialistPoolService for SpecialistPoolService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -16681,7 +16901,7 @@ impl super::stub::SpecialistPoolService for SpecialistPoolService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -16814,9 +17034,13 @@ impl super::stub::TensorboardService for TensorboardService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.tensorboard), options)
             .await
@@ -16850,9 +17074,13 @@ impl super::stub::TensorboardService for TensorboardService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -17017,9 +17245,13 @@ impl super::stub::TensorboardService for TensorboardService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.tensorboard_experiment), options)
             .await
@@ -17053,9 +17285,13 @@ impl super::stub::TensorboardService for TensorboardService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -17192,9 +17428,13 @@ impl super::stub::TensorboardService for TensorboardService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.tensorboard_run), options)
             .await
@@ -17228,9 +17468,13 @@ impl super::stub::TensorboardService for TensorboardService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -17371,9 +17615,13 @@ impl super::stub::TensorboardService for TensorboardService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.tensorboard_time_series), options)
             .await
@@ -17407,9 +17655,13 @@ impl super::stub::TensorboardService for TensorboardService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -17676,7 +17928,7 @@ impl super::stub::TensorboardService for TensorboardService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -17857,7 +18109,7 @@ impl super::stub::TensorboardService for TensorboardService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -18278,7 +18530,7 @@ impl super::stub::VertexRagDataService for VertexRagDataService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -18459,7 +18711,7 @@ impl super::stub::VertexRagDataService for VertexRagDataService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -18687,7 +18939,7 @@ impl super::stub::VertexRagService for VertexRagService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -18868,7 +19120,7 @@ impl super::stub::VertexRagService for VertexRagService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -19394,7 +19646,7 @@ impl super::stub::VizierService for VizierService {
         let builder = req
             .options
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -19575,7 +19827,7 @@ impl super::stub::VizierService for VizierService {
         let builder = req
             .timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {

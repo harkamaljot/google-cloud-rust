@@ -92,6 +92,8 @@ impl wkt::message::Message for TroubleshootIamPolicyRequest {
 pub struct TroubleshootIamPolicyResponse {
     /// Indicates whether the principal has the specified permission for the
     /// specified resource, based on evaluating all of the applicable IAM policies.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub access: crate::model::AccessState,
 
     /// List of IAM policies that were evaluated to check the principal's
@@ -105,10 +107,12 @@ pub struct TroubleshootIamPolicyResponse {
     /// To learn more about the resource hierarchy, see
     /// <https://cloud.google.com/iam/help/resource-hierarchy>.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub explained_policies: std::vec::Vec<crate::model::ExplainedPolicy>,
 
     /// The general errors contained in the troubleshooting response.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub errors: std::vec::Vec<rpc::model::Status>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -169,6 +173,7 @@ pub struct AccessTuple {
     /// The principal must be a Google Account or a service account. Other types of
     /// principals are not supported.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub principal: std::string::String,
 
     /// Required. The full resource name that identifies the resource. For example,
@@ -177,6 +182,7 @@ pub struct AccessTuple {
     /// For examples of full resource names for Google Cloud services, see
     /// <https://cloud.google.com/iam/help/troubleshooter/full-resource-names>.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub full_resource_name: std::string::String,
 
     /// Required. The IAM permission to check for the specified principal and
@@ -188,6 +194,7 @@ pub struct AccessTuple {
     /// For a complete list of predefined IAM roles and the permissions in each
     /// role, see <https://cloud.google.com/iam/help/roles/reference>.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub permission: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -244,6 +251,8 @@ pub struct ExplainedPolicy {
     /// this policy. To determine whether the principal actually has the
     /// permission, use the `access` field in the
     /// [TroubleshootIamPolicyResponse][IamChecker.TroubleshootIamPolicyResponse].
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub access: crate::model::AccessState,
 
     /// The full resource name that identifies the resource. For example,
@@ -255,6 +264,7 @@ pub struct ExplainedPolicy {
     /// For examples of full resource names for Google Cloud services, see
     /// <https://cloud.google.com/iam/help/troubleshooter/full-resource-names>.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub full_resource_name: std::string::String,
 
     /// The IAM policy attached to the resource.
@@ -270,6 +280,7 @@ pub struct ExplainedPolicy {
     /// If the sender of the request does not have access to the policy, this field
     /// is omitted.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub binding_explanations: std::vec::Vec<crate::model::BindingExplanation>,
 
     /// The relevance of this policy to the overall determination in the
@@ -277,6 +288,8 @@ pub struct ExplainedPolicy {
     ///
     /// If the sender of the request does not have access to the policy, this field
     /// is omitted.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub relevance: crate::model::HeuristicRelevance,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -363,6 +376,8 @@ pub struct BindingExplanation {
     /// this binding. To determine whether the principal actually has the
     /// permission, use the `access` field in the
     /// [TroubleshootIamPolicyResponse][IamChecker.TroubleshootIamPolicyResponse].
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub access: crate::model::AccessState,
 
     /// The role that this binding grants. For example,
@@ -371,14 +386,19 @@ pub struct BindingExplanation {
     /// For a complete list of predefined IAM roles, as well as the permissions in
     /// each role, see <https://cloud.google.com/iam/help/roles/reference>.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub role: std::string::String,
 
     /// Indicates whether the role granted by this binding contains the specified
     /// permission.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub role_permission: crate::model::binding_explanation::RolePermission,
 
     /// The relevance of the permission's existence, or nonexistence, in the role
     /// to the overall determination for the entire policy.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub role_permission_relevance: crate::model::HeuristicRelevance,
 
     /// Indicates whether each principal in the binding includes the principal
@@ -402,6 +422,7 @@ pub struct BindingExplanation {
     /// `group:product-eng@example.com`, and the `membership` field in the value is
     /// set to `MEMBERSHIP_INCLUDED`.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub memberships: std::collections::HashMap<
         std::string::String,
         crate::model::binding_explanation::AnnotatedMembership,
@@ -409,6 +430,8 @@ pub struct BindingExplanation {
 
     /// The relevance of this binding to the overall determination for the entire
     /// policy.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub relevance: crate::model::HeuristicRelevance,
 
     /// A condition expression that prevents this binding from granting access
@@ -520,10 +543,14 @@ pub mod binding_explanation {
     #[non_exhaustive]
     pub struct AnnotatedMembership {
         /// Indicates whether the binding includes the principal.
+        #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub membership: crate::model::binding_explanation::Membership,
 
         /// The relevance of the principal's status to the overall determination for
         /// the binding.
+        #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub relevance: crate::model::HeuristicRelevance,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]

@@ -111,7 +111,11 @@ func newCodec(protobufSource bool, options map[string]string) (*codec, error) {
 				codec.packageMapping[source] = pkgOption.pkg
 			}
 		case key == "disabled-rustdoc-warnings":
-			codec.disabledRustdocWarnings = strings.Split(definition, ",")
+			if definition == "" {
+				codec.disabledRustdocWarnings = []string{}
+			} else {
+				codec.disabledRustdocWarnings = strings.Split(definition, ",")
+			}
 		case key == "template-override":
 			codec.templateOverride = definition
 		case key == "include-grpc-only-methods":
@@ -405,12 +409,14 @@ func scalarFieldType(f *api.Field) string {
 
 func fieldFormatter(typez api.Typez) string {
 	switch typez {
-	case api.INT64_TYPE,
-		api.UINT64_TYPE,
-		api.FIXED64_TYPE,
-		api.SFIXED64_TYPE,
-		api.SINT64_TYPE:
-		return "serde_with::DisplayFromStr"
+	case api.INT64_TYPE, api.SINT64_TYPE, api.SFIXED64_TYPE:
+		return "wkt::internal::I64"
+	case api.UINT64_TYPE, api.FIXED64_TYPE:
+		return "wkt::internal::U64"
+	case api.INT32_TYPE, api.SINT32_TYPE, api.SFIXED32_TYPE:
+		return "wkt::internal::I32"
+	case api.UINT32_TYPE, api.FIXED32_TYPE:
+		return "wkt::internal::U32"
 	case api.FLOAT_TYPE:
 		return "wkt::internal::F32"
 	case api.DOUBLE_TYPE:
@@ -420,6 +426,13 @@ func fieldFormatter(typez api.Typez) string {
 	default:
 		return "_"
 	}
+}
+
+func keyFieldFormatter(typez api.Typez) string {
+	if typez == api.BOOL_TYPE {
+		return "serde_with::DisplayFromStr"
+	}
+	return fieldFormatter(typez)
 }
 
 func fieldSkipAttributes(f *api.Field) []string {
@@ -451,7 +464,8 @@ func fieldSkipAttributes(f *api.Field) []string {
 		api.SFIXED32_TYPE,
 		api.SFIXED64_TYPE,
 		api.SINT32_TYPE,
-		api.SINT64_TYPE:
+		api.SINT64_TYPE,
+		api.ENUM_TYPE:
 		return []string{`#[serde(skip_serializing_if = "wkt::internal::is_default")]`}
 	default:
 		return []string{}
@@ -459,15 +473,16 @@ func fieldSkipAttributes(f *api.Field) []string {
 }
 
 func fieldBaseAttributes(f *api.Field) []string {
-	if toCamel(toSnake(f.Name)) != f.JSONName {
+	// Names starting with `_` are not handled quite right by serde.
+	if toCamel(f.Name) != f.JSONName || strings.HasPrefix(f.Name, "_") {
 		return []string{fmt.Sprintf(`#[serde(rename = "%s")]`, f.JSONName)}
 	}
 	return []string{}
 }
 
-func wrapperFieldAttributes(f *api.Field, attributes []string) []string {
+func messageFieldAttributes(f *api.Field, attributes []string) []string {
 	// Message fields could be `Vec<..>`, and are always optional:
-	attributes = wrapperFieldSkipAttributes(f, attributes)
+	attributes = messageFieldSkipAttributes(f, attributes)
 	var formatter string
 	switch f.TypezID {
 	case ".google.protobuf.BytesValue":
@@ -476,19 +491,30 @@ func wrapperFieldAttributes(f *api.Field, attributes []string) []string {
 		formatter = fieldFormatter(api.UINT64_TYPE)
 	case ".google.protobuf.Int64Value":
 		formatter = fieldFormatter(api.INT64_TYPE)
+	case ".google.protobuf.UInt32Value":
+		formatter = fieldFormatter(api.UINT32_TYPE)
+	case ".google.protobuf.Int32Value":
+		formatter = fieldFormatter(api.INT32_TYPE)
 	case ".google.protobuf.FloatValue":
 		formatter = fieldFormatter(api.FLOAT_TYPE)
 	case ".google.protobuf.DoubleValue":
 		formatter = fieldFormatter(api.DOUBLE_TYPE)
 	default:
-		return attributes
+		formatter = "_"
 	}
-	// A few message types require ad-hoc treatment. Most are just managed with
-	// the default handler.
 	if f.IsOneOf {
+		if formatter == "_" {
+			return attributes
+		}
 		return append(attributes, fmt.Sprintf(`#[serde_as(as = "%s")]`, oneOfFieldTypeFormatter(f, false, formatter)))
 	}
 	if f.Optional {
+		if f.TypezID == ".google.protobuf.Value" {
+			return append(attributes, `#[serde_as(as = "wkt::internal::OptionalValue")]`)
+		}
+		if formatter == "_" {
+			return attributes
+		}
 		return append(
 			attributes,
 			fmt.Sprintf(`#[serde_as(as = "std::option::Option<%s>")]`, formatter))
@@ -496,14 +522,14 @@ func wrapperFieldAttributes(f *api.Field, attributes []string) []string {
 	if f.Repeated {
 		return append(
 			attributes,
-			fmt.Sprintf(`#[serde_as(as = "std::vec::Vec<%s>")]`, formatter))
+			fmt.Sprintf(`#[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<%s>>")]`, formatter))
 	}
 	return append(
 		attributes,
-		fmt.Sprintf(`#[serde_as(as = "%s")]`, formatter))
+		fmt.Sprintf(`#[serde_as(as = "serde_with::DefaultOnNull<%s>")]`, formatter))
 }
 
-func wrapperFieldSkipAttributes(f *api.Field, attributes []string) []string {
+func messageFieldSkipAttributes(f *api.Field, attributes []string) []string {
 	// oneofs have explicit presence, and default values should be serialized:
 	// https://protobuf.dev/programming-guides/field_presence/.
 	if f.IsOneOf {
@@ -518,24 +544,49 @@ func wrapperFieldSkipAttributes(f *api.Field, attributes []string) []string {
 	return attributes
 }
 
+func mapFieldAttributes(f *api.Field, message *api.Message, attributes []string) []string {
+	// map<> field types require special treatment.
+	if !f.IsOneOf {
+		attributes = append(attributes, `#[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]`)
+	}
+	var key, value *api.Field
+	for _, f := range message.Fields {
+		switch f.Name {
+		case "key":
+			key = f
+		case "value":
+			value = f
+		default:
+		}
+	}
+	if key == nil || value == nil {
+		slog.Error("missing key or value in map field")
+		return attributes
+	}
+	keyFormat := keyFieldFormatter(key.Typez)
+	valFormat := fieldFormatter(value.Typez)
+	return append(attributes, fmt.Sprintf(`#[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<%s, %s>>")]`, keyFormat, valFormat))
+
+}
+
 func fieldAttributes(f *api.Field, state *api.APIState) []string {
 	if f.Synthetic {
 		return []string{`#[serde(skip)]`}
 	}
 	attributes := fieldBaseAttributes(f)
 	switch f.Typez {
-	case api.INT32_TYPE,
-		api.FIXED32_TYPE,
-		api.BOOL_TYPE,
-		api.STRING_TYPE,
-		api.UINT32_TYPE,
-		api.SFIXED32_TYPE,
-		api.SINT32_TYPE,
-		api.ENUM_TYPE,
-		api.GROUP_TYPE:
+	case api.GROUP_TYPE:
 		return append(attributes, fieldSkipAttributes(f)...)
 
-	case api.INT64_TYPE,
+	case api.BOOL_TYPE,
+		api.STRING_TYPE,
+		api.ENUM_TYPE,
+		api.INT32_TYPE,
+		api.SFIXED32_TYPE,
+		api.SINT32_TYPE,
+		api.UINT32_TYPE,
+		api.FIXED32_TYPE,
+		api.INT64_TYPE,
 		api.UINT64_TYPE,
 		api.FIXED64_TYPE,
 		api.SFIXED64_TYPE,
@@ -546,41 +597,21 @@ func fieldAttributes(f *api.Field, state *api.APIState) []string {
 		formatter := fieldFormatter(f.Typez)
 		attributes = append(attributes, fieldSkipAttributes(f)...)
 		if f.Optional {
-			return append(attributes, fmt.Sprintf(`#[serde_as(as = "std::option::Option<%s>")]`, formatter))
+			if formatter != "_" {
+				attributes = append(attributes, fmt.Sprintf(`#[serde_as(as = "std::option::Option<%s>")]`, formatter))
+			}
+			return attributes
 		}
 		if f.Repeated {
-			return append(attributes, fmt.Sprintf(`#[serde_as(as = "std::vec::Vec<%s>")]`, formatter))
+			return append(attributes, fmt.Sprintf(`#[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<%s>>")]`, formatter))
 		}
-		return append(attributes, fmt.Sprintf(`#[serde_as(as = "%s")]`, formatter))
+		return append(attributes, fmt.Sprintf(`#[serde_as(as = "serde_with::DefaultOnNull<%s>")]`, formatter))
 
 	case api.MESSAGE_TYPE:
 		if message, ok := state.MessageByID[f.TypezID]; ok && message.IsMap {
-			// map<> field types require special treatment.
-			if !f.IsOneOf {
-				attributes = append(attributes, `#[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]`)
-			}
-			var key, value *api.Field
-			for _, f := range message.Fields {
-				switch f.Name {
-				case "key":
-					key = f
-				case "value":
-					value = f
-				default:
-				}
-			}
-			if key == nil || value == nil {
-				slog.Error("missing key or value in map field")
-				return attributes
-			}
-			keyFormat := fieldFormatter(key.Typez)
-			valFormat := fieldFormatter(value.Typez)
-			if keyFormat == "_" && valFormat == "_" {
-				return attributes
-			}
-			return append(attributes, fmt.Sprintf(`#[serde_as(as = "std::collections::HashMap<%s, %s>")]`, keyFormat, valFormat))
+			return mapFieldAttributes(f, message, attributes)
 		}
-		return wrapperFieldAttributes(f, attributes)
+		return messageFieldAttributes(f, attributes)
 
 	default:
 		slog.Error("unexpected field type", "field", *f)
@@ -696,25 +727,15 @@ func addQueryParameter(f *api.Field) string {
 		}
 		return fmt.Sprintf(`let builder = builder.query(&[("%s", &req.%s)]);`, f.JSONName, fieldName)
 	case api.MESSAGE_TYPE:
-		if f.TypezID == ".google.protobuf.FieldMask" {
-			// `FieldMask` (and other well-known types) are special. Their JSON
-			// encoding is a string. That works well for `Timestamp`, `Empty`,
-			// `Duration`, and so forth, but is not what Google Cloud expects
-			// for query parameters.
-			if f.Optional || f.Repeated {
-				return fmt.Sprintf(`let builder = req.%s.as_ref().iter().flat_map(|p| p.paths.iter()).fold(builder, |builder, v| builder.query(&[("%s", v)]));`, fieldName, f.JSONName)
-			}
-			return fmt.Sprintf(`let builder = req.%s.paths.iter().fold(builder, |builder, v| builder.query(&[("%s", v)]));`, fieldName, f.JSONName)
-		}
 		// Query parameters in nested messages are first converted to a
 		// `serde_json::Value`` and then recursively merged into the request
 		// query. The conversion to `serde_json::Value` is expensive, but very
 		// few requests use nested objects as query parameters. Furthermore,
 		// the conversion is skipped if the object field is `None`.`
 		if f.Optional || f.Repeated {
-			return fmt.Sprintf(`let builder = req.%s.as_ref().map(|p| serde_json::to_value(p).map_err(Error::serde) ).transpose()?.into_iter().fold(builder, |builder, v| { use gaxi::query_parameter::QueryParameter; v.add(builder, "%s") });`, fieldName, f.JSONName)
+			return fmt.Sprintf(`let builder = req.%s.as_ref().map(|p| serde_json::to_value(p).map_err(Error::ser) ).transpose()?.into_iter().fold(builder, |builder, v| { use gaxi::query_parameter::QueryParameter; v.add(builder, "%s") });`, fieldName, f.JSONName)
 		}
-		return fmt.Sprintf(`let builder = { use gaxi::query_parameter::QueryParameter; serde_json::to_value(&req.%s).map_err(Error::serde)?.add(builder, "%s") };`, fieldName, f.JSONName)
+		return fmt.Sprintf(`let builder = { use gaxi::query_parameter::QueryParameter; serde_json::to_value(&req.%s).map_err(Error::ser)?.add(builder, "%s") };`, fieldName, f.JSONName)
 	default:
 		if f.Optional || f.Repeated {
 			return fmt.Sprintf(`let builder = req.%s.iter().fold(builder, |builder, p| builder.query(&[("%s", p)]));`, fieldName, f.JSONName)
@@ -734,7 +755,7 @@ func addQueryParameterOneOf(f *api.Field) string {
 		// query. The conversion to `serde_json::Value` is expensive, but very
 		// few requests use nested objects as query parameters. Furthermore,
 		// the conversion is skipped if the object field is `None`.`
-		return fmt.Sprintf(`let builder = req.%s().map(|p| serde_json::to_value(p).map_err(Error::serde) ).transpose()?.into_iter().fold(builder, |builder, p| { use gaxi::query_parameter::QueryParameter; p.add(builder, "%s") });`, fieldName, f.JSONName)
+		return fmt.Sprintf(`let builder = req.%s().map(|p| serde_json::to_value(p).map_err(Error::ser) ).transpose()?.into_iter().fold(builder, |builder, p| { use gaxi::query_parameter::QueryParameter; p.add(builder, "%s") });`, fieldName, f.JSONName)
 	default:
 		return fmt.Sprintf(`let builder = req.%s().iter().fold(builder, |builder, p| builder.query(&[("%s", p)]));`, fieldName, f.JSONName)
 	}

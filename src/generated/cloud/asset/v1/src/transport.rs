@@ -88,7 +88,7 @@ impl super::stub::AssetService for AssetService {
         let builder = req
             .read_time
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -139,7 +139,7 @@ impl super::stub::AssetService for AssetService {
         let builder = req
             .read_time_window
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -320,9 +320,13 @@ impl super::stub::AssetService for AssetService {
         let builder = req
             .read_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("readMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "readMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -390,7 +394,7 @@ impl super::stub::AssetService for AssetService {
         let builder = req
             .analysis_query
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -401,7 +405,7 @@ impl super::stub::AssetService for AssetService {
         let builder = req
             .execution_timeout
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -603,9 +607,13 @@ impl super::stub::AssetService for AssetService {
         let builder = req
             .update_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("updateMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "updateMask")
+            });
         self.inner
             .execute(builder, Some(req.saved_query), options)
             .await

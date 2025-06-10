@@ -42,6 +42,7 @@ pub struct Notification {
     /// organizations/{organization}/locations/{location}/notifications/{notification}
     /// or projects/{project}/locations/{location}/notifications/{notification}.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// The subject line of the notification.
@@ -50,6 +51,7 @@ pub struct Notification {
 
     /// A list of messages in the notification.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub messages: std::vec::Vec<crate::model::Message>,
 
     /// Output only. Time the notification was created.
@@ -57,6 +59,8 @@ pub struct Notification {
     pub create_time: std::option::Option<wkt::Timestamp>,
 
     /// Type of notification
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub notification_type: crate::model::NotificationType,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -145,13 +149,17 @@ impl wkt::message::Message for Notification {
 pub struct Text {
     /// The English copy.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub en_text: std::string::String,
 
     /// The requested localized copy (if applicable).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub localized_text: std::string::String,
 
     /// Status of the localization.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub localization_state: crate::model::LocalizationState,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -247,6 +255,7 @@ pub struct Message {
 
     /// The attachments to download.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub attachments: std::vec::Vec<crate::model::Attachment>,
 
     /// The Message creation timestamp.
@@ -396,6 +405,7 @@ pub mod message {
 pub struct Attachment {
     /// The title of the attachment.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub display_name: std::string::String,
 
     /// Data type of the attachment.
@@ -485,11 +495,13 @@ pub mod attachment {
 pub struct Csv {
     /// The list of headers for data columns in a CSV file.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub headers: std::vec::Vec<std::string::String>,
 
     /// The list of data rows in a CSV file, as string arrays rather than as a
     /// single comma-separated string.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub data_rows: std::vec::Vec<crate::model::csv::CsvRow>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -544,6 +556,7 @@ pub mod csv {
         /// The data entries in a CSV file row, as a string array rather than a
         /// single comma-separated string.
         #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
         pub entries: std::vec::Vec<std::string::String>,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -584,6 +597,7 @@ pub struct ListNotificationsRequest {
     /// Must be of the form "organizations/{organization}/locations/{location}"
     /// or "projects/{project}/locations/{location}".
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// The maximum number of notifications to return. The service may return
@@ -591,16 +605,20 @@ pub struct ListNotificationsRequest {
     /// notifications will be returned. The maximum value is 50; values above 50
     /// will be coerced to 50.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// A page token returned from a previous request.
     /// When paginating, all other parameters provided in the request
     /// must match the call that returned the page token.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     /// Specifies which parts of the notification resource should be returned
     /// in the response.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub view: crate::model::NotificationView,
 
     /// ISO code for requested localization language.  If unset, will be
@@ -609,6 +627,7 @@ pub struct ListNotificationsRequest {
     /// LocalizationState. If the ISO code is invalid (i.e. not a real language),
     /// this RPC will throw an error.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub language_code: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -665,15 +684,18 @@ impl wkt::message::Message for ListNotificationsRequest {
 pub struct ListNotificationsResponse {
     /// List of notifications under a given parent.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub notifications: std::vec::Vec<crate::model::Notification>,
 
     /// A token, which can be sent as `page_token` to retrieve the next page.
     /// If this field is omitted, there are no subsequent pages.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     /// Estimation of a total number of notifications.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub total_size: i32,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -740,6 +762,7 @@ pub struct GetNotificationRequest {
     /// organizations/{organization}/locations/{location}/notifications/{notification}
     /// or projects/{projects}/locations/{location}/notifications/{notification}.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// ISO code for requested localization language. If unset, will be
@@ -748,6 +771,7 @@ pub struct GetNotificationRequest {
     /// LocalizationState. If the ISO code is invalid (i.e. not a real language),
     /// this RPC will throw an error.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub language_code: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -789,12 +813,14 @@ pub struct Settings {
     /// organizations/{organization}/locations/{location}/settings or
     /// projects/{projects}/locations/{location}/settings.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Required. Map of each notification type and its settings to get/set all
     /// settings at once. The server will validate the value for each notification
     /// type.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub notification_settings:
         std::collections::HashMap<std::string::String, crate::model::NotificationSettings>,
 
@@ -803,6 +829,7 @@ pub struct Settings {
     /// the value known to the server, ABORTED will be thrown, and the client
     /// should retry the read-modify-write cycle.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub etag: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -853,6 +880,7 @@ impl wkt::message::Message for Settings {
 pub struct NotificationSettings {
     /// Whether the associated NotificationType is enabled.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub enabled: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -888,6 +916,7 @@ pub struct GetSettingsRequest {
     /// organizations/{organization}/locations/{location}/settings or
     /// projects/{projects}/locations/{location}/settings.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]

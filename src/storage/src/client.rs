@@ -15,8 +15,11 @@
 pub use crate::Error;
 pub use crate::Result;
 use auth::credentials::CacheableResource;
+use base64::Engine;
+use base64::prelude::BASE64_STANDARD;
 pub use control::model::Object;
 use http::Extensions;
+use sha2::{Digest, Sha256};
 
 /// Implements a client for the Cloud Storage API.
 ///
@@ -106,89 +109,58 @@ impl Storage {
 
     /// A simple upload from a buffer.
     ///
+    /// # Parameters
+    /// * `bucket` - the bucket name containing the object. In
+    ///   `projects/_/buckets/{bucket_id}` format.
+    /// * `object` - the object name.
+    /// * `payload` - the object data.
+    ///
     /// # Example
     /// ```
     /// # use google_cloud_storage::client::Storage;
     /// async fn example(client: &Storage) -> gax::Result<()> {
     ///     let response = client
-    ///         .insert_object(
-    ///             "projects/_/buckets/my-bucket",
-    ///             "my-object",
-    ///             "the quick brown fox jumped over the lazy dog",
-    ///         )
+    ///         .insert_object("projects/_/buckets/my-bucket", "my-object", "the quick brown fox jumped over the lazy dog")
+    ///         .send()
     ///         .await?;
     ///     println!("response details={response:?}");
     ///     Ok(())
     /// }
     /// ```
-    pub async fn insert_object<B, O, P>(
-        &self,
-        bucket: B,
-        object: O,
-        payload: P,
-    ) -> crate::Result<Object>
+    pub fn insert_object<B, O, P>(&self, bucket: B, object: O, payload: P) -> InsertObject
     where
         B: Into<String>,
         O: Into<String>,
         P: Into<bytes::Bytes>,
     {
-        let bucket: String = bucket.into();
-        let bucket_id = bucket
-            .as_str()
-            .strip_prefix("projects/_/buckets/")
-            .ok_or_else(|| {
-                Error::other(format!(
-                    "malformed bucket name, it must start with `projects/_/buckets/`: {bucket}"
-                ))
-            })?;
-        let object: String = object.into();
-        let builder = self
-            .inner
-            .client
-            .request(
-                reqwest::Method::POST,
-                format!("{}/upload/storage/v1/b/{bucket_id}/o", &self.inner.endpoint),
-            )
-            .query(&[("uploadType", "media")])
-            .query(&[("name", &object)])
-            .header("content-type", "application/octet-stream")
-            .header(
-                "x-goog-api-client",
-                reqwest::header::HeaderValue::from_static(&self::info::X_GOOG_API_CLIENT_HEADER),
-            );
-
-        let builder = self.inner.apply_auth_headers(builder).await?;
-        let builder = builder.body(payload.into());
-
-        tracing::info!("builder={builder:?}");
-
-        let response = builder.send().await.map_err(Error::io)?;
-        if !response.status().is_success() {
-            return gaxi::http::to_http_error(response).await;
-        }
-        let response = response.json::<v1::Object>().await.map_err(Error::io)?;
-
-        Ok(Object::from(response))
+        InsertObject::new(self.inner.clone(), bucket, object, payload)
     }
 
     /// A simple download into a buffer.
+    ///
+    /// # Parameters
+    /// * `bucket` - the bucket name containing the object. In
+    ///   `projects/_/buckets/{bucket_id}` format.
+    /// * `object` - the object name.
     ///
     /// # Example
     /// ```
     /// # use google_cloud_storage::client::Storage;
     /// async fn example(client: &Storage) -> gax::Result<()> {
     ///     let contents = client
-    ///         .read_object()
-    ///         .set_bucket("projects/_/buckets/my-bucket")
-    ///         .set_object("my-object")
+    ///         .read_object("projects/_/buckets/my-bucket", "my-object")
     ///         .send()
     ///         .await?;
     ///     println!("object contents={contents:?}");
     ///     Ok(())
     /// }
     /// ```
-    pub fn read_object(&self) -> ReadObject {
-        ReadObject::new(self.inner.clone())
+    pub fn read_object<B, O>(&self, bucket: B, object: O) -> ReadObject
+    where
+        B: Into<String>,
+        O: Into<String>,
+    {
+        ReadObject::new(self.inner.clone(), bucket, object)
     }
 
     pub(crate) async fn new(
@@ -293,6 +265,103 @@ pub(crate) mod info {
     }
 }
 
+pub struct InsertObject {
+    inner: std::sync::Arc<StorageInner>,
+    bucket: String,
+    object: String,
+    payload: bytes::Bytes,
+    common_object_request_params: Option<control::model::CommonObjectRequestParams>,
+}
+
+impl InsertObject {
+    fn new<B, O, P>(inner: std::sync::Arc<StorageInner>, bucket: B, object: O, payload: P) -> Self
+    where
+        B: Into<String>,
+        O: Into<String>,
+        P: Into<bytes::Bytes>,
+    {
+        InsertObject {
+            inner,
+            bucket: bucket.into(),
+            object: object.into(),
+            payload: payload.into(),
+            common_object_request_params: None,
+        }
+    }
+
+    /// A simple upload from a buffer.
+    ///
+    /// # Example
+    /// ```
+    /// # use google_cloud_storage::client::Storage;
+    /// async fn example(client: &Storage) -> gax::Result<()> {
+    ///     let response = client
+    ///         .insert_object("projects/_/buckets/my-bucket", "my-object", "the quick brown fox jumped over the lazy dog")
+    ///         .send()
+    ///         .await?;
+    ///     println!("response details={response:?}");
+    ///     Ok(())
+    /// }
+    /// ```
+    pub async fn send(self) -> crate::Result<Object> {
+        let builder = self.http_request_builder().await?;
+
+        tracing::info!("builder={builder:?}");
+
+        let response = builder.send().await.map_err(Error::io)?;
+        if !response.status().is_success() {
+            return gaxi::http::to_http_error(response).await;
+        }
+        let response = response.json::<v1::Object>().await.map_err(Error::io)?;
+
+        Ok(Object::from(response))
+    }
+
+    async fn http_request_builder(self) -> Result<reqwest::RequestBuilder> {
+        let bucket: String = self.bucket;
+        let bucket_id = bucket
+            .as_str()
+            .strip_prefix("projects/_/buckets/")
+            .ok_or_else(|| {
+                Error::binding(format!(
+                    "malformed bucket name, it must start with `projects/_/buckets/`: {bucket}"
+                ))
+            })?;
+        let object: String = self.object;
+        let builder = self
+            .inner
+            .client
+            .request(
+                reqwest::Method::POST,
+                format!("{}/upload/storage/v1/b/{bucket_id}/o", &self.inner.endpoint),
+            )
+            .query(&[("uploadType", "media")])
+            .query(&[("name", &object)])
+            .header("content-type", "application/octet-stream")
+            .header(
+                "x-goog-api-client",
+                reqwest::header::HeaderValue::from_static(&self::info::X_GOOG_API_CLIENT_HEADER),
+            );
+
+        let builder =
+            apply_customer_supplied_encryption_headers(builder, self.common_object_request_params);
+
+        let builder = self.inner.apply_auth_headers(builder).await?;
+        let builder = builder.body(self.payload);
+        Ok(builder)
+    }
+
+    /// The encryption key used with the Customer-Supplied Encryption Keys
+    /// feature. In raw bytes format (not base64-encoded).
+    pub fn with_key<T>(mut self, v: T) -> Self
+    where
+        T: Into<bytes::Bytes>,
+    {
+        self.common_object_request_params = Some(key_to_common_object_request_params(v.into()));
+        self
+    }
+}
+
 /// The request builder for [Storage::read_object][crate::client::Storage::read_object] calls.
 ///
 /// # Example
@@ -303,10 +372,7 @@ pub(crate) mod info {
 /// # let client = Storage::builder()
 /// #   .with_endpoint("https://storage.googleapis.com")
 /// #    .build().await?;
-/// let builder: ReadObject = client
-///         .read_object()
-///         .set_bucket("projects/_/buckets/my-bucket")
-///         .set_object("my-object");
+/// let builder: ReadObject = client.read_object("projects/_/buckets/my-bucket", "my-object");
 /// let contents = builder.send().await?;
 /// println!("object contents={contents:?}");
 /// # Ok::<(), anyhow::Error>(()) });
@@ -317,148 +383,77 @@ pub struct ReadObject {
 }
 
 impl ReadObject {
-    fn new(inner: std::sync::Arc<StorageInner>) -> Self {
+    fn new<B, O>(inner: std::sync::Arc<StorageInner>, bucket: B, object: O) -> Self
+    where
+        B: Into<String>,
+        O: Into<String>,
+    {
         ReadObject {
             inner,
-            request: control::model::ReadObjectRequest::new(),
+            request: control::model::ReadObjectRequest::new()
+                .set_bucket(bucket)
+                .set_object(object),
         }
     }
 
-    /// Sets the value of [bucket][control::model::ReadObjectRequest::bucket].
-    pub fn set_bucket<T: Into<String>>(mut self, v: T) -> Self {
-        self.request.bucket = v.into();
-        self
-    }
-
-    /// Sets the value of [object][control::model::ReadObjectRequest::object].
-    pub fn set_object<T: Into<String>>(mut self, v: T) -> Self {
-        self.request.object = v.into();
-        self
-    }
-
-    /// Sets the value of [generation][control::model::ReadObjectRequest::generation].
-    pub fn set_generation<T: Into<i64>>(mut self, v: T) -> Self {
+    /// If present, selects a specific revision of this object (as
+    /// opposed to the latest version, the default).
+    pub fn with_generation<T: Into<i64>>(mut self, v: T) -> Self {
         self.request.generation = v.into();
         self
     }
 
-    /// Sets the value of [read_offset][control::model::ReadObjectRequest::read_offset].
-    pub fn set_read_offset<T: Into<i64>>(mut self, v: T) -> Self {
-        self.request.read_offset = v.into();
-        self
-    }
-
-    /// Sets the value of [read_limit][control::model::ReadObjectRequest::read_limit].
-    pub fn set_read_limit<T: Into<i64>>(mut self, v: T) -> Self {
-        self.request.read_limit = v.into();
-        self
-    }
-
-    /// Sets the value of [if_generation_match][control::model::ReadObjectRequest::if_generation_match].
-    pub fn set_if_generation_match<T>(mut self, v: T) -> Self
+    /// Makes the operation conditional on whether the object's current generation
+    /// matches the given value. Setting to 0 makes the operation succeed only if
+    /// there are no live versions of the object.
+    pub fn with_if_generation_match<T>(mut self, v: T) -> Self
     where
         T: Into<i64>,
     {
-        self.request.if_generation_match = Option::Some(v.into());
+        self.request.if_generation_match = Some(v.into());
         self
     }
 
-    /// Sets or clears the value of [if_generation_match][control::model::ReadObjectRequest::if_generation_match].
-    pub fn set_or_clear_if_generation_match<T>(mut self, v: Option<T>) -> Self
+    /// Makes the operation conditional on whether the object's live generation
+    /// does not match the given value. If no live object exists, the precondition
+    /// fails. Setting to 0 makes the operation succeed only if there is a live
+    /// version of the object.
+    pub fn with_if_generation_not_match<T>(mut self, v: T) -> Self
     where
         T: Into<i64>,
     {
-        self.request.if_generation_match = v.map(|x| x.into());
+        self.request.if_generation_not_match = Some(v.into());
         self
     }
 
-    /// Sets the value of [if_generation_not_match][control::model::ReadObjectRequest::if_generation_not_match].
-    pub fn set_if_generation_not_match<T>(mut self, v: T) -> Self
+    /// Makes the operation conditional on whether the object's current
+    /// metageneration matches the given value.
+    pub fn with_if_metageneration_match<T>(mut self, v: T) -> Self
     where
         T: Into<i64>,
     {
-        self.request.if_generation_not_match = Option::Some(v.into());
+        self.request.if_metageneration_match = Some(v.into());
         self
     }
 
-    /// Sets or clears the value of [if_generation_not_match][control::model::ReadObjectRequest::if_generation_not_match].
-    pub fn set_or_clear_if_generation_not_match<T>(mut self, v: Option<T>) -> Self
+    /// Makes the operation conditional on whether the object's current
+    /// metageneration does not match the given value.
+    pub fn with_if_metageneration_not_match<T>(mut self, v: T) -> Self
     where
         T: Into<i64>,
     {
-        self.request.if_generation_not_match = v.map(|x| x.into());
+        self.request.if_metageneration_not_match = Some(v.into());
         self
     }
 
-    /// Sets the value of [if_metageneration_match][control::model::ReadObjectRequest::if_metageneration_match].
-    pub fn set_if_metageneration_match<T>(mut self, v: T) -> Self
+    /// The encryption key used with the Customer-Supplied Encryption Keys
+    /// feature. In raw bytes format (not base64-encoded).
+    pub fn with_key<T>(mut self, v: T) -> Self
     where
-        T: Into<i64>,
+        T: Into<bytes::Bytes>,
     {
-        self.request.if_metageneration_match = Option::Some(v.into());
-        self
-    }
-
-    /// Sets or clears the value of [if_metageneration_match][control::model::ReadObjectRequest::if_metageneration_match].
-    pub fn set_or_clear_if_metageneration_match<T>(mut self, v: Option<T>) -> Self
-    where
-        T: Into<i64>,
-    {
-        self.request.if_metageneration_match = v.map(|x| x.into());
-        self
-    }
-
-    /// Sets the value of [if_metageneration_not_match][control::model::ReadObjectRequest::if_metageneration_not_match].
-    pub fn set_if_metageneration_not_match<T>(mut self, v: T) -> Self
-    where
-        T: Into<i64>,
-    {
-        self.request.if_metageneration_not_match = Option::Some(v.into());
-        self
-    }
-
-    /// Sets or clears the value of [if_metageneration_not_match][control::model::ReadObjectRequest::if_metageneration_not_match].
-    pub fn set_or_clear_if_metageneration_not_match<T>(mut self, v: Option<T>) -> Self
-    where
-        T: Into<i64>,
-    {
-        self.request.if_metageneration_not_match = v.map(|x| x.into());
-        self
-    }
-
-    /// Sets the value of [common_object_request_params][control::model::ReadObjectRequest::common_object_request_params].
-    pub fn set_common_object_request_params<T>(mut self, v: T) -> Self
-    where
-        T: Into<control::model::CommonObjectRequestParams>,
-    {
-        self.request.common_object_request_params = Option::Some(v.into());
-        self
-    }
-
-    /// Sets or clears the value of [common_object_request_params][control::model::ReadObjectRequest::common_object_request_params].
-    pub fn set_or_clear_common_object_request_params<T>(mut self, v: Option<T>) -> Self
-    where
-        T: Into<control::model::CommonObjectRequestParams>,
-    {
-        self.request.common_object_request_params = v.map(|x| x.into());
-        self
-    }
-
-    /// Sets the value of [read_mask][control::model::ReadObjectRequest::read_mask].
-    pub fn set_read_mask<T>(mut self, v: T) -> Self
-    where
-        T: Into<wkt::FieldMask>,
-    {
-        self.request.read_mask = Option::Some(v.into());
-        self
-    }
-
-    /// Sets or clears the value of [read_mask][control::model::ReadObjectRequest::read_mask].
-    pub fn set_or_clear_read_mask<T>(mut self, v: Option<T>) -> Self
-    where
-        T: Into<wkt::FieldMask>,
-    {
-        self.request.read_mask = v.map(|x| x.into());
+        self.request.common_object_request_params =
+            Some(key_to_common_object_request_params(v.into()));
         self
     }
 
@@ -478,39 +473,17 @@ impl ReadObject {
     }
 
     async fn http_request_builder(self) -> Result<reqwest::RequestBuilder> {
-        // TODO(#2103): map additional parameters to the JSON request.
-        // - map relevant parameters to remaining: softDelete, projection, restoreToken
-        // - map request parameters to optional extension headers: X-Goog-Encryption-Algorithm,
-        //   X-Goog-Encryption-Key, X-Goog-Encryption-Key-Sha256
-
         // Collect the required bucket and object parameters.
         let bucket: String = self.request.bucket;
         let bucket_id = bucket
             .as_str()
             .strip_prefix("projects/_/buckets/")
             .ok_or_else(|| {
-                Error::other(format!(
+                Error::binding(format!(
                     "malformed bucket name, it must start with `projects/_/buckets/`: {bucket}"
                 ))
             })?;
         let object: String = self.request.object;
-
-        // Check for parameters that are set that do not apply for the JSON API.
-        if let Some(read_mask) = self.request.read_mask {
-            return Err(ReadObject::unimplemented_err("read_mask", read_mask));
-        }
-        if self.request.read_offset != 0 {
-            return Err(ReadObject::unimplemented_err(
-                "read_offset",
-                self.request.read_offset,
-            ));
-        }
-        if self.request.read_limit != 0 {
-            return Err(ReadObject::unimplemented_err(
-                "read_limit",
-                self.request.read_limit,
-            ));
-        }
 
         // Build the request.
         let builder = self
@@ -556,16 +529,43 @@ impl ReadObject {
             .iter()
             .fold(builder, |b, v| b.query(&[("ifMetagenerationNotMatch", v)]));
 
+        let builder = apply_customer_supplied_encryption_headers(
+            builder,
+            self.request.common_object_request_params,
+        );
+
         let builder = self.inner.apply_auth_headers(builder).await?;
         Ok(builder)
     }
+}
 
-    fn unimplemented_err<T: std::fmt::Debug>(name: &str, value: T) -> Error {
-        Error::other(format!(
-            "unimplemented parameter {} set to {:?}",
-            name, value
-        ))
-    }
+fn apply_customer_supplied_encryption_headers(
+    builder: reqwest::RequestBuilder,
+    common_object_request_params: Option<control::model::CommonObjectRequestParams>,
+) -> reqwest::RequestBuilder {
+    common_object_request_params.iter().fold(builder, |b, v| {
+        b.header(
+            "x-goog-encryption-algorithm",
+            v.encryption_algorithm.clone(),
+        )
+        .header(
+            "x-goog-encryption-key",
+            BASE64_STANDARD.encode(v.encryption_key_bytes.clone()),
+        )
+        .header(
+            "x-goog-encryption-key-sha256",
+            BASE64_STANDARD.encode(v.encryption_key_sha256_bytes.clone()),
+        )
+    })
+}
+
+fn key_to_common_object_request_params(
+    v: bytes::Bytes,
+) -> control::model::CommonObjectRequestParams {
+    control::model::CommonObjectRequestParams::new()
+        .set_encryption_algorithm("AES256")
+        .set_encryption_key_bytes(v.clone())
+        .set_encryption_key_sha256_bytes(Sha256::digest(v.clone()).as_slice().to_owned())
 }
 
 #[cfg(test)]
@@ -573,6 +573,110 @@ mod tests {
     use super::*;
     use std::collections::HashMap;
     type Result = std::result::Result<(), Box<dyn std::error::Error>>;
+
+    #[tokio::test]
+    async fn test_insert_object() -> Result {
+        let client = Storage::builder()
+            .with_endpoint("http://private.googleapis.com")
+            .with_credentials(auth::credentials::testing::test_credentials())
+            .build()
+            .await?;
+
+        let insert_object_builder = client
+            .insert_object("projects/_/buckets/bucket", "object", "hello")
+            .http_request_builder()
+            .await?
+            .build()?;
+
+        assert_eq!(insert_object_builder.method(), reqwest::Method::POST);
+        assert_eq!(
+            insert_object_builder.url().as_str(),
+            "http://private.googleapis.com/upload/storage/v1/b/bucket/o?uploadType=media&name=object"
+        );
+        assert_eq!(
+            b"hello",
+            insert_object_builder.body().unwrap().as_bytes().unwrap()
+        );
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_insert_object_error_credentials() -> Result {
+        let client = Storage::builder()
+            .with_endpoint("http://private.googleapis.com")
+            .with_credentials(auth::credentials::testing::error_credentials(false))
+            .build()
+            .await?;
+
+        client
+            .insert_object("projects/_/buckets/bucket", "object", "hello")
+            .http_request_builder()
+            .await
+            .inspect_err(|e| assert!(e.is_authentication()))
+            .expect_err("invalid credentials should err");
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_insert_object_bad_bucket() -> Result {
+        let client = Storage::builder()
+            .with_credentials(auth::credentials::testing::test_credentials())
+            .build()
+            .await?;
+
+        client
+            .insert_object("malformed", "object", "hello")
+            .http_request_builder()
+            .await
+            .expect_err("malformed bucket string should error");
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_insert_object_headers() -> Result {
+        let client = Storage::builder()
+            .with_credentials(auth::credentials::testing::test_credentials())
+            .build()
+            .await?;
+        // Make a 32-byte key.
+        let key = vec![b'a'; 32];
+        let key_base64 = BASE64_STANDARD.encode(key.clone());
+
+        let key_sha256 = Sha256::digest(key.clone());
+        let key_sha256_base64 = BASE64_STANDARD.encode(key_sha256);
+
+        // The API takes the unencoded byte array.
+        let insert_object_builder = client
+            .insert_object("projects/_/buckets/bucket", "object", "hello")
+            .with_key(key)
+            .http_request_builder()
+            .await?
+            .build()?;
+
+        assert_eq!(insert_object_builder.method(), reqwest::Method::POST);
+        assert_eq!(
+            insert_object_builder.url().as_str(),
+            "https://storage.googleapis.com/upload/storage/v1/b/bucket/o?uploadType=media&name=object"
+        );
+
+        let want = vec![
+            ("x-goog-encryption-algorithm", "AES256".to_string()),
+            ("x-goog-encryption-key", key_base64),
+            ("x-goog-encryption-key-sha256", key_sha256_base64),
+        ];
+
+        for (name, value) in want {
+            assert_eq!(
+                insert_object_builder
+                    .headers()
+                    .get(name)
+                    .unwrap()
+                    .as_bytes(),
+                bytes::Bytes::from(value)
+            );
+        }
+        Ok(())
+    }
 
     #[tokio::test]
     async fn test_read_object() -> Result {
@@ -583,9 +687,7 @@ mod tests {
             .await?;
 
         let read_object_builder = client
-            .read_object()
-            .set_bucket("projects/_/buckets/bucket")
-            .set_object("object")
+            .read_object("projects/_/buckets/bucket", "object")
             .http_request_builder()
             .await?
             .build()?;
@@ -607,9 +709,7 @@ mod tests {
             .await?;
 
         client
-            .read_object()
-            .set_bucket("projects/_/buckets/bucket")
-            .set_object("object")
+            .read_object("projects/_/buckets/bucket", "object")
             .http_request_builder()
             .await
             .inspect_err(|e| assert!(e.is_authentication()))
@@ -625,9 +725,7 @@ mod tests {
             .await?;
 
         client
-            .read_object()
-            .set_bucket("malformed")
-            .set_object("object")
+            .read_object("malformed", "object")
             .http_request_builder()
             .await
             .expect_err("malformed bucket string should error");
@@ -642,14 +740,12 @@ mod tests {
             .await?;
 
         let read_object_builder = client
-            .read_object()
-            .set_bucket("projects/_/buckets/bucket")
-            .set_object("object")
-            .set_generation(5)
-            .set_if_generation_match(10)
-            .set_if_generation_not_match(20)
-            .set_if_metageneration_match(30)
-            .set_if_metageneration_not_match(40)
+            .read_object("projects/_/buckets/bucket", "object")
+            .with_generation(5)
+            .with_if_generation_match(10)
+            .with_if_generation_not_match(20)
+            .with_if_metageneration_match(30)
+            .with_if_metageneration_not_match(40)
             .http_request_builder()
             .await?
             .build()?;
@@ -677,33 +773,45 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_read_object_unimplemented() -> Result {
+    async fn test_read_object_headers() -> Result {
         let client = Storage::builder()
             .with_credentials(auth::credentials::testing::test_credentials())
             .build()
             .await?;
+        // Make a 32-byte key.
+        let key = vec![b'a'; 32];
+        assert_eq!(key.len(), 32);
+        let key_base64 = BASE64_STANDARD.encode(key.clone());
 
-        let new_builder = || {
-            client
-                .read_object()
-                .set_bucket("projects/_/buckets/bucket")
-                .set_object("object")
-        };
+        let key_sha256 = Sha256::digest(key.clone());
+        let key_sha256_base64 = BASE64_STANDARD.encode(key_sha256);
 
-        let expect_unimplemented_error = async |read_obj: ReadObject| {
-            read_obj
-                .http_request_builder()
-                .await
-                .inspect_err(|e| assert!(e.to_string().contains("unimplemented")))
-                .expect_err("unimplemented field should error")
-        };
+        // The API takes the unencoded byte array.
+        let read_object_builder = client
+            .read_object("projects/_/buckets/bucket", "object")
+            .with_key(key)
+            .http_request_builder()
+            .await?
+            .build()?;
 
-        expect_unimplemented_error(new_builder().set_read_limit(5)).await;
-        expect_unimplemented_error(new_builder().set_read_offset(5)).await;
-        expect_unimplemented_error(
-            new_builder().set_read_mask(wkt::FieldMask::default().set_paths(["abc"])),
-        )
-        .await;
+        assert_eq!(read_object_builder.method(), reqwest::Method::GET);
+        assert_eq!(
+            read_object_builder.url().as_str(),
+            "https://storage.googleapis.com/storage/v1/b/bucket/o/object?alt=media"
+        );
+
+        let want = vec![
+            ("x-goog-encryption-algorithm", "AES256".to_string()),
+            ("x-goog-encryption-key", key_base64),
+            ("x-goog-encryption-key-sha256", key_sha256_base64),
+        ];
+
+        for (name, value) in want {
+            assert_eq!(
+                read_object_builder.headers().get(name).unwrap().as_bytes(),
+                bytes::Bytes::from(value)
+            );
+        }
         Ok(())
     }
 }

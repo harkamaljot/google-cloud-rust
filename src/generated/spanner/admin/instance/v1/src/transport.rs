@@ -234,7 +234,7 @@ impl super::stub::InstanceAdmin for InstanceAdmin {
         let builder = req
             .instance_deadline
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -272,7 +272,7 @@ impl super::stub::InstanceAdmin for InstanceAdmin {
         let builder = req
             .instance_partition_deadline
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {
@@ -308,9 +308,13 @@ impl super::stub::InstanceAdmin for InstanceAdmin {
         let builder = req
             .field_mask
             .as_ref()
-            .iter()
-            .flat_map(|p| p.paths.iter())
-            .fold(builder, |builder, v| builder.query(&[("fieldMask", v)]));
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
+            .transpose()?
+            .into_iter()
+            .fold(builder, |builder, v| {
+                use gaxi::query_parameter::QueryParameter;
+                v.add(builder, "fieldMask")
+            });
         self.inner
             .execute(builder, None::<gaxi::http::NoBody>, options)
             .await
@@ -607,7 +611,7 @@ impl super::stub::InstanceAdmin for InstanceAdmin {
         let builder = req
             .instance_partition_deadline
             .as_ref()
-            .map(|p| serde_json::to_value(p).map_err(Error::serde))
+            .map(|p| serde_json::to_value(p).map_err(Error::ser))
             .transpose()?
             .into_iter()
             .fold(builder, |builder, v| {

@@ -42,6 +42,7 @@ pub struct DiscoverConnectionProfileRequest {
     /// Required. The parent resource of the connection profile type. Must be in
     /// the format `projects/*/locations/*`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// The connection profile on which to run discover.
@@ -376,7 +377,7 @@ pub mod discover_connection_profile_request {
         /// An ad-hoc connection profile configuration.
         ConnectionProfile(std::boxed::Box<crate::model::ConnectionProfile>),
         /// A reference to an existing connection profile.
-        ConnectionProfileName(std::string::String),
+        ConnectionProfileName(#[serde_as(as = "serde_with::DefaultOnNull<_>")] std::string::String),
     }
 
     /// The depth of the retrieved hierarchy of data objects.
@@ -387,9 +388,9 @@ pub mod discover_connection_profile_request {
     pub enum Hierarchy {
         /// Whether to retrieve the full hierarchy of data objects (TRUE) or only the
         /// current level (FALSE).
-        FullHierarchy(bool),
+        FullHierarchy(#[serde_as(as = "serde_with::DefaultOnNull<_>")] bool),
         /// The number of hierarchy levels below the current level to be retrieved.
-        HierarchyDepth(i32),
+        HierarchyDepth(#[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")] i32),
     }
 
     /// The data object to populate with child data objects and metadata.
@@ -607,15 +608,18 @@ pub struct FetchStaticIpsRequest {
     /// Required. The resource name for the location for which static IPs should be
     /// returned. Must be in the format `projects/*/locations/*`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Maximum number of Ips to return, will likely not be specified.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// A page token, received from a previous `ListStaticIps` call.
     /// will likely not be specified.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -660,11 +664,13 @@ impl wkt::message::Message for FetchStaticIpsRequest {
 pub struct FetchStaticIpsResponse {
     /// list of static ips by account
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub static_ips: std::vec::Vec<std::string::String>,
 
     /// A token that can be sent as `page_token` to retrieve the next page.
     /// If this field is omitted, there are no subsequent pages.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -708,12 +714,14 @@ impl wkt::message::Message for FetchStaticIpsResponse {
 pub struct ListConnectionProfilesRequest {
     /// Required. The parent that owns the collection of connection profiles.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Maximum number of connection profiles to return.
     /// If unspecified, at most 50 connection profiles will be returned.
     /// The maximum value is 1000; values above 1000 will be coerced to 1000.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// Page token received from a previous `ListConnectionProfiles` call.
@@ -722,14 +730,17 @@ pub struct ListConnectionProfilesRequest {
     /// When paginating, all other parameters provided to `ListConnectionProfiles`
     /// must match the call that provided the page token.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     /// Filter request.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub filter: std::string::String,
 
     /// Order by fields for the result.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub order_by: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -786,15 +797,18 @@ impl wkt::message::Message for ListConnectionProfilesRequest {
 pub struct ListConnectionProfilesResponse {
     /// List of connection profiles.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub connection_profiles: std::vec::Vec<crate::model::ConnectionProfile>,
 
     /// A token, which can be sent as `page_token` to retrieve the next page.
     /// If this field is omitted, there are no subsequent pages.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     /// Locations that could not be reached.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub unreachable: std::vec::Vec<std::string::String>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -863,6 +877,7 @@ impl gax::paginator::internal::PageableResponse for ListConnectionProfilesRespon
 pub struct GetConnectionProfileRequest {
     /// Required. The name of the connection profile resource to get.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -895,10 +910,12 @@ impl wkt::message::Message for GetConnectionProfileRequest {
 pub struct CreateConnectionProfileRequest {
     /// Required. The parent that owns the collection of ConnectionProfiles.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Required. The connection profile identifier.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub connection_profile_id: std::string::String,
 
     /// Required. The connection profile resource to create.
@@ -919,15 +936,18 @@ pub struct CreateConnectionProfileRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported (00000000-0000-0000-0000-000000000000).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     /// Optional. Only validate the connection profile, but don't create any
     /// resources. The default is false.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub validate_only: bool,
 
     /// Optional. Create the connection profile without validating it.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub force: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1029,15 +1049,18 @@ pub struct UpdateConnectionProfileRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported (00000000-0000-0000-0000-000000000000).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     /// Optional. Only validate the connection profile, but don't update any
     /// resources. The default is false.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub validate_only: bool,
 
     /// Optional. Update the connection profile without validating it.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub force: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1118,6 +1141,7 @@ impl wkt::message::Message for UpdateConnectionProfileRequest {
 pub struct DeleteConnectionProfileRequest {
     /// Required. The name of the connection profile resource to delete.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Optional. A request ID to identify requests. Specify a unique request ID
@@ -1134,6 +1158,7 @@ pub struct DeleteConnectionProfileRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported (00000000-0000-0000-0000-000000000000).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1172,12 +1197,14 @@ impl wkt::message::Message for DeleteConnectionProfileRequest {
 pub struct ListStreamsRequest {
     /// Required. The parent that owns the collection of streams.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Maximum number of streams to return.
     /// If unspecified, at most 50 streams will  be returned. The maximum
     /// value is 1000; values above 1000 will be coerced to 1000.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// Page token received from a previous `ListStreams` call.
@@ -1186,14 +1213,17 @@ pub struct ListStreamsRequest {
     /// When paginating, all other parameters provided to `ListStreams`
     /// must match the call that provided the page token.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     /// Filter request.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub filter: std::string::String,
 
     /// Order by fields for the result.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub order_by: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1250,15 +1280,18 @@ impl wkt::message::Message for ListStreamsRequest {
 pub struct ListStreamsResponse {
     /// List of streams
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub streams: std::vec::Vec<crate::model::Stream>,
 
     /// A token, which can be sent as `page_token` to retrieve the next page.
     /// If this field is omitted, there are no subsequent pages.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     /// Locations that could not be reached.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub unreachable: std::vec::Vec<std::string::String>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1327,6 +1360,7 @@ impl gax::paginator::internal::PageableResponse for ListStreamsResponse {
 pub struct GetStreamRequest {
     /// Required. The name of the stream resource to get.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1359,10 +1393,12 @@ impl wkt::message::Message for GetStreamRequest {
 pub struct CreateStreamRequest {
     /// Required. The parent that owns the collection of streams.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Required. The stream identifier.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub stream_id: std::string::String,
 
     /// Required. The stream resource to create.
@@ -1383,15 +1419,18 @@ pub struct CreateStreamRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported (00000000-0000-0000-0000-000000000000).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     /// Optional. Only validate the stream, but don't create any resources.
     /// The default is false.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub validate_only: bool,
 
     /// Optional. Create the stream without validating it.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub force: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1490,15 +1529,18 @@ pub struct UpdateStreamRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported (00000000-0000-0000-0000-000000000000).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     /// Optional. Only validate the stream with the changes, without actually
     /// updating it. The default is false.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub validate_only: bool,
 
     /// Optional. Update the stream without validating it.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub force: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1579,6 +1621,7 @@ impl wkt::message::Message for UpdateStreamRequest {
 pub struct DeleteStreamRequest {
     /// Required. The name of the stream resource to delete.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Optional. A request ID to identify requests. Specify a unique request ID
@@ -1595,6 +1638,7 @@ pub struct DeleteStreamRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported (00000000-0000-0000-0000-000000000000).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1634,6 +1678,7 @@ pub struct RunStreamRequest {
     /// Required. Name of the stream resource to start, in the format:
     /// projects/{project_id}/locations/{location}/streams/{stream_name}
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Optional. The CDC strategy of the stream. If not set, the system's default
@@ -1643,6 +1688,7 @@ pub struct RunStreamRequest {
 
     /// Optional. Update the stream without validating it.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub force: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1699,6 +1745,7 @@ impl wkt::message::Message for RunStreamRequest {
 pub struct GetStreamObjectRequest {
     /// Required. The name of the stream object resource to get.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1732,6 +1779,7 @@ impl wkt::message::Message for GetStreamObjectRequest {
 pub struct LookupStreamObjectRequest {
     /// Required. The parent stream that owns the collection of objects.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Required. The source object identifier which maps to the stream object.
@@ -1787,6 +1835,7 @@ pub struct StartBackfillJobRequest {
     /// Required. The name of the stream object resource to start a backfill job
     /// for.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub object: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1865,6 +1914,7 @@ pub struct StopBackfillJobRequest {
     /// Required. The name of the stream object resource to stop the backfill job
     /// for.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub object: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1941,11 +1991,13 @@ impl wkt::message::Message for StopBackfillJobResponse {
 pub struct ListStreamObjectsRequest {
     /// Required. The parent stream that owns the collection of objects.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Maximum number of objects to return. Default is 50.
     /// The maximum value is 1000; values above 1000 will be coerced to 1000.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// Page token received from a previous `ListStreamObjectsRequest` call.
@@ -1955,6 +2007,7 @@ pub struct ListStreamObjectsRequest {
     /// `ListStreamObjectsRequest` must match the call that provided the page
     /// token.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1999,10 +2052,12 @@ impl wkt::message::Message for ListStreamObjectsRequest {
 pub struct ListStreamObjectsResponse {
     /// List of stream objects.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub stream_objects: std::vec::Vec<crate::model::StreamObject>,
 
     /// A token, which can be sent as `page_token` to retrieve the next page.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2068,14 +2123,17 @@ pub struct OperationMetadata {
 
     /// Output only. Server-defined resource path for the target of the operation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub target: std::string::String,
 
     /// Output only. Name of the verb executed by the operation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub verb: std::string::String,
 
     /// Output only. Human-readable status of the operation, if any.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub status_message: std::string::String,
 
     /// Output only. Identifies whether the user has requested cancellation
@@ -2088,10 +2146,12 @@ pub struct OperationMetadata {
     /// [google.longrunning.Operation.error]: longrunning::model::Operation::result
     /// [google.rpc.Status.code]: rpc::model::Status::code
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub requested_cancellation: bool,
 
     /// Output only. API version used to start the operation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub api_version: std::string::String,
 
     /// Output only. Results of executed validations if there are any.
@@ -2206,10 +2266,12 @@ impl wkt::message::Message for OperationMetadata {
 pub struct CreatePrivateConnectionRequest {
     /// Required. The parent that owns the collection of PrivateConnections.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Required. The private connectivity identifier.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub private_connection_id: std::string::String,
 
     /// Required. The Private Connectivity resource to create.
@@ -2230,10 +2292,12 @@ pub struct CreatePrivateConnectionRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported (00000000-0000-0000-0000-000000000000).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     /// Optional. If set to true, will skip validations.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub force: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2306,6 +2370,7 @@ pub struct ListPrivateConnectionsRequest {
     /// Required. The parent that owns the collection of private connectivity
     /// configurations.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Maximum number of private connectivity configurations to return.
@@ -2313,6 +2378,7 @@ pub struct ListPrivateConnectionsRequest {
     /// returned. The maximum value is 1000; values above 1000 will be coerced to
     /// 1000.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// Page token received from a previous `ListPrivateConnections` call.
@@ -2322,14 +2388,17 @@ pub struct ListPrivateConnectionsRequest {
     /// `ListPrivateConnections` must match the call that provided the page
     /// token.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     /// Filter request.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub filter: std::string::String,
 
     /// Order by fields for the result.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub order_by: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2386,15 +2455,18 @@ impl wkt::message::Message for ListPrivateConnectionsRequest {
 pub struct ListPrivateConnectionsResponse {
     /// List of private connectivity configurations.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub private_connections: std::vec::Vec<crate::model::PrivateConnection>,
 
     /// A token, which can be sent as `page_token` to retrieve the next page.
     /// If this field is omitted, there are no subsequent pages.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     /// Locations that could not be reached.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub unreachable: std::vec::Vec<std::string::String>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2463,6 +2535,7 @@ impl gax::paginator::internal::PageableResponse for ListPrivateConnectionsRespon
 pub struct DeletePrivateConnectionRequest {
     /// Required. The name of the private connectivity configuration to delete.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Optional. A request ID to identify requests. Specify a unique request ID
@@ -2479,11 +2552,13 @@ pub struct DeletePrivateConnectionRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported (00000000-0000-0000-0000-000000000000).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     /// Optional. If set to true, any child routes that belong to this
     /// PrivateConnection will also be deleted.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub force: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2528,6 +2603,7 @@ impl wkt::message::Message for DeletePrivateConnectionRequest {
 pub struct GetPrivateConnectionRequest {
     /// Required. The name of the  private connectivity configuration to get.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2560,10 +2636,12 @@ impl wkt::message::Message for GetPrivateConnectionRequest {
 pub struct CreateRouteRequest {
     /// Required. The parent that owns the collection of Routes.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Required. The Route identifier.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub route_id: std::string::String,
 
     /// Required. The Route resource to create.
@@ -2584,6 +2662,7 @@ pub struct CreateRouteRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported (00000000-0000-0000-0000-000000000000).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2646,6 +2725,7 @@ impl wkt::message::Message for CreateRouteRequest {
 pub struct ListRoutesRequest {
     /// Required. The parent that owns the collection of Routess.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Maximum number of Routes to return. The service may return
@@ -2653,6 +2733,7 @@ pub struct ListRoutesRequest {
     /// will be returned. The maximum value is 1000; values above 1000 will be
     /// coerced to 1000.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// Page token received from a previous `ListRoutes` call.
@@ -2662,14 +2743,17 @@ pub struct ListRoutesRequest {
     /// `ListRoutes` must match the call that provided the page
     /// token.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     /// Filter request.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub filter: std::string::String,
 
     /// Order by fields for the result.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub order_by: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2726,15 +2810,18 @@ impl wkt::message::Message for ListRoutesRequest {
 pub struct ListRoutesResponse {
     /// List of Routes.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub routes: std::vec::Vec<crate::model::Route>,
 
     /// A token, which can be sent as `page_token` to retrieve the next page.
     /// If this field is omitted, there are no subsequent pages.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     /// Locations that could not be reached.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub unreachable: std::vec::Vec<std::string::String>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2803,6 +2890,7 @@ impl gax::paginator::internal::PageableResponse for ListRoutesResponse {
 pub struct DeleteRouteRequest {
     /// Required. The name of the Route resource to delete.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Optional. A request ID to identify requests. Specify a unique request ID
@@ -2819,6 +2907,7 @@ pub struct DeleteRouteRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported (00000000-0000-0000-0000-000000000000).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2857,6 +2946,7 @@ impl wkt::message::Message for DeleteRouteRequest {
 pub struct GetRouteRequest {
     /// Required. The name of the Route resource to get.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2889,27 +2979,33 @@ impl wkt::message::Message for GetRouteRequest {
 pub struct OracleProfile {
     /// Required. Hostname for the Oracle connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub hostname: std::string::String,
 
     /// Port for the Oracle connection, default value is 1521.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub port: i32,
 
     /// Required. Username for the Oracle connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub username: std::string::String,
 
     /// Optional. Password for the Oracle connection. Mutually exclusive with the
     /// `secret_manager_stored_password` field.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub password: std::string::String,
 
     /// Required. Database for the Oracle connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub database_service: std::string::String,
 
     /// Connection string attributes
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub connection_attributes: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// Optional. SSL configuration for the Oracle connection.
@@ -2923,6 +3019,7 @@ pub struct OracleProfile {
     /// Optional. A reference to a Secret Manager resource name storing the Oracle
     /// connection password. Mutually exclusive with the `password` field.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub secret_manager_stored_password: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3039,27 +3136,33 @@ impl wkt::message::Message for OracleProfile {
 pub struct OracleAsmConfig {
     /// Required. Hostname for the Oracle ASM connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub hostname: std::string::String,
 
     /// Required. Port for the Oracle ASM connection.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub port: i32,
 
     /// Required. Username for the Oracle ASM connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub username: std::string::String,
 
     /// Optional. Password for the Oracle ASM connection. Mutually exclusive with
     /// the `secret_manager_stored_password` field.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub password: std::string::String,
 
     /// Required. ASM service name for the Oracle ASM connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub asm_service: std::string::String,
 
     /// Optional. Connection string attributes
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub connection_attributes: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// Optional. SSL configuration for the Oracle connection.
@@ -3069,6 +3172,7 @@ pub struct OracleAsmConfig {
     /// Optional. A reference to a Secret Manager resource name storing the Oracle
     /// ASM connection password. Mutually exclusive with the `password` field.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub secret_manager_stored_password: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3164,19 +3268,23 @@ impl wkt::message::Message for OracleAsmConfig {
 pub struct MysqlProfile {
     /// Required. Hostname for the MySQL connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub hostname: std::string::String,
 
     /// Port for the MySQL connection, default value is 3306.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub port: i32,
 
     /// Required. Username for the MySQL connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub username: std::string::String,
 
     /// Optional. Input only. Password for the MySQL connection. Mutually exclusive
     /// with the `secret_manager_stored_password` field.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub password: std::string::String,
 
     /// SSL configuration for the MySQL connection.
@@ -3186,6 +3294,7 @@ pub struct MysqlProfile {
     /// Optional. A reference to a Secret Manager resource name storing the MySQL
     /// connection password. Mutually exclusive with the `password` field.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub secret_manager_stored_password: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3263,29 +3372,35 @@ impl wkt::message::Message for MysqlProfile {
 pub struct PostgresqlProfile {
     /// Required. Hostname for the PostgreSQL connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub hostname: std::string::String,
 
     /// Port for the PostgreSQL connection, default value is 5432.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub port: i32,
 
     /// Required. Username for the PostgreSQL connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub username: std::string::String,
 
     /// Optional. Password for the PostgreSQL connection. Mutually exclusive with
     /// the `secret_manager_stored_password` field.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub password: std::string::String,
 
     /// Required. Database for the PostgreSQL connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub database: std::string::String,
 
     /// Optional. A reference to a Secret Manager resource name storing the
     /// PostgreSQL connection password. Mutually exclusive with the `password`
     /// field.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub secret_manager_stored_password: std::string::String,
 
     /// Optional. SSL configuration for the PostgreSQL connection.
@@ -3376,29 +3491,35 @@ impl wkt::message::Message for PostgresqlProfile {
 pub struct SqlServerProfile {
     /// Required. Hostname for the SQLServer connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub hostname: std::string::String,
 
     /// Port for the SQLServer connection, default value is 1433.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub port: i32,
 
     /// Required. Username for the SQLServer connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub username: std::string::String,
 
     /// Optional. Password for the SQLServer connection. Mutually exclusive with
     /// the `secret_manager_stored_password` field.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub password: std::string::String,
 
     /// Required. Database for the SQLServer connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub database: std::string::String,
 
     /// Optional. A reference to a Secret Manager resource name storing the
     /// SQLServer connection password. Mutually exclusive with the `password`
     /// field.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub secret_manager_stored_password: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3464,6 +3585,7 @@ impl wkt::message::Message for SqlServerProfile {
 pub struct SalesforceProfile {
     /// Required. Domain endpoint for the Salesforce connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub domain: std::string::String,
 
     /// Credentials for Salesforce connection.
@@ -3588,28 +3710,33 @@ pub mod salesforce_profile {
     pub struct UserCredentials {
         /// Required. Username for the Salesforce connection.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub username: std::string::String,
 
         /// Optional. Password for the Salesforce connection.
         /// Mutually exclusive with the `secret_manager_stored_password` field.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub password: std::string::String,
 
         /// Optional. Security token for the Salesforce connection.
         /// Mutually exclusive with the `secret_manager_stored_security_token` field.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub security_token: std::string::String,
 
         /// Optional. A reference to a Secret Manager resource name storing the
         /// Salesforce connection's password. Mutually exclusive with the `password`
         /// field.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub secret_manager_stored_password: std::string::String,
 
         /// Optional. A reference to a Secret Manager resource name storing the
         /// Salesforce connection's security token. Mutually exclusive with the
         /// `security_token` field.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub secret_manager_stored_security_token: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3677,17 +3804,20 @@ pub mod salesforce_profile {
     pub struct Oauth2ClientCredentials {
         /// Required. Client ID for Salesforce OAuth2 Client Credentials.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub client_id: std::string::String,
 
         /// Optional. Client secret for Salesforce OAuth2 Client Credentials.
         /// Mutually exclusive with the `secret_manager_stored_client_secret` field.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub client_secret: std::string::String,
 
         /// Optional. A reference to a Secret Manager resource name storing the
         /// Salesforce OAuth2 client_secret. Mutually exclusive with the
         /// `client_secret` field.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub secret_manager_stored_client_secret: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3755,10 +3885,12 @@ pub mod salesforce_profile {
 pub struct GcsProfile {
     /// Required. The Cloud Storage bucket name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub bucket: std::string::String,
 
     /// The root path inside the Cloud Storage bucket.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub root_path: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3843,14 +3975,17 @@ impl wkt::message::Message for StaticServiceIpConnectivity {
 pub struct ForwardSshTunnelConnectivity {
     /// Required. Hostname for the SSH tunnel.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub hostname: std::string::String,
 
     /// Required. Username for the SSH tunnel.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub username: std::string::String,
 
     /// Port for the SSH tunnel, default value is 22.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub port: i32,
 
     #[serde(flatten, skip_serializing_if = "std::option::Option::is_none")]
@@ -3972,9 +4107,9 @@ pub mod forward_ssh_tunnel_connectivity {
     #[non_exhaustive]
     pub enum AuthenticationMethod {
         /// Input only. SSH password.
-        Password(std::string::String),
+        Password(#[serde_as(as = "serde_with::DefaultOnNull<_>")] std::string::String),
         /// Input only. SSH private key.
-        PrivateKey(std::string::String),
+        PrivateKey(#[serde_as(as = "serde_with::DefaultOnNull<_>")] std::string::String),
     }
 }
 
@@ -3988,10 +4123,12 @@ pub struct VpcPeeringConfig {
     /// Required. Fully qualified name of the VPC that Datastream will peer to.
     /// Format: `projects/{project}/global/{networks}/{name}`
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub vpc: std::string::String,
 
     /// Required. A free subnet for peering. (CIDR of /29)
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub subnet: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4031,6 +4168,7 @@ impl wkt::message::Message for VpcPeeringConfig {
 pub struct PrivateConnection {
     /// Output only. Identifier. The resource's name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Output only. The create time of the resource.
@@ -4043,13 +4181,17 @@ pub struct PrivateConnection {
 
     /// Labels.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub labels: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// Required. Display name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub display_name: std::string::String,
 
     /// Output only. The state of the Private Connection.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub state: crate::model::private_connection::State,
 
     /// Output only. In case of error, the details of the error in a user-friendly
@@ -4394,6 +4536,7 @@ pub struct PrivateConnectivity {
     /// Required. A reference to a private connection resource.
     /// Format: `projects/{project}/locations/{location}/privateConnections/{name}`
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub private_connection: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4430,6 +4573,7 @@ impl wkt::message::Message for PrivateConnectivity {
 pub struct Route {
     /// Output only. Identifier. The resource's name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Output only. The create time of the resource.
@@ -4442,18 +4586,22 @@ pub struct Route {
 
     /// Labels.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub labels: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// Required. Display name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub display_name: std::string::String,
 
     /// Required. Destination address for connection
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub destination_address: std::string::String,
 
     /// Destination port for connection
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub destination_port: i32,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4557,10 +4705,12 @@ pub struct MysqlSslConfig {
     /// Certificate. If this field is used then the 'client_certificate' and the
     /// 'ca_certificate' fields are mandatory.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub client_key: std::string::String,
 
     /// Output only. Indicates whether the client_key field is set.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub client_key_set: bool,
 
     /// Optional. Input only. PEM-encoded certificate that will be used by the
@@ -4568,19 +4718,23 @@ pub struct MysqlSslConfig {
     /// is used then the 'client_key' and the 'ca_certificate' fields are
     /// mandatory.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub client_certificate: std::string::String,
 
     /// Output only. Indicates whether the client_certificate field is set.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub client_certificate_set: bool,
 
     /// Input only. PEM-encoded certificate of the CA that signed the source
     /// database server's certificate.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub ca_certificate: std::string::String,
 
     /// Output only. Indicates whether the ca_certificate field is set.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub ca_certificate_set: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4647,11 +4801,13 @@ pub struct OracleSslConfig {
     /// Input only. PEM-encoded certificate of the CA that signed the source
     /// database server's certificate.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub ca_certificate: std::string::String,
 
     /// Output only. Indicates whether the ca_certificate field has been set for
     /// this Connection-Profile.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub ca_certificate_set: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4817,6 +4973,7 @@ pub mod postgresql_ssl_config {
     pub struct ServerVerification {
         /// Required. Input only. PEM-encoded server root CA certificate.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub ca_certificate: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4860,6 +5017,7 @@ pub mod postgresql_ssl_config {
         /// leaf certificate) to link the this certificate to the trusted root
         /// certificate.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub client_certificate: std::string::String,
 
         /// Optional. Input only. PEM-encoded private key associated with the client
@@ -4867,10 +5025,12 @@ pub mod postgresql_ssl_config {
         /// allowing the PostgreSQL server to authenticate the client's identity,
         /// i.e. identity of the Datastream.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub client_key: std::string::String,
 
         /// Required. Input only. PEM-encoded server root CA certificate.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub ca_certificate: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4945,6 +5105,7 @@ pub mod postgresql_ssl_config {
 pub struct ConnectionProfile {
     /// Output only. Identifier. The resource's name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Output only. The create time of the resource.
@@ -4957,10 +5118,12 @@ pub struct ConnectionProfile {
 
     /// Labels.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub labels: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// Required. Display name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub display_name: std::string::String,
 
     /// Output only. Reserved for future use.
@@ -5483,38 +5646,47 @@ pub mod connection_profile {
 pub struct OracleColumn {
     /// Column name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub column: std::string::String,
 
     /// The Oracle data type.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub data_type: std::string::String,
 
     /// Column length.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub length: i32,
 
     /// Column precision.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub precision: i32,
 
     /// Column scale.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub scale: i32,
 
     /// Column encoding.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub encoding: std::string::String,
 
     /// Whether or not the column represents a primary key.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub primary_key: bool,
 
     /// Whether or not the column can accept a null value.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub nullable: bool,
 
     /// The ordinal position of the column in the table.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub ordinal_position: i32,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5595,12 +5767,14 @@ impl wkt::message::Message for OracleColumn {
 pub struct OracleTable {
     /// Table name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub table: std::string::String,
 
     /// Oracle columns in the schema.
     /// When unspecified as part of include/exclude objects, includes/excludes
     /// everything.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub oracle_columns: std::vec::Vec<crate::model::OracleColumn>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5644,10 +5818,12 @@ impl wkt::message::Message for OracleTable {
 pub struct OracleSchema {
     /// Schema name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub schema: std::string::String,
 
     /// Tables in the schema.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub oracle_tables: std::vec::Vec<crate::model::OracleTable>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5691,6 +5867,7 @@ impl wkt::message::Message for OracleSchema {
 pub struct OracleRdbms {
     /// Oracle schemas/databases in the database server.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub oracle_schemas: std::vec::Vec<crate::model::OracleSchema>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5737,11 +5914,13 @@ pub struct OracleSourceConfig {
     /// Maximum number of concurrent CDC tasks. The number should be non-negative.
     /// If not set (or set to 0), the system's default value is used.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub max_concurrent_cdc_tasks: i32,
 
     /// Maximum number of concurrent backfill tasks. The number should be
     /// non-negative. If not set (or set to 0), the system's default value is used.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub max_concurrent_backfill_tasks: i32,
 
     /// The configuration for handle Oracle large objects.
@@ -6201,10 +6380,12 @@ pub mod oracle_source_config {
         pub struct LogFileDirectories {
             /// Required. Oracle directory for online logs.
             #[serde(skip_serializing_if = "std::string::String::is_empty")]
+            #[serde_as(as = "serde_with::DefaultOnNull<_>")]
             pub online_log_directory: std::string::String,
 
             /// Required. Oracle directory for archived logs.
             #[serde(skip_serializing_if = "std::string::String::is_empty")]
+            #[serde_as(as = "serde_with::DefaultOnNull<_>")]
             pub archived_log_directory: std::string::String,
 
             #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -6295,34 +6476,42 @@ pub mod oracle_source_config {
 pub struct PostgresqlColumn {
     /// Column name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub column: std::string::String,
 
     /// The PostgreSQL data type.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub data_type: std::string::String,
 
     /// Column length.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub length: i32,
 
     /// Column precision.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub precision: i32,
 
     /// Column scale.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub scale: i32,
 
     /// Whether or not the column represents a primary key.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub primary_key: bool,
 
     /// Whether or not the column can accept a null value.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub nullable: bool,
 
     /// The ordinal position of the column in the table.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub ordinal_position: i32,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -6397,12 +6586,14 @@ impl wkt::message::Message for PostgresqlColumn {
 pub struct PostgresqlTable {
     /// Table name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub table: std::string::String,
 
     /// PostgreSQL columns in the schema.
     /// When unspecified as part of include/exclude objects,
     /// includes/excludes everything.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub postgresql_columns: std::vec::Vec<crate::model::PostgresqlColumn>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -6446,10 +6637,12 @@ impl wkt::message::Message for PostgresqlTable {
 pub struct PostgresqlSchema {
     /// Schema name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub schema: std::string::String,
 
     /// Tables in the schema.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub postgresql_tables: std::vec::Vec<crate::model::PostgresqlTable>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -6493,6 +6686,7 @@ impl wkt::message::Message for PostgresqlSchema {
 pub struct PostgresqlRdbms {
     /// PostgreSQL schemas in the database server.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub postgresql_schemas: std::vec::Vec<crate::model::PostgresqlSchema>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -6539,17 +6733,20 @@ pub struct PostgresqlSourceConfig {
     /// Required. Immutable. The name of the logical replication slot that's
     /// configured with the pgoutput plugin.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub replication_slot: std::string::String,
 
     /// Required. The name of the publication that includes the set of all tables
     /// that are defined in the stream's include_objects.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub publication: std::string::String,
 
     /// Maximum number of concurrent backfill tasks. The number should be non
     /// negative. If not set (or set to 0), the system's default value will be
     /// used.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub max_concurrent_backfill_tasks: i32,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -6633,34 +6830,42 @@ impl wkt::message::Message for PostgresqlSourceConfig {
 pub struct SqlServerColumn {
     /// Column name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub column: std::string::String,
 
     /// The SQLServer data type.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub data_type: std::string::String,
 
     /// Column length.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub length: i32,
 
     /// Column precision.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub precision: i32,
 
     /// Column scale.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub scale: i32,
 
     /// Whether or not the column represents a primary key.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub primary_key: bool,
 
     /// Whether or not the column can accept a null value.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub nullable: bool,
 
     /// The ordinal position of the column in the table.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub ordinal_position: i32,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -6735,12 +6940,14 @@ impl wkt::message::Message for SqlServerColumn {
 pub struct SqlServerTable {
     /// Table name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub table: std::string::String,
 
     /// SQLServer columns in the schema.
     /// When unspecified as part of include/exclude objects,
     /// includes/excludes everything.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub columns: std::vec::Vec<crate::model::SqlServerColumn>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -6784,10 +6991,12 @@ impl wkt::message::Message for SqlServerTable {
 pub struct SqlServerSchema {
     /// Schema name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub schema: std::string::String,
 
     /// Tables in the schema.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub tables: std::vec::Vec<crate::model::SqlServerTable>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -6831,6 +7040,7 @@ impl wkt::message::Message for SqlServerSchema {
 pub struct SqlServerRdbms {
     /// SQLServer schemas in the database server.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub schemas: std::vec::Vec<crate::model::SqlServerSchema>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -6876,10 +7086,12 @@ pub struct SqlServerSourceConfig {
 
     /// Max concurrent CDC tasks.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub max_concurrent_cdc_tasks: i32,
 
     /// Max concurrent backfill tasks.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub max_concurrent_backfill_tasks: i32,
 
     /// Configuration to select the CDC read method for the stream.
@@ -7098,39 +7310,48 @@ impl wkt::message::Message for SqlServerChangeTables {
 pub struct MysqlColumn {
     /// Column name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub column: std::string::String,
 
     /// The MySQL data type. Full data types list can be found here:
     /// <https://dev.mysql.com/doc/refman/8.0/en/data-types.html>
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub data_type: std::string::String,
 
     /// Column length.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub length: i32,
 
     /// Column collation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub collation: std::string::String,
 
     /// Whether or not the column represents a primary key.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub primary_key: bool,
 
     /// Whether or not the column can accept a null value.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub nullable: bool,
 
     /// The ordinal position of the column in the table.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub ordinal_position: i32,
 
     /// Column precision.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub precision: i32,
 
     /// Column scale.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub scale: i32,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7211,12 +7432,14 @@ impl wkt::message::Message for MysqlColumn {
 pub struct MysqlTable {
     /// Table name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub table: std::string::String,
 
     /// MySQL columns in the database.
     /// When unspecified as part of include/exclude objects, includes/excludes
     /// everything.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub mysql_columns: std::vec::Vec<crate::model::MysqlColumn>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7260,10 +7483,12 @@ impl wkt::message::Message for MysqlTable {
 pub struct MysqlDatabase {
     /// Database name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub database: std::string::String,
 
     /// Tables in the database.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub mysql_tables: std::vec::Vec<crate::model::MysqlTable>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7307,6 +7532,7 @@ impl wkt::message::Message for MysqlDatabase {
 pub struct MysqlRdbms {
     /// Mysql databases on the server
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub mysql_databases: std::vec::Vec<crate::model::MysqlDatabase>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7353,12 +7579,14 @@ pub struct MysqlSourceConfig {
     /// Maximum number of concurrent CDC tasks. The number should be non negative.
     /// If not set (or set to 0), the system's default value will be used.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub max_concurrent_cdc_tasks: i32,
 
     /// Maximum number of concurrent backfill tasks. The number should be non
     /// negative. If not set (or set to 0), the system's default value will be
     /// used.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub max_concurrent_backfill_tasks: i32,
 
     /// The CDC method to use for the stream.
@@ -7665,6 +7893,7 @@ impl wkt::message::Message for SalesforceSourceConfig {
 pub struct SalesforceOrg {
     /// Salesforce objects in the database server.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub objects: std::vec::Vec<crate::model::SalesforceObject>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7702,6 +7931,7 @@ impl wkt::message::Message for SalesforceOrg {
 pub struct SalesforceObject {
     /// Object name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub object_name: std::string::String,
 
     /// Salesforce fields.
@@ -7709,6 +7939,7 @@ pub struct SalesforceObject {
     /// includes everything, when unspecified as part of exclude objects,
     /// excludes nothing.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub fields: std::vec::Vec<crate::model::SalesforceField>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7752,14 +7983,17 @@ impl wkt::message::Message for SalesforceObject {
 pub struct SalesforceField {
     /// Field name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// The data type.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub data_type: std::string::String,
 
     /// Indicates whether the field can accept nil values.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub nillable: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7805,6 +8039,7 @@ pub struct SourceConfig {
     /// Required. Source connection profile resource.
     /// Format: `projects/{project}/locations/{location}/connectionProfiles/{name}`
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub source_connection_profile: std::string::String,
 
     /// Stream configuration that is specific to the data source type.
@@ -8063,9 +8298,13 @@ impl wkt::message::Message for AvroFileFormat {
 #[non_exhaustive]
 pub struct JsonFileFormat {
     /// The schema file format along JSON data files.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub schema_file_format: crate::model::json_file_format::SchemaFileFormat,
 
     /// Compression of the loaded JSON file.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub compression: crate::model::json_file_format::JsonCompression,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8384,10 +8623,12 @@ pub mod json_file_format {
 pub struct GcsDestinationConfig {
     /// Path inside the Cloud Storage bucket to write data to.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub path: std::string::String,
 
     /// The maximum file size to be saved in the bucket.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub file_rotation_mb: i32,
 
     /// The maximum duration for which new events are added before a file is
@@ -8810,6 +9051,7 @@ pub mod big_query_destination_config {
         /// DatasetIds allowed characters:
         /// <https://cloud.google.com/bigquery/docs/reference/rest/v2/datasets#datasetreference>.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub dataset_id: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8894,12 +9136,14 @@ pub mod big_query_destination_config {
             /// <https://cloud.google.com/bigquery/docs/locations> for supported
             /// locations.
             #[serde(skip_serializing_if = "std::string::String::is_empty")]
+            #[serde_as(as = "serde_with::DefaultOnNull<_>")]
             pub location: std::string::String,
 
             /// If supplied, every created dataset will have its name prefixed by the
             /// provided value. The prefix and name will be separated by an underscore.
             /// i.e. \<prefix\>_<dataset_name>.
             #[serde(skip_serializing_if = "std::string::String::is_empty")]
+            #[serde_as(as = "serde_with::DefaultOnNull<_>")]
             pub dataset_id_prefix: std::string::String,
 
             /// Describes the Cloud KMS encryption key that will be used to
@@ -8910,6 +9154,7 @@ pub mod big_query_destination_config {
             /// See <https://cloud.google.com/bigquery/docs/customer-managed-encryption>
             /// for more information.
             #[serde(skip_serializing_if = "std::string::String::is_empty")]
+            #[serde_as(as = "serde_with::DefaultOnNull<_>")]
             pub kms_key_name: std::string::String,
 
             #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8964,21 +9209,28 @@ pub mod big_query_destination_config {
     pub struct BlmtConfig {
         /// Required. The Cloud Storage bucket name.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub bucket: std::string::String,
 
         /// The root path inside the Cloud Storage bucket.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub root_path: std::string::String,
 
         /// Required. The bigquery connection.
         /// Format: `{project}.{location}.{name}`
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub connection_name: std::string::String,
 
         /// Required. The file format.
+        #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub file_format: crate::model::big_query_destination_config::blmt_config::FileFormat,
 
         /// Required. The table format.
+        #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub table_format: crate::model::big_query_destination_config::blmt_config::TableFormat,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9387,6 +9639,7 @@ pub struct DestinationConfig {
     /// Required. Destination connection profile resource.
     /// Format: `projects/{project}/locations/{location}/connectionProfiles/{name}`
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub destination_connection_profile: std::string::String,
 
     /// Stream configuration that is specific to the data destination type.
@@ -9529,6 +9782,7 @@ pub mod destination_config {
 pub struct Stream {
     /// Output only. Identifier. The stream's name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Output only. The creation time of the stream.
@@ -9541,10 +9795,12 @@ pub struct Stream {
 
     /// Labels.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub labels: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// Required. Display name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub display_name: std::string::String,
 
     /// Required. Source connection profile configuration.
@@ -9556,10 +9812,13 @@ pub struct Stream {
     pub destination_config: std::option::Option<crate::model::DestinationConfig>,
 
     /// The state of the stream.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub state: crate::model::stream::State,
 
     /// Output only. Errors on the Stream.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub errors: std::vec::Vec<crate::model::Error>,
 
     /// Immutable. A reference to a KMS encryption key.
@@ -10321,6 +10580,7 @@ pub mod stream {
 pub struct StreamObject {
     /// Output only. Identifier. The object resource's name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Output only. The creation time of the object.
@@ -10333,10 +10593,12 @@ pub struct StreamObject {
 
     /// Required. Display name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub display_name: std::string::String,
 
     /// Output only. Active errors on the object.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub errors: std::vec::Vec<crate::model::Error>,
 
     /// The latest backfill job that was initiated for the stream object.
@@ -10698,10 +10960,12 @@ pub mod source_object_identifier {
     pub struct OracleObjectIdentifier {
         /// Required. The schema name.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub schema: std::string::String,
 
         /// Required. The table name.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub table: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -10740,10 +11004,12 @@ pub mod source_object_identifier {
     pub struct PostgresqlObjectIdentifier {
         /// Required. The schema name.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub schema: std::string::String,
 
         /// Required. The table name.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub table: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -10782,10 +11048,12 @@ pub mod source_object_identifier {
     pub struct MysqlObjectIdentifier {
         /// Required. The database name.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub database: std::string::String,
 
         /// Required. The table name.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub table: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -10824,10 +11092,12 @@ pub mod source_object_identifier {
     pub struct SqlServerObjectIdentifier {
         /// Required. The schema name.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub schema: std::string::String,
 
         /// Required. The table name.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub table: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -10866,6 +11136,7 @@ pub mod source_object_identifier {
     pub struct SalesforceObjectIdentifier {
         /// Required. The object name.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub object_name: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -10926,9 +11197,13 @@ pub mod source_object_identifier {
 #[non_exhaustive]
 pub struct BackfillJob {
     /// Output only. Backfill job state.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub state: crate::model::backfill_job::State,
 
     /// Backfill job's triggering reason.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub trigger: crate::model::backfill_job::Trigger,
 
     /// Output only. Backfill job's start time.
@@ -10941,6 +11216,7 @@ pub struct BackfillJob {
 
     /// Output only. Errors which caused the backfill job to fail.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub errors: std::vec::Vec<crate::model::Error>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -11341,15 +11617,18 @@ pub mod backfill_job {
 pub struct Error {
     /// A title that explains the reason for the error.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub reason: std::string::String,
 
     /// A unique identifier for this specific error,
     /// allowing it to be traced throughout the system in logs and API responses.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub error_uuid: std::string::String,
 
     /// A message containing more information about the error that occurred.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub message: std::string::String,
 
     /// The time when the error occurred.
@@ -11358,6 +11637,7 @@ pub struct Error {
 
     /// Additional information about the error.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub details: std::collections::HashMap<std::string::String, std::string::String>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -11433,6 +11713,7 @@ pub struct ValidationResult {
     /// A list of validations (includes both executed as well as not executed
     /// validations).
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub validations: std::vec::Vec<crate::model::Validation>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -11470,17 +11751,22 @@ impl wkt::message::Message for ValidationResult {
 pub struct Validation {
     /// A short description of the validation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub description: std::string::String,
 
     /// Output only. Validation execution status.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub state: crate::model::validation::State,
 
     /// Messages reflecting the validation results.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub message: std::vec::Vec<crate::model::ValidationMessage>,
 
     /// A custom code identifying this validation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub code: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -11691,17 +11977,22 @@ pub mod validation {
 pub struct ValidationMessage {
     /// The result of the validation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub message: std::string::String,
 
     /// Message severity level (warning or error).
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub level: crate::model::validation_message::Level,
 
     /// Additional metadata related to the result.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub metadata: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// A custom code identifying this specific message.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub code: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -12308,6 +12599,7 @@ pub mod cdc_strategy {
 pub struct SqlServerLsnPosition {
     /// Required. Log sequence number (LSN) from where Logs will be read
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub lsn: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -12340,7 +12632,7 @@ impl wkt::message::Message for SqlServerLsnPosition {
 pub struct OracleScnPosition {
     /// Required. SCN number from where Logs will be read
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "serde_with::DisplayFromStr")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I64>")]
     pub scn: i64,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -12373,10 +12665,12 @@ impl wkt::message::Message for OracleScnPosition {
 pub struct MysqlLogPosition {
     /// Required. The binary log file name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub log_file: std::string::String,
 
     /// Optional. The position within the binary log file. Default is head of file.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
     pub log_position: std::option::Option<i32>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -12427,6 +12721,7 @@ impl wkt::message::Message for MysqlLogPosition {
 pub struct MysqlGtidPosition {
     /// Required. The gtid set to start replication from.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub gtid_set: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]

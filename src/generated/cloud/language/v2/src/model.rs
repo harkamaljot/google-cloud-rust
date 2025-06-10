@@ -39,6 +39,8 @@ pub struct Document {
     /// Required. If the type is not set or is `TYPE_UNSPECIFIED`,
     /// returns an `INVALID_ARGUMENT` error.
     #[serde(rename = "type")]
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub r#type: crate::model::document::Type,
 
     /// Optional. The language of the document (if not specified, the language is
@@ -50,6 +52,7 @@ pub struct Document {
     /// specified by the caller or automatically detected) is not supported by the
     /// called API method, an `INVALID_ARGUMENT` error is returned.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub language_code: std::string::String,
 
     /// The source of the document: a string containing the content or a
@@ -288,12 +291,12 @@ pub mod document {
     pub enum Source {
         /// The content of the input in string format.
         /// Cloud audit logging exempt since it is based on user data.
-        Content(std::string::String),
+        Content(#[serde_as(as = "serde_with::DefaultOnNull<_>")] std::string::String),
         /// The Google Cloud Storage URI where the file content is located.
         /// This URI must be of the form: gs://bucket_name/object_name. For more
         /// details, see <https://cloud.google.com/storage/docs/reference-uris>.
         /// NOTE: Cloud Storage object versioning is not supported.
-        GcsContentUri(std::string::String),
+        GcsContentUri(#[serde_as(as = "serde_with::DefaultOnNull<_>")] std::string::String),
     }
 }
 
@@ -377,10 +380,13 @@ impl wkt::message::Message for Sentence {
 pub struct Entity {
     /// The representative name for the entity.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// The entity type.
     #[serde(rename = "type")]
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub r#type: crate::model::entity::Type,
 
     /// Metadata associated with the entity.
@@ -388,11 +394,13 @@ pub struct Entity {
     /// For the metadata
     /// associated with other entity types, see the Type table below.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub metadata: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// The mentions of this entity in the input document. The API currently
     /// supports proper noun mentions.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub mentions: std::vec::Vec<crate::model::EntityMention>,
 
     /// For calls to [AnalyzeEntitySentiment][] or if
@@ -726,13 +734,13 @@ pub struct Sentiment {
     /// the absolute magnitude of sentiment regardless of score (positive or
     /// negative).
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "wkt::internal::F32")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::F32>")]
     pub magnitude: f32,
 
     /// Sentiment score between -1.0 (negative sentiment) and 1.0
     /// (positive sentiment).
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "wkt::internal::F32")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::F32>")]
     pub score: f32,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -776,6 +784,8 @@ pub struct EntityMention {
 
     /// The type of the entity mention.
     #[serde(rename = "type")]
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub r#type: crate::model::entity_mention::Type,
 
     /// For calls to [AnalyzeEntitySentiment][] or if
@@ -790,7 +800,7 @@ pub struct EntityMention {
     /// The score shows the probability of the entity mention being the entity
     /// type. The score is in (0, 1] range.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "wkt::internal::F32")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::F32>")]
     pub probability: f32,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1006,6 +1016,7 @@ pub mod entity_mention {
 pub struct TextSpan {
     /// The content of the text span, which is a substring of the document.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub content: std::string::String,
 
     /// The API calculates the beginning offset of the content in the original
@@ -1015,6 +1026,7 @@ pub struct TextSpan {
     ///
     /// [google.cloud.language.v2.EncodingType]: crate::model::EncodingType
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub begin_offset: i32,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1053,19 +1065,20 @@ impl wkt::message::Message for TextSpan {
 pub struct ClassificationCategory {
     /// The name of the category representing the document.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// The classifier's confidence of the category. Number represents how certain
     /// the classifier is that this category represents the given text.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "wkt::internal::F32")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::F32>")]
     pub confidence: f32,
 
     /// Optional. The classifier's severity of the category. This is only present
     /// when the ModerateTextRequest.ModelVersion is set to MODEL_VERSION_2, and
     /// the corresponding category has a severity score.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "wkt::internal::F32")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::F32>")]
     pub severity: f32,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1113,6 +1126,8 @@ pub struct AnalyzeSentimentRequest {
     pub document: std::option::Option<crate::model::Document>,
 
     /// The encoding type used by the API to calculate sentence offsets.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub encoding_type: crate::model::EncodingType,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1172,16 +1187,19 @@ pub struct AnalyzeSentimentResponse {
     /// in the request or, if not specified, the automatically-detected language.
     /// See [Document.language][] field for more details.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub language_code: std::string::String,
 
     /// The sentiment for all the sentences in the document.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub sentences: std::vec::Vec<crate::model::Sentence>,
 
     /// Whether the language is officially supported. The API may still return a
     /// response when the language is not supported, but it is on a best effort
     /// basis.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub language_supported: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1252,6 +1270,8 @@ pub struct AnalyzeEntitiesRequest {
     pub document: std::option::Option<crate::model::Document>,
 
     /// The encoding type used by the API to calculate offsets.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub encoding_type: crate::model::EncodingType,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1305,18 +1325,21 @@ impl wkt::message::Message for AnalyzeEntitiesRequest {
 pub struct AnalyzeEntitiesResponse {
     /// The recognized entities in the input document.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub entities: std::vec::Vec<crate::model::Entity>,
 
     /// The language of the text, which will be the same as the language specified
     /// in the request or, if not specified, the automatically-detected language.
     /// See [Document.language][] field for more details.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub language_code: std::string::String,
 
     /// Whether the language is officially supported. The API may still return a
     /// response when the language is not supported, but it is on a best effort
     /// basis.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub language_supported: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1410,18 +1433,21 @@ impl wkt::message::Message for ClassifyTextRequest {
 pub struct ClassifyTextResponse {
     /// Categories representing the input document.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub categories: std::vec::Vec<crate::model::ClassificationCategory>,
 
     /// The language of the text, which will be the same as the language specified
     /// in the request or, if not specified, the automatically-detected language.
     /// See [Document.language][] field for more details.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub language_code: std::string::String,
 
     /// Whether the language is officially supported. The API may still return a
     /// response when the language is not supported, but it is on a best effort
     /// basis.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub language_supported: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1474,6 +1500,8 @@ pub struct ModerateTextRequest {
     pub document: std::option::Option<crate::model::Document>,
 
     /// Optional. The model version to use for ModerateText.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub model_version: crate::model::moderate_text_request::ModelVersion,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1671,18 +1699,21 @@ pub mod moderate_text_request {
 pub struct ModerateTextResponse {
     /// Harmful and sensitive categories representing the input document.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub moderation_categories: std::vec::Vec<crate::model::ClassificationCategory>,
 
     /// The language of the text, which will be the same as the language specified
     /// in the request or, if not specified, the automatically-detected language.
     /// See [Document.language][] field for more details.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub language_code: std::string::String,
 
     /// Whether the language is officially supported. The API may still return a
     /// response when the language is not supported, but it is on a best effort
     /// basis.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub language_supported: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1740,6 +1771,8 @@ pub struct AnnotateTextRequest {
     pub features: std::option::Option<crate::model::annotate_text_request::Features>,
 
     /// The encoding type used by the API to calculate offsets.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub encoding_type: crate::model::EncodingType,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1817,18 +1850,22 @@ pub mod annotate_text_request {
     pub struct Features {
         /// Optional. Extract entities.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub extract_entities: bool,
 
         /// Optional. Extract document-level sentiment.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub extract_document_sentiment: bool,
 
         /// Optional. Classify the full document into categories.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub classify_text: bool,
 
         /// Optional. Moderate the document for harmful and sensitive categories.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub moderate_text: bool,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1883,6 +1920,7 @@ pub struct AnnotateTextResponse {
     ///
     /// [google.cloud.language.v2.AnnotateTextRequest.Features.extract_document_sentiment]: crate::model::annotate_text_request::Features::extract_document_sentiment
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub sentences: std::vec::Vec<crate::model::Sentence>,
 
     /// Entities, along with their semantic information, in the input document.
@@ -1893,6 +1931,7 @@ pub struct AnnotateTextResponse {
     ///
     /// [google.cloud.language.v2.AnnotateTextRequest.Features.extract_entities]: crate::model::annotate_text_request::Features::extract_entities
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub entities: std::vec::Vec<crate::model::Entity>,
 
     /// The overall sentiment for the document. Populated if the user enables
@@ -1906,20 +1945,24 @@ pub struct AnnotateTextResponse {
     /// in the request or, if not specified, the automatically-detected language.
     /// See [Document.language][] field for more details.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub language_code: std::string::String,
 
     /// Categories identified in the input document.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub categories: std::vec::Vec<crate::model::ClassificationCategory>,
 
     /// Harmful and sensitive categories identified in the input document.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub moderation_categories: std::vec::Vec<crate::model::ClassificationCategory>,
 
     /// Whether the language is officially supported by all requested features.
     /// The API may still return a response when the language is not supported, but
     /// it is on a best effort basis.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub language_supported: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]

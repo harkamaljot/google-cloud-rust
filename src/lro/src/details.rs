@@ -149,12 +149,12 @@ where
     R: wkt::message::Message + serde::ser::Serialize + serde::de::DeserializeOwned,
 {
     if let Some(any) = op.response() {
-        return any.to_msg::<R>().map_err(Error::serde);
+        return any.to_msg::<R>().map_err(Error::deser);
     }
     if let Some(e) = op.error() {
         return Err(Error::service(gax::error::rpc::Status::from(e.clone())));
     }
-    Err(Error::serde("missing result in completed operation"))
+    Err(Error::other("missing result in completed operation"))
 }
 
 fn as_metadata<R, M>(op: Operation<R, M>) -> Option<M>
@@ -193,7 +193,7 @@ mod test {
             .metadata()
             .unwrap()
             .to_msg::<wkt::Timestamp>()
-            .map_err(Error::other)?;
+            .expect("Any::from_msg should succeed");
         assert_eq!(got, wkt::Timestamp::clamp(123, 0));
 
         Ok(())
@@ -202,7 +202,7 @@ mod test {
     #[test]
     fn typed_operation_with_response() -> Result<()> {
         let any = wkt::Any::from_msg(&wkt::Duration::clamp(23, 0))
-            .map_err(|e| Error::other(format!("unexpected error in Any::try_from {e}")))?;
+            .expect("successful deserialization via Any::from_msg");
         let op = longrunning::model::Operation::default()
             .set_name("test-only-name")
             .set_result(longrunning::model::operation::Result::Response(any.into()));
@@ -216,7 +216,7 @@ mod test {
             .response()
             .unwrap()
             .to_msg::<wkt::Duration>()
-            .map_err(Error::other)?;
+            .expect("successful deserialization via Any::from_msg");
         assert_eq!(got, wkt::Duration::clamp(23, 0));
 
         Ok(())
@@ -509,7 +509,7 @@ mod test {
         ));
         let op = O::new(op);
         let err = as_result(op).unwrap_err();
-        assert!(err.is_serde(), "{err:?}");
+        assert!(err.is_deserialization(), "{err:?}");
         assert!(
             matches!(
                 err.source().and_then(|e| e.downcast_ref::<wkt::AnyError>()),
@@ -529,7 +529,8 @@ mod test {
         let op = longrunning::model::Operation::default();
         let op = O::new(op);
         let err = as_result(op).err().unwrap();
-        assert!(err.is_serde(), "{err:?}");
+        // TODO(#2312) - use a real `is_*()` predicate.
+        assert!(format!("{err:?}").contains("Other"), "{err:?}");
         assert!(format!("{err}").contains("missing result"), "{err}");
 
         Ok(())

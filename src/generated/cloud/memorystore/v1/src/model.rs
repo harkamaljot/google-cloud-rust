@@ -43,6 +43,7 @@ pub struct Instance {
     /// Identifier. Unique name of the instance.
     /// Format: projects/{project}/locations/{location}/instances/{instance}
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Output only. Creation timestamp of the instance.
@@ -55,9 +56,12 @@ pub struct Instance {
 
     /// Optional. Labels to represent user-provided metadata.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub labels: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// Output only. Current state of the instance.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub state: crate::model::instance::State,
 
     /// Output only. Additional information about the state of the instance.
@@ -66,30 +70,40 @@ pub struct Instance {
 
     /// Output only. System assigned, unique identifier for the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub uid: std::string::String,
 
     /// Optional. Number of replica nodes per shard. If omitted the default is 0
     /// replicas.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
     pub replica_count: std::option::Option<i32>,
 
     /// Optional. Immutable. Authorization mode of the instance.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub authorization_mode: crate::model::instance::AuthorizationMode,
 
     /// Optional. Immutable. In-transit encryption mode of the instance.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub transit_encryption_mode: crate::model::instance::TransitEncryptionMode,
 
     /// Optional. Number of shards for the instance.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub shard_count: i32,
 
     /// Output only. Deprecated: Use the endpoints.connections.psc_auto_connection
     /// or endpoints.connections.psc_connection values instead.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     #[deprecated]
     pub discovery_endpoints: std::vec::Vec<crate::model::DiscoveryEndpoint>,
 
     /// Optional. Machine type for individual nodes of the instance.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub node_type: crate::model::instance::NodeType,
 
     /// Optional. Persistence configuration of the instance.
@@ -98,10 +112,12 @@ pub struct Instance {
 
     /// Optional. Engine version of the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub engine_version: std::string::String,
 
     /// Optional. User-provided engine configurations for the instance.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub engine_configs: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// Output only. Configuration of individual nodes of the instance.
@@ -120,18 +136,23 @@ pub struct Instance {
     /// Optional. Immutable. Deprecated: Use the
     /// endpoints.connections.psc_auto_connection value instead.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     #[deprecated]
     pub psc_auto_connections: std::vec::Vec<crate::model::PscAutoConnection>,
 
     /// Output only. Service attachment details to configure PSC connections.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub psc_attachment_details: std::vec::Vec<crate::model::PscAttachmentDetail>,
 
     /// Optional. Endpoints for the instance.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub endpoints: std::vec::Vec<crate::model::instance::InstanceEndpoint>,
 
     /// Optional. The mode config for the instance.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub mode: crate::model::instance::Mode,
 
     /// Optional. Input only. Ondemand maintenance for the instance.
@@ -767,10 +788,12 @@ pub mod instance {
         pub struct UpdateInfo {
             /// Output only. Target number of shards for the instance.
             #[serde(skip_serializing_if = "std::option::Option::is_none")]
+            #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
             pub target_shard_count: std::option::Option<i32>,
 
             /// Output only. Target number of replica nodes per shard for the instance.
             #[serde(skip_serializing_if = "std::option::Option::is_none")]
+            #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
             pub target_replica_count: std::option::Option<i32>,
 
             /// Output only. Target engine version for the instance.
@@ -891,6 +914,7 @@ pub mod instance {
     pub struct GcsBackupSource {
         /// Optional. Example: gs://bucket1/object1, gs://bucket2/folder2/object2
         #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
         pub uris: std::vec::Vec<std::string::String>,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -933,6 +957,7 @@ pub mod instance {
         /// projects/{project}/locations/{location}/backupCollections/{collection}/backups/{backup_id}
         /// In this case, it assumes the backup is under memorystore.googleapis.com.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub backup: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -968,6 +993,7 @@ pub mod instance {
         /// Optional. A group of PSC connections. They are created in the same VPC
         /// network, one for each service attachment in the cluster.
         #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
         pub connections: std::vec::Vec<crate::model::instance::ConnectionDetail>,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1853,6 +1879,8 @@ pub mod instance {
 pub struct AutomatedBackupConfig {
     /// Optional. The automated backup mode. If the mode is disabled, the other
     /// fields will be ignored.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub automated_backup_mode: crate::model::automated_backup_config::AutomatedBackupMode,
 
     /// Optional. How long to keep automated backups before the backups are
@@ -2164,25 +2192,30 @@ pub mod automated_backup_config {
 pub struct BackupCollection {
     /// Identifier. Full resource path of the backup collection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Output only. The instance uid of the backup collection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance_uid: std::string::String,
 
     /// Output only. The full resource path of the instance the backup collection
     /// belongs to. Example:
     /// projects/{project}/locations/{location}/instances/{instance}
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Output only. The KMS key used to encrypt the backups under this backup
     /// collection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kms_key: std::string::String,
 
     /// Output only. System assigned unique identifier of the backup collection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub uid: std::string::String,
 
     /// Output only. The time when the backup collection was created.
@@ -2264,6 +2297,7 @@ pub struct Backup {
     /// UID] OR customer specified while backup instance. Example:
     /// 20240515123000_1234
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Output only. The time when the backup was created.
@@ -2272,15 +2306,17 @@ pub struct Backup {
 
     /// Output only. Instance resource path of this backup.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Output only. Instance uid of this backup.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance_uid: std::string::String,
 
     /// Output only. Total size of the backup in bytes.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "serde_with::DisplayFromStr")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I64>")]
     pub total_size_bytes: i64,
 
     /// Output only. The time when the backup will expire.
@@ -2289,31 +2325,42 @@ pub struct Backup {
 
     /// Output only. valkey-7.5/valkey-8.0, etc.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub engine_version: std::string::String,
 
     /// Output only. List of backup files of the backup.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub backup_files: std::vec::Vec<crate::model::BackupFile>,
 
     /// Output only. Node type of the instance.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub node_type: crate::model::instance::NodeType,
 
     /// Output only. Number of replicas for the instance.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub replica_count: i32,
 
     /// Output only. Number of shards for the instance.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub shard_count: i32,
 
     /// Output only. Type of the backup.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub backup_type: crate::model::backup::BackupType,
 
     /// Output only. State of the backup.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub state: crate::model::backup::State,
 
     /// Output only. System assigned unique identifier of the backup.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub uid: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2744,11 +2791,12 @@ pub mod backup {
 pub struct BackupFile {
     /// Output only. e.g: \<shard-id\>.rdb
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub file_name: std::string::String,
 
     /// Output only. Size of the backup file in bytes.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "serde_with::DisplayFromStr")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I64>")]
     pub size_bytes: i64,
 
     /// Output only. The time when the backup file was created.
@@ -2808,6 +2856,8 @@ impl wkt::message::Message for BackupFile {
 #[non_exhaustive]
 pub struct CrossInstanceReplicationConfig {
     /// Required. The role of the instance in cross instance replication.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance_role: crate::model::cross_instance_replication_config::InstanceRole,
 
     /// Optional. Details of the primary instance that is used as the replication
@@ -2823,6 +2873,7 @@ pub struct CrossInstanceReplicationConfig {
     ///
     /// This field is only set for a primary instance.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub secondary_instances:
         std::vec::Vec<crate::model::cross_instance_replication_config::RemoteInstance>,
 
@@ -2952,10 +3003,12 @@ pub mod cross_instance_replication_config {
         /// Optional. The full resource path of the remote instance in
         /// the format: projects/\<project\>/locations/\<region\>/instances/\<instance-id\>
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub instance: std::string::String,
 
         /// Output only. The unique identifier of the remote instance.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub uid: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3002,6 +3055,7 @@ pub mod cross_instance_replication_config {
         /// Output only. The list of secondary instances replicating from the primary
         /// instance.
         #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
         pub secondary_instances:
             std::vec::Vec<crate::model::cross_instance_replication_config::RemoteInstance>,
 
@@ -3213,6 +3267,7 @@ pub struct MaintenancePolicy {
     /// policy. Minimum 1. For the current version, the maximum number of
     /// weekly_window is expected to be one.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub weekly_maintenance_window: std::vec::Vec<crate::model::WeeklyMaintenanceWindow>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3285,6 +3340,8 @@ impl wkt::message::Message for MaintenancePolicy {
 #[non_exhaustive]
 pub struct WeeklyMaintenanceWindow {
     /// Optional. Allows to define schedule that runs specified day of the week.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub day: gtype::model::DayOfWeek,
 
     /// Optional. Start time of the window in UTC.
@@ -3409,9 +3466,12 @@ pub struct PscAttachmentDetail {
     /// Output only. Service attachment URI which your self-created PscConnection
     /// should use as target.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub service_attachment: std::string::String,
 
     /// Output only. Type of Psc endpoint.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub connection_type: crate::model::ConnectionType,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3457,42 +3517,52 @@ pub struct PscAutoConnection {
     /// Output only. The PSC connection id of the forwarding rule connected to the
     /// service attachment.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub psc_connection_id: std::string::String,
 
     /// Output only. The IP allocated on the consumer network for the PSC
     /// forwarding rule.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub ip_address: std::string::String,
 
     /// Output only. The URI of the consumer side forwarding rule.
     /// Format:
     /// projects/{project}/regions/{region}/forwardingRules/{forwarding_rule}
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub forwarding_rule: std::string::String,
 
     /// Required. The consumer project_id where PSC connections are established.
     /// This should be the same project_id that the instance is being created in.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project_id: std::string::String,
 
     /// Required. The network where the PSC endpoints are created, in the form of
     /// projects/{project_id}/global/networks/{network_id}.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub network: std::string::String,
 
     /// Output only. The service attachment which is the target of the PSC
     /// connection, in the form of
     /// projects/{project-id}/regions/{region}/serviceAttachments/{service-attachment-id}.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub service_attachment: std::string::String,
 
     /// Output only. The status of the PSC connection: whether a connection exists
     /// and ACTIVE or it no longer exists. Please note that this value is updated
     /// periodically. Please use Private Service Connect APIs for the latest
     /// status.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub psc_connection_status: crate::model::PscConnectionStatus,
 
     /// Output only. Type of the PSC connection.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub connection_type: crate::model::ConnectionType,
 
     /// Ports of the exposed endpoint.
@@ -3623,7 +3693,7 @@ pub mod psc_auto_connection {
     #[non_exhaustive]
     pub enum Ports {
         /// Optional. port will only be set for Primary/Reader or Discovery endpoint.
-        Port(i32),
+        Port(#[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")] i32),
     }
 }
 
@@ -3636,42 +3706,52 @@ pub struct PscConnection {
     /// Required. The PSC connection id of the forwarding rule connected to the
     /// service attachment.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub psc_connection_id: std::string::String,
 
     /// Required. The IP allocated on the consumer network for the PSC forwarding
     /// rule.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub ip_address: std::string::String,
 
     /// Required. The URI of the consumer side forwarding rule.
     /// Format:
     /// projects/{project}/regions/{region}/forwardingRules/{forwarding_rule}
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub forwarding_rule: std::string::String,
 
     /// Output only. The consumer project_id where the forwarding rule is created
     /// from.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project_id: std::string::String,
 
     /// Required. The consumer network where the IP address resides, in the form of
     /// projects/{project_id}/global/networks/{network_id}.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub network: std::string::String,
 
     /// Required. The service attachment which is the target of the PSC connection,
     /// in the form of
     /// projects/{project-id}/regions/{region}/serviceAttachments/{service-attachment-id}.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub service_attachment: std::string::String,
 
     /// Output only. The status of the PSC connection: whether a connection exists
     /// and ACTIVE or it no longer exists. Please note that this value is updated
     /// periodically. Please use Private Service Connect APIs for the latest
     /// status.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub psc_connection_status: crate::model::PscConnectionStatus,
 
     /// Output only. Type of the PSC connection.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub connection_type: crate::model::ConnectionType,
 
     /// Ports of the exposed endpoint.
@@ -3801,7 +3881,7 @@ pub mod psc_connection {
     #[non_exhaustive]
     pub enum Ports {
         /// Optional. port will only be set for Primary/Reader or Discovery endpoint.
-        Port(i32),
+        Port(#[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")] i32),
     }
 }
 
@@ -3813,16 +3893,19 @@ pub mod psc_connection {
 pub struct DiscoveryEndpoint {
     /// Output only. IP address of the exposed endpoint clients connect to.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub address: std::string::String,
 
     /// Output only. The port number of the exposed endpoint.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub port: i32,
 
     /// Output only. The network where the IP address of the discovery endpoint
     /// will be reserved, in the form of
     /// projects/{network_project}/global/networks/{network_id}.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub network: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3866,6 +3949,8 @@ impl wkt::message::Message for DiscoveryEndpoint {
 #[non_exhaustive]
 pub struct PersistenceConfig {
     /// Optional. Current persistence mode.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub mode: crate::model::persistence_config::PersistenceMode,
 
     /// Optional. RDB configuration. This field will be ignored if mode is not RDB.
@@ -3949,6 +4034,8 @@ pub mod persistence_config {
     #[non_exhaustive]
     pub struct RDBConfig {
         /// Optional. Period between RDB snapshots.
+        #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub rdb_snapshot_period: crate::model::persistence_config::rdb_config::SnapshotPeriod,
 
         /// Optional. Time that the first snapshot was/will be attempted, and to
@@ -4164,6 +4251,8 @@ pub mod persistence_config {
     #[non_exhaustive]
     pub struct AOFConfig {
         /// Optional. The fsync mode.
+        #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub append_fsync: crate::model::persistence_config::aof_config::AppendFsync,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4492,7 +4581,7 @@ pub mod persistence_config {
 pub struct NodeConfig {
     /// Output only. Memory size in GB of the node.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "wkt::internal::F64")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::F64>")]
     pub size_gb: f64,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4526,9 +4615,12 @@ pub struct ZoneDistributionConfig {
     /// Optional. Defines zone where all resources will be allocated with
     /// SINGLE_ZONE mode. Ignored for MULTI_ZONE mode.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub zone: std::string::String,
 
     /// Optional. Current zone distribution mode. Defaults to MULTI_ZONE.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub mode: crate::model::zone_distribution_config::ZoneDistributionMode,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4714,9 +4806,12 @@ pub struct RescheduleMaintenanceRequest {
     /// Required. Name of the instance to reschedule maintenance for:
     /// `projects/{project}/locations/{location_id}/instances/{instance}`
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Required. If reschedule type is SPECIFIC_TIME, schedule_time must be set.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub reschedule_type: crate::model::reschedule_maintenance_request::RescheduleType,
 
     /// Optional. Timestamp when the maintenance shall be rescheduled to if
@@ -4923,24 +5018,29 @@ pub struct ListInstancesRequest {
     /// Required. The parent to list instances from.
     /// Format: projects/{project}/locations/{location}
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Optional. Requested page size. Server may return fewer items than
     /// requested. If unspecified, server will pick an appropriate default.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// Optional. A token identifying a page of results the server should return.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     /// Optional. Expression for filtering results.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub filter: std::string::String,
 
     /// Optional. Sort results by a defined order. Supported values: "name",
     /// "create_time".
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub order_by: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4999,15 +5099,18 @@ pub struct ListInstancesResponse {
     /// instances from all locations. Instances in unreachable locations will be
     /// omitted.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub instances: std::vec::Vec<crate::model::Instance>,
 
     /// A token, which can be sent as `page_token` to retrieve the next page.
     /// If this field is omitted, there are no subsequent pages.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     /// Locations that could not be reached.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub unreachable: std::vec::Vec<std::string::String>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5077,6 +5180,7 @@ pub struct GetInstanceRequest {
     /// Required. The name of the instance to retrieve.
     /// Format: projects/{project}/locations/{location}/instances/{instance}
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5110,6 +5214,7 @@ pub struct CreateInstanceRequest {
     /// Required. The parent resource where this instance will be created.
     /// Format: projects/{project}/locations/{location}
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Required. The ID to use for the instance, which will become the final
@@ -5123,6 +5228,7 @@ pub struct CreateInstanceRequest {
     /// * Must not end with a hyphen
     /// * Must be unique within a location
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance_id: std::string::String,
 
     /// Required. The instance to create.
@@ -5143,6 +5249,7 @@ pub struct CreateInstanceRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported (00000000-0000-0000-0000-000000000000).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5226,6 +5333,7 @@ pub struct UpdateInstanceRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported (00000000-0000-0000-0000-000000000000).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5295,6 +5403,7 @@ pub struct DeleteInstanceRequest {
     /// Required. The name of the instance to delete.
     /// Format: projects/{project}/locations/{location}/instances/{instance}
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Optional. An optional request ID to identify requests. Specify a unique
@@ -5311,6 +5420,7 @@ pub struct DeleteInstanceRequest {
     /// The request ID must be a valid UUID with the exception that zero UUID is
     /// not supported (00000000-0000-0000-0000-000000000000).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5352,6 +5462,7 @@ pub struct ListBackupCollectionsRequest {
     /// `projects/{project_id}/locations/{location_id}`
     /// where `location_id` refers to a Google Cloud region.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Optional. The maximum number of items to return.
@@ -5364,11 +5475,13 @@ pub struct ListBackupCollectionsRequest {
     ///
     /// [google.cloud.memorystore.v1.ListBackupCollectionsResponse.next_page_token]: crate::model::ListBackupCollectionsResponse::next_page_token
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// Optional. The `next_page_token` value returned from a previous
     /// [ListBackupCollections] request, if any.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5422,15 +5535,18 @@ pub struct ListBackupCollectionsResponse {
     /// `status` field set to ERROR and `status_message` field set to "location not
     /// available for ListBackupCollections".
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub backup_collections: std::vec::Vec<crate::model::BackupCollection>,
 
     /// Token to retrieve the next page of results, or empty if there are no more
     /// results in the list.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     /// Locations that could not be reached.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub unreachable: std::vec::Vec<std::string::String>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5501,6 +5617,7 @@ pub struct GetBackupCollectionRequest {
     /// `projects/{project_id}/locations/{location_id}/backupCollections/{backup_collection_id}`
     /// where `location_id` refers to a Google Cloud region.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5534,6 +5651,7 @@ pub struct ListBackupsRequest {
     /// Required. The resource name of the backupCollection using the form:
     /// `projects/{project_id}/locations/{location_id}/backupCollections/{backup_collection_id}`
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub parent: std::string::String,
 
     /// Optional. The maximum number of items to return.
@@ -5546,11 +5664,13 @@ pub struct ListBackupsRequest {
     ///
     /// [google.cloud.memorystore.v1.ListBackupsResponse.next_page_token]: crate::model::ListBackupsResponse::next_page_token
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub page_size: i32,
 
     /// Optional. The `next_page_token` value returned from a previous
     /// [ListBackupCollections] request, if any.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5595,15 +5715,18 @@ impl wkt::message::Message for ListBackupsRequest {
 pub struct ListBackupsResponse {
     /// A list of backups in the project.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub backups: std::vec::Vec<crate::model::Backup>,
 
     /// Token to retrieve the next page of results, or empty if there are no more
     /// results in the list.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     /// Backups that could not be reached.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub unreachable: std::vec::Vec<std::string::String>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5673,6 +5796,7 @@ pub struct GetBackupRequest {
     /// Required. Instance backup resource name using the form:
     /// `projects/{project_id}/locations/{location_id}/backupCollections/{backup_collection_id}/backups/{backup_id}`
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5706,10 +5830,12 @@ pub struct DeleteBackupRequest {
     /// Required. Instance backup resource name using the form:
     /// `projects/{project_id}/locations/{location_id}/backupCollections/{backup_collection_id}/backups/{backup_id}`
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Optional. Idempotent request UUID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub request_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5749,6 +5875,7 @@ pub struct ExportBackupRequest {
     /// Required. Instance backup resource name using the form:
     /// `projects/{project_id}/locations/{location_id}/backupCollections/{backup_collection_id}/backups/{backup_id}`
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Required. Specify destination to export a backup.
@@ -5828,7 +5955,7 @@ pub mod export_backup_request {
     #[non_exhaustive]
     pub enum Destination {
         /// Google Cloud Storage bucket, like "my-bucket".
-        GcsBucket(std::string::String),
+        GcsBucket(#[serde_as(as = "serde_with::DefaultOnNull<_>")] std::string::String),
     }
 }
 
@@ -5842,6 +5969,7 @@ pub struct BackupInstanceRequest {
     /// `projects/{project_id}/locations/{location_id}/instances/{instance_id}`
     /// where `location_id` refers to a Google Cloud region.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Optional. TTL for the backup to expire. Value range is 1 day to 100 years.
@@ -5922,6 +6050,7 @@ pub struct GetCertificateAuthorityRequest {
     /// Format:
     /// projects/{project}/locations/{location}/instances/{instance}/certificateAuthority
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5956,6 +6085,7 @@ pub struct CertificateAuthority {
     /// Format:
     /// projects/{project}/locations/{location}/instances/{instance}
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Information about the server certificate authority.
@@ -6047,6 +6177,7 @@ pub mod certificate_authority {
     pub struct ManagedCertificateAuthority {
         /// PEM encoded CA certificate chains for managed server authentication.
         #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
         pub ca_certs: std::vec::Vec<
             crate::model::certificate_authority::managed_certificate_authority::CertChain,
         >,
@@ -6093,6 +6224,7 @@ pub mod certificate_authority {
         pub struct CertChain {
             /// The certificates that form the CA chain in order of leaf to root.
             #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+            #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
             pub certificates: std::vec::Vec<std::string::String>,
 
             #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -6152,14 +6284,17 @@ pub struct OperationMetadata {
 
     /// Output only. Server-defined resource path for the target of the operation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub target: std::string::String,
 
     /// Output only. Name of the verb executed by the operation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub verb: std::string::String,
 
     /// Output only. Human-readable status of the operation, if any.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub status_message: std::string::String,
 
     /// Output only. Identifies whether the user has requested cancellation
@@ -6170,10 +6305,12 @@ pub struct OperationMetadata {
     ///
     /// [google.rpc.Status.code]: rpc::model::Status::code
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub requested_cancellation: bool,
 
     /// Output only. API version used to start the operation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub api_version: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]

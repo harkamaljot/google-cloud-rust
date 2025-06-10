@@ -40,15 +40,17 @@ pub struct SqlBackupRunsDeleteRequest {
     /// [list](https://cloud.google.com/sql/docs/mysql/admin-api/rest/v1/backupRuns/list)
     /// method.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "serde_with::DisplayFromStr")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I64>")]
     pub id: i64,
 
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -93,15 +95,17 @@ impl wkt::message::Message for SqlBackupRunsDeleteRequest {
 pub struct SqlBackupRunsGetRequest {
     /// The ID of this backup run.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "serde_with::DisplayFromStr")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I64>")]
     pub id: i64,
 
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -146,10 +150,12 @@ impl wkt::message::Message for SqlBackupRunsGetRequest {
 pub struct SqlBackupRunsInsertRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -210,19 +216,23 @@ pub struct SqlBackupRunsListRequest {
     /// Cloud SQL instance ID, or "-" for all instances. This does not include
     /// the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Maximum number of backup runs per response.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub max_results: i32,
 
     /// A previously-returned page token representing part of the larger set of
     /// results to view.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -273,9 +283,12 @@ impl wkt::message::Message for SqlBackupRunsListRequest {
 pub struct BackupRun {
     /// This is always `sql#backupRun`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// The status of this run.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub status: crate::model::SqlBackupRunStatus,
 
     /// The time the run was enqueued in UTC timezone in
@@ -287,7 +300,7 @@ pub struct BackupRun {
     /// The identifier for this backup run. Unique only for a specific Cloud SQL
     /// instance.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "serde_with::DisplayFromStr")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I64>")]
     pub id: i64,
 
     /// The time the backup operation actually started in UTC timezone in
@@ -311,10 +324,13 @@ pub struct BackupRun {
     /// This field defaults to "ON_DEMAND" and is ignored, when specified for
     /// insert requests.
     #[serde(rename = "type")]
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub r#type: crate::model::SqlBackupRunType,
 
     /// The description of this run, only applicable to on-demand backups.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub description: std::string::String,
 
     /// The start time of the backup window during which this the backup was
@@ -325,14 +341,17 @@ pub struct BackupRun {
 
     /// Name of the database instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// The URI of this resource.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub self_link: std::string::String,
 
     /// Location of the backups.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub location: std::string::String,
 
     /// Encryption configuration specific to a backup.
@@ -345,16 +364,19 @@ pub struct BackupRun {
     pub disk_encryption_status: std::option::Option<crate::model::DiskEncryptionStatus>,
 
     /// Specifies the kind of backup, PHYSICAL or DEFAULT_SNAPSHOT.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub backup_kind: crate::model::SqlBackupKind,
 
     /// Backup time zone to prevent restores to an instance with
     /// a different time zone. Now relevant only for SQL Server.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub time_zone: std::string::String,
 
     /// Output only. The maximum chargeable bytes for the backup.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
-    #[serde_as(as = "std::option::Option<serde_with::DisplayFromStr>")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I64>")]
     pub max_chargeable_bytes: std::option::Option<i64>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -594,15 +616,18 @@ impl wkt::message::Message for BackupRun {
 pub struct BackupRunsListResponse {
     /// This is always `sql#backupRunsList`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// A list of backup runs in reverse chronological order of the enqueued time.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub items: std::vec::Vec<crate::model::BackupRun>,
 
     /// The continuation token, used to page through large result sets. Provide
     /// this value in a subsequent request to return the next page of results.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -666,10 +691,12 @@ impl gax::paginator::internal::PageableResponse for BackupRunsListResponse {
 pub struct GetConnectSettingsRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     /// Optional. Optional snapshot read timestamp to trade freshness for
@@ -731,6 +758,7 @@ impl wkt::message::Message for GetConnectSettingsRequest {
 pub struct ConnectSettings {
     /// This is always `sql#connectSettings`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// SSL configuration.
@@ -739,11 +767,13 @@ pub struct ConnectSettings {
 
     /// The assigned IP addresses for the instance.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub ip_addresses: std::vec::Vec<crate::model::IpMapping>,
 
     /// The cloud region for the instance. For example, `us-central1`,
     /// `europe-west1`. The region cannot be changed after instance creation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub region: std::string::String,
 
     /// The database engine type and version. The `databaseVersion`
@@ -757,23 +787,31 @@ pub struct ConnectSettings {
     /// `SQLSERVER_2017_WEB`, `SQLSERVER_2019_STANDARD`,
     /// `SQLSERVER_2019_ENTERPRISE`, `SQLSERVER_2019_EXPRESS`, or
     /// `SQLSERVER_2019_WEB`.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub database_version: crate::model::SqlDatabaseVersion,
 
     /// `SECOND_GEN`: Cloud SQL database instance.
     /// `EXTERNAL`: A database server that is not managed by Google.
     /// This property is read-only; use the `tier` property in the `settings`
     /// object to determine the database type.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub backend_type: crate::model::SqlBackendType,
 
     /// Whether PSC connectivity is enabled for this instance.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub psc_enabled: bool,
 
     /// The dns name of the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub dns_name: std::string::String,
 
     /// Specify what type of CA is used for the server certificate.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub server_ca_mode: crate::model::connect_settings::CaMode,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1021,20 +1059,24 @@ pub mod connect_settings {
 pub struct GenerateEphemeralCertRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     /// PEM encoded public key to include in the signed certificate.
     #[serde(rename = "public_key")]
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub public_key: std::string::String,
 
     /// Optional. Access token to include in the signed certificate.
     #[serde(rename = "access_token")]
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub access_token: std::string::String,
 
     /// Optional. Optional snapshot read timestamp to trade freshness for
@@ -1174,14 +1216,17 @@ impl wkt::message::Message for GenerateEphemeralCertResponse {
 pub struct SqlDatabasesDeleteRequest {
     /// Name of the database to be deleted in the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub database: std::string::String,
 
     /// Database instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1226,14 +1271,17 @@ impl wkt::message::Message for SqlDatabasesDeleteRequest {
 pub struct SqlDatabasesGetRequest {
     /// Name of the database in the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub database: std::string::String,
 
     /// Database instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1278,10 +1326,12 @@ impl wkt::message::Message for SqlDatabasesGetRequest {
 pub struct SqlDatabasesInsertRequest {
     /// Database instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -1341,10 +1391,12 @@ impl wkt::message::Message for SqlDatabasesInsertRequest {
 pub struct SqlDatabasesListRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1383,14 +1435,17 @@ impl wkt::message::Message for SqlDatabasesListRequest {
 pub struct SqlDatabasesUpdateRequest {
     /// Name of the database to be updated in the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub database: std::string::String,
 
     /// Database instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -1456,10 +1511,12 @@ impl wkt::message::Message for SqlDatabasesUpdateRequest {
 pub struct DatabasesListResponse {
     /// This is always `sql#databasesList`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// List of database resources in the instance.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub items: std::vec::Vec<crate::model::Database>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1504,6 +1561,7 @@ pub struct SqlFlagsListRequest {
     /// Database type and version you want to retrieve flags for. By default, this
     /// method returns flags for all database types and versions.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub database_version: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1539,10 +1597,12 @@ impl wkt::message::Message for SqlFlagsListRequest {
 pub struct FlagsListResponse {
     /// This is always `sql#flagsList`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// List of flags.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub items: std::vec::Vec<crate::model::Flag>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1587,12 +1647,15 @@ pub struct Flag {
     /// This is the name of the flag. Flag names always use underscores, not
     /// hyphens, for example: `max_allowed_packet`
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// The type of the flag. Flags are typed to being `BOOLEAN`, `STRING`,
     /// `INTEGER` or `NONE`. `NONE` is used for flags that do not take a
     /// value, such as `skip_grant_tables`.
     #[serde(rename = "type")]
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub r#type: crate::model::SqlFlagType,
 
     /// The database version this flag applies to. Can be
@@ -1606,20 +1669,22 @@ pub struct Flag {
     /// See [the complete
     /// list](/sql/docs/mysql/admin-api/rest/v1/SqlDatabaseVersion).
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub applies_to: std::vec::Vec<crate::model::SqlDatabaseVersion>,
 
     /// For `STRING` flags, a list of strings that the value can be set to.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub allowed_string_values: std::vec::Vec<std::string::String>,
 
     /// For `INTEGER` flags, the minimum allowed value.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
-    #[serde_as(as = "std::option::Option<serde_with::DisplayFromStr>")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I64>")]
     pub min_value: std::option::Option<wkt::Int64Value>,
 
     /// For `INTEGER` flags, the maximum allowed value.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
-    #[serde_as(as = "std::option::Option<serde_with::DisplayFromStr>")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I64>")]
     pub max_value: std::option::Option<wkt::Int64Value>,
 
     /// Indicates whether changing this flag will trigger a database restart. Only
@@ -1629,6 +1694,7 @@ pub struct Flag {
 
     /// This is always `sql#flag`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// Whether or not the flag is considered in beta.
@@ -1638,7 +1704,7 @@ pub struct Flag {
     /// Use this field if only certain integers are accepted. Can be combined
     /// with min_value and max_value to add additional values.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
-    #[serde_as(as = "std::vec::Vec<serde_with::DisplayFromStr>")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<wkt::internal::I64>>")]
     pub allowed_int_values: std::vec::Vec<i64>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1788,10 +1854,12 @@ impl wkt::message::Message for Flag {
 pub struct SqlInstancesAddServerCaRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1831,10 +1899,12 @@ pub struct SqlInstancesCloneRequest {
     /// The ID of the Cloud SQL instance to be cloned (source). This does not
     /// include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the source as well as the clone Cloud SQL instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -1894,10 +1964,12 @@ impl wkt::message::Message for SqlInstancesCloneRequest {
 pub struct SqlInstancesDeleteRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance to be deleted.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -1936,10 +2008,12 @@ impl wkt::message::Message for SqlInstancesDeleteRequest {
 pub struct SqlInstancesDemoteMasterRequest {
     /// Cloud SQL instance name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -1999,10 +2073,12 @@ impl wkt::message::Message for SqlInstancesDemoteMasterRequest {
 pub struct SqlInstancesDemoteRequest {
     /// Required. Cloud SQL instance name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Required. ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     /// Required. The request body.
@@ -2063,10 +2139,12 @@ impl wkt::message::Message for SqlInstancesDemoteRequest {
 pub struct SqlInstancesExportRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance to be exported.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -2126,10 +2204,12 @@ impl wkt::message::Message for SqlInstancesExportRequest {
 pub struct SqlInstancesFailoverRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// ID of the project that contains the read replica.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -2189,10 +2269,12 @@ impl wkt::message::Message for SqlInstancesFailoverRequest {
 pub struct SqlInstancesGetRequest {
     /// Database instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2231,10 +2313,12 @@ impl wkt::message::Message for SqlInstancesGetRequest {
 pub struct SqlInstancesImportRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -2295,6 +2379,7 @@ pub struct SqlInstancesInsertRequest {
     /// Project ID of the project to which the newly created Cloud SQL instances
     /// should belong.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -2356,6 +2441,7 @@ pub struct SqlInstancesListRequest {
     /// expression is an AND expression. However, you can include AND and OR
     /// expressions explicitly.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub filter: std::string::String,
 
     /// The maximum number of instances to return. The service may return fewer
@@ -2363,15 +2449,18 @@ pub struct SqlInstancesListRequest {
     /// If unspecified, at most 500 instances are returned.
     /// The maximum value is 1000; values above 1000 are coerced to 1000.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::U32>")]
     pub max_results: u32,
 
     /// A previously-returned page token representing part of the larger set of
     /// results to view.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     /// Project ID of the project for which to list Cloud SQL instances.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2422,10 +2511,12 @@ impl wkt::message::Message for SqlInstancesListRequest {
 pub struct SqlInstancesListServerCasRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2464,10 +2555,12 @@ impl wkt::message::Message for SqlInstancesListServerCasRequest {
 pub struct SqlInstancesPatchRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -2527,10 +2620,12 @@ impl wkt::message::Message for SqlInstancesPatchRequest {
 pub struct SqlInstancesPromoteReplicaRequest {
     /// Cloud SQL read replica instance name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// ID of the project that contains the read replica.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     /// Set to true to invoke a replica failover to the designated DR
@@ -2541,6 +2636,7 @@ pub struct SqlInstancesPromoteReplicaRequest {
     /// instance becomes an independent Cloud SQL primary instance.
     /// Only applicable to MySQL.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub failover: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2585,10 +2681,12 @@ impl wkt::message::Message for SqlInstancesPromoteReplicaRequest {
 pub struct SqlInstancesSwitchoverRequest {
     /// Cloud SQL read replica instance name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// ID of the project that contains the replica.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     /// Optional. (MySQL only) Cloud SQL instance operations timeout, which is a
@@ -2651,10 +2749,12 @@ impl wkt::message::Message for SqlInstancesSwitchoverRequest {
 pub struct SqlInstancesResetSslConfigRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2693,10 +2793,12 @@ impl wkt::message::Message for SqlInstancesResetSslConfigRequest {
 pub struct SqlInstancesRestartRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance to be restarted.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2735,10 +2837,12 @@ impl wkt::message::Message for SqlInstancesRestartRequest {
 pub struct SqlInstancesRestoreBackupRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -2798,10 +2902,12 @@ impl wkt::message::Message for SqlInstancesRestoreBackupRequest {
 pub struct SqlInstancesRotateServerCaRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -2861,10 +2967,12 @@ impl wkt::message::Message for SqlInstancesRotateServerCaRequest {
 pub struct SqlInstancesStartReplicaRequest {
     /// Cloud SQL read replica instance name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// ID of the project that contains the read replica.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2903,10 +3011,12 @@ impl wkt::message::Message for SqlInstancesStartReplicaRequest {
 pub struct SqlInstancesStopReplicaRequest {
     /// Cloud SQL read replica instance name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// ID of the project that contains the read replica.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -2945,10 +3055,12 @@ impl wkt::message::Message for SqlInstancesStopReplicaRequest {
 pub struct SqlInstancesTruncateLogRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the Cloud SQL project.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -3008,10 +3120,12 @@ impl wkt::message::Message for SqlInstancesTruncateLogRequest {
 pub struct SqlInstancesPerformDiskShrinkRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     /// Perform disk shrink context.
@@ -3072,10 +3186,12 @@ impl wkt::message::Message for SqlInstancesPerformDiskShrinkRequest {
 pub struct SqlInstancesUpdateRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -3135,10 +3251,12 @@ impl wkt::message::Message for SqlInstancesUpdateRequest {
 pub struct SqlInstancesRescheduleMaintenanceRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -3198,10 +3316,12 @@ impl wkt::message::Message for SqlInstancesRescheduleMaintenanceRequest {
 pub struct SqlInstancesReencryptRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     /// Reencrypt body that users request
@@ -3306,6 +3426,7 @@ impl wkt::message::Message for InstancesReencryptRequest {
 pub struct BackupReencryptionConfig {
     /// Backup re-encryption limit
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
     pub backup_limit: std::option::Option<i32>,
 
     /// Type of backups users want to re-encrypt.
@@ -3510,10 +3631,12 @@ pub mod backup_reencryption_config {
 pub struct SqlInstancesGetDiskShrinkConfigRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -3552,32 +3675,42 @@ impl wkt::message::Message for SqlInstancesGetDiskShrinkConfigRequest {
 pub struct SqlInstancesVerifyExternalSyncSettingsRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     /// Flag to enable verifying connection only
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub verify_connection_only: bool,
 
     /// External sync mode
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub sync_mode:
         crate::model::sql_instances_verify_external_sync_settings_request::ExternalSyncMode,
 
     /// Optional. Flag to verify settings required by replication setup only
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub verify_replication_only: bool,
 
     /// Optional. MigrationType configures the migration to use physical files or
     /// logical dump files. If not set, then the logical dump file configuration is
     /// used. Valid values are `LOGICAL` or `PHYSICAL`. Only applicable to MySQL.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub migration_type:
         crate::model::sql_instances_verify_external_sync_settings_request::MigrationType,
 
     /// Optional. Parallel level for initial data sync. Only applicable for
     /// PostgreSQL.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub sync_parallel_level: crate::model::ExternalSyncParallelLevel,
 
     #[serde(flatten, skip_serializing_if = "std::option::Option::is_none")]
@@ -4000,27 +4133,36 @@ pub mod sql_instances_verify_external_sync_settings_request {
 pub struct SqlInstancesStartExternalSyncRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     /// External sync mode.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub sync_mode:
         crate::model::sql_instances_verify_external_sync_settings_request::ExternalSyncMode,
 
     /// Whether to skip the verification step (VESS).
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub skip_verification: bool,
 
     /// Optional. Parallel level for initial data sync. Currently only applicable
     /// for MySQL.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub sync_parallel_level: crate::model::ExternalSyncParallelLevel,
 
     /// Optional. MigrationType configures the migration to use physical files or
     /// logical dump files. If not set, then the logical dump file configuration is
     /// used. Valid values are `LOGICAL` or `PHYSICAL`. Only applicable to MySQL.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub migration_type:
         crate::model::sql_instances_verify_external_sync_settings_request::MigrationType,
 
@@ -4172,10 +4314,12 @@ pub mod sql_instances_start_external_sync_request {
 pub struct SqlInstancesResetReplicaSizeRequest {
     /// Cloud SQL read replica instance name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// ID of the project that contains the read replica.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4214,10 +4358,12 @@ impl wkt::message::Message for SqlInstancesResetReplicaSizeRequest {
 pub struct SqlInstancesCreateEphemeralCertRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the Cloud SQL project.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -4499,11 +4645,13 @@ pub struct SslCertsCreateEphemeralRequest {
     /// PEM encoded public key to include in the signed certificate.
     #[serde(rename = "public_key")]
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub public_key: std::string::String,
 
     /// Access token to include in the signed certificate.
     #[serde(rename = "access_token")]
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub access_token: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4586,19 +4734,23 @@ impl wkt::message::Message for InstancesImportRequest {
 pub struct InstancesListResponse {
     /// This is always `sql#instancesList`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// List of warnings that occurred while handling the request.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub warnings: std::vec::Vec<crate::model::ApiWarning>,
 
     /// List of database instance resources.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub items: std::vec::Vec<crate::model::DatabaseInstance>,
 
     /// The continuation token, used to page through large result sets. Provide
     /// this value in a subsequent request to return the next page of results.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4673,13 +4825,16 @@ impl gax::paginator::internal::PageableResponse for InstancesListResponse {
 pub struct InstancesListServerCasResponse {
     /// List of server CA certificates for the instance.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub certs: std::vec::Vec<crate::model::SslCert>,
 
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub active_version: std::string::String,
 
     /// This is always `sql#instancesListServerCas`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4905,14 +5060,17 @@ impl wkt::message::Message for InstancesAcquireSsrsLeaseRequest {
 pub struct SqlInstancesVerifyExternalSyncSettingsResponse {
     /// This is always `sql#migrationSettingErrorList`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// List of migration violations.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub errors: std::vec::Vec<crate::model::SqlExternalSyncSettingError>,
 
     /// List of migration warnings.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub warnings: std::vec::Vec<crate::model::SqlExternalSyncSettingError>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -4967,15 +5125,17 @@ impl wkt::message::Message for SqlInstancesVerifyExternalSyncSettingsResponse {
 pub struct SqlInstancesGetDiskShrinkConfigResponse {
     /// This is always `sql#getDiskShrinkConfig`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// The minimum size to which a disk can be shrunk in GigaBytes.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "serde_with::DisplayFromStr")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I64>")]
     pub minimal_target_size_gb: i64,
 
     /// Additional message to customers.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub message: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5020,10 +5180,12 @@ impl wkt::message::Message for SqlInstancesGetDiskShrinkConfigResponse {
 pub struct SqlInstancesGetLatestRecoveryTimeRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5062,6 +5224,7 @@ impl wkt::message::Message for SqlInstancesGetLatestRecoveryTimeRequest {
 pub struct SqlInstancesGetLatestRecoveryTimeResponse {
     /// This is always `sql#getLatestRecoveryTime`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// Timestamp, identifies the latest recovery time of the source instance.
@@ -5116,15 +5279,17 @@ impl wkt::message::Message for SqlInstancesGetLatestRecoveryTimeResponse {
 pub struct CloneContext {
     /// This is always `sql#cloneContext`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// Reserved for future use.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "serde_with::DisplayFromStr")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I64>")]
     pub pitr_timestamp_ms: i64,
 
     /// Name of the Cloud SQL instance to be created as a clone.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub destination_instance_name: std::string::String,
 
     /// Binary log coordinates, if specified, identify the position up to which the
@@ -5146,11 +5311,13 @@ pub struct CloneContext {
     /// [a-z]([-a-z0-9]*[a-z0-9])?.
     /// Reserved for future use.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub allocated_ip_range: std::string::String,
 
     /// (SQL Server only) Clone only the specified databases from the source
     /// instance. Clone all databases if empty.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub database_names: std::vec::Vec<std::string::String>,
 
     /// Optional. Copy clone and point-in-time recovery clone of an instance to the
@@ -5278,15 +5445,17 @@ impl wkt::message::Message for CloneContext {
 pub struct BinLogCoordinates {
     /// Name of the binary log file for a Cloud SQL instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub bin_log_file_name: std::string::String,
 
     /// Position (offset) within the binary log file.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "serde_with::DisplayFromStr")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I64>")]
     pub bin_log_position: i64,
 
     /// This is always `sql#binLogCoordinates`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -5334,13 +5503,18 @@ impl wkt::message::Message for BinLogCoordinates {
 pub struct DatabaseInstance {
     /// This is always `sql#instance`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// The current serving state of the Cloud SQL instance.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub state: crate::model::database_instance::SqlInstanceState,
 
     /// The database engine type and version. The `databaseVersion` field cannot
     /// be changed after instance creation.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub database_version: crate::model::SqlDatabaseVersion,
 
     /// The user settings.
@@ -5350,6 +5524,7 @@ pub struct DatabaseInstance {
     /// This field is deprecated and will be removed from a future version of the
     /// API. Use the `settings.settingsVersion` field instead.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub etag: std::string::String,
 
     /// The name and status of the failover replica.
@@ -5359,15 +5534,17 @@ pub struct DatabaseInstance {
     /// The name of the instance which will act as primary in the replication
     /// setup.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub master_instance_name: std::string::String,
 
     /// The replicas of the instance.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub replica_names: std::vec::Vec<std::string::String>,
 
     /// The maximum disk size of the instance in bytes.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
-    #[serde_as(as = "std::option::Option<serde_with::DisplayFromStr>")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I64>")]
     #[deprecated]
     pub max_disk_size: std::option::Option<wkt::Int64Value>,
 
@@ -5378,12 +5555,13 @@ pub struct DatabaseInstance {
     /// announcement](https://groups.google.com/d/msg/google-cloud-sql-announce/I_7-F9EBhT0/BtvFtdFeAgAJ)
     /// for details.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
-    #[serde_as(as = "std::option::Option<serde_with::DisplayFromStr>")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I64>")]
     #[deprecated]
     pub current_disk_size: std::option::Option<wkt::Int64Value>,
 
     /// The assigned IP addresses for the instance.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub ip_addresses: std::vec::Vec<crate::model::IpMapping>,
 
     /// SSL configuration.
@@ -5391,23 +5569,28 @@ pub struct DatabaseInstance {
     pub server_ca_cert: std::option::Option<crate::model::SslCert>,
 
     /// The instance type.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance_type: crate::model::SqlInstanceType,
 
     /// The project ID of the project containing the Cloud SQL instance. The Google
     /// apps domain is prefixed if applicable.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     /// The IPv6 address assigned to the instance.
     /// (Deprecated) This property was applicable only
     /// to First Generation instances.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     #[deprecated]
     pub ipv6_address: std::string::String,
 
     /// The service account email address assigned to the instance.\This
     /// property is read-only.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub service_account_email_address: std::string::String,
 
     /// Configuration specific to on-premises instances.
@@ -5424,22 +5607,28 @@ pub struct DatabaseInstance {
     ///
     /// This property is read-only; use the `tier` property in the `settings`
     /// object to determine the database type.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub backend_type: crate::model::SqlBackendType,
 
     /// The URI of this resource.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub self_link: std::string::String,
 
     /// If the instance state is SUSPENDED, the reason for the suspension.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub suspension_reason: std::vec::Vec<crate::model::SqlSuspensionReason>,
 
     /// Connection name of the Cloud SQL instance used in connection strings.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub connection_name: std::string::String,
 
     /// Name of the Cloud SQL instance. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// The geographical region of the Cloud SQL instance.
@@ -5451,6 +5640,7 @@ pub struct DatabaseInstance {
     /// For example,  `asia-east1`, `europe-west1`, and  `us-central1`.
     /// The default value is `us-central1`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub region: std::string::String,
 
     /// The Compute Engine zone that the instance is currently serving from. This
@@ -5458,6 +5648,7 @@ pub struct DatabaseInstance {
     /// was created if the instance has failed over to its secondary zone. WARNING:
     /// Changing this might restart the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub gce_zone: std::string::String,
 
     /// The Compute Engine zone that the failover instance is currently serving
@@ -5465,6 +5656,7 @@ pub struct DatabaseInstance {
     /// from the zone that was specified when the instance
     /// was created if the instance has failed over to its secondary/failover zone.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub secondary_gce_zone: std::string::String,
 
     /// Disk encryption configuration specific to an instance.
@@ -5479,6 +5671,7 @@ pub struct DatabaseInstance {
     /// Initial root password. Use only on creation. You must set root passwords
     /// before you can connect to PostgreSQL instances.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub root_password: std::string::String,
 
     /// The start time of any upcoming scheduled maintenance for this instance.
@@ -5495,6 +5688,7 @@ pub struct DatabaseInstance {
     /// Output only. Stores the current database version running on the instance
     /// including minor version such as `MYSQL_8_0_18`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub database_installed_version: std::string::String,
 
     /// This field represents the report generated by the proactive database
@@ -5516,14 +5710,17 @@ pub struct DatabaseInstance {
 
     /// Output only. List all maintenance versions applicable on the instance
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub available_maintenance_versions: std::vec::Vec<std::string::String>,
 
     /// The current software version on the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub maintenance_version: std::string::String,
 
     /// Output only. All database versions that are available for upgrade.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub upgradable_database_versions: std::vec::Vec<crate::model::AvailableDatabaseVersion>,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -6204,6 +6401,7 @@ pub mod database_instance {
         /// failover replica is created for the instance. The name
         /// doesn't include the project ID.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub name: std::string::String,
 
         /// The availability status of the failover replica. A false status indicates
@@ -6263,11 +6461,13 @@ pub mod database_instance {
         pub start_time: std::option::Option<wkt::Timestamp>,
 
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         #[deprecated]
         pub can_defer: bool,
 
         /// If the scheduled maintenance can be rescheduled.
         #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub can_reschedule: bool,
 
         /// Maintenance cannot be rescheduled to start beyond this deadline.
@@ -6364,6 +6564,7 @@ pub mod database_instance {
         /// * the proactive database wellness job for OOD.
         /// * Readers:
         #[serde(skip_serializing_if = "std::option::Option::is_none")]
+        #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
         pub sql_min_recommended_increase_size_gb: std::option::Option<i32>,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7047,6 +7248,7 @@ pub struct ReplicationCluster {
     /// user as information. This field can exist even if a standalone instance
     /// does not yet have a replica, or had a DR replica that was deleted.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub psa_write_endpoint: std::string::String,
 
     /// Optional. If the instance is a primary instance, then this field identifies
@@ -7056,11 +7258,13 @@ pub struct ReplicationCluster {
     /// to designate a DR replica for a primary instance. Remove the replica name
     /// to remove the DR replica designation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub failover_dr_replica_name: std::string::String,
 
     /// Output only. Read-only field that indicates whether the replica is a DR
     /// replica. This field is not set if the instance is a primary instance.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub dr_replica: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7253,6 +7457,8 @@ pub mod sql_instances_reschedule_maintenance_request_body {
     #[non_exhaustive]
     pub struct Reschedule {
         /// Required. The type of the reschedule.
+        #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub reschedule_type:
             crate::model::sql_instances_reschedule_maintenance_request_body::RescheduleType,
 
@@ -7457,6 +7663,7 @@ pub mod sql_instances_reschedule_maintenance_request_body {
 pub struct DemoteMasterContext {
     /// This is always `sql#demoteMasterContext`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// Verify the GTID consistency for demote operation. Default value:
@@ -7472,6 +7679,7 @@ pub struct DemoteMasterContext {
     /// The name of the instance which will act as on-premises primary instance
     /// in the replication setup.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub master_instance_name: std::string::String,
 
     /// Configuration specific to read-replicas replicating from the on-premises
@@ -7481,6 +7689,7 @@ pub struct DemoteMasterContext {
 
     /// Flag to skip replication setup on the instance.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub skip_replication_setup: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7565,11 +7774,13 @@ impl wkt::message::Message for DemoteMasterContext {
 pub struct DemoteContext {
     /// This is always `sql#demoteContext`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// Required. The name of the instance which acts as the on-premises primary
     /// instance in the replication setup.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub source_representative_instance_name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7612,11 +7823,12 @@ pub struct FailoverContext {
     /// The current settings version of this instance. Request will be rejected if
     /// this version doesn't match the current settings version.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "serde_with::DisplayFromStr")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I64>")]
     pub settings_version: i64,
 
     /// This is always `sql#failoverContext`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7656,19 +7868,22 @@ impl wkt::message::Message for FailoverContext {
 pub struct RestoreBackupContext {
     /// This is always `sql#restoreBackupContext`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// The ID of the backup run to restore from.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "serde_with::DisplayFromStr")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I64>")]
     pub backup_run_id: i64,
 
     /// The ID of the instance that the backup was taken from.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance_id: std::string::String,
 
     /// The full project ID of the source instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7719,11 +7934,13 @@ impl wkt::message::Message for RestoreBackupContext {
 pub struct RotateServerCaContext {
     /// This is always `sql#rotateServerCaContext`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// The fingerprint of the next version to be rotated to. If left unspecified,
     /// will be rotated to the most recently added server CA version.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_version: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7762,11 +7979,13 @@ impl wkt::message::Message for RotateServerCaContext {
 pub struct TruncateLogContext {
     /// This is always `sql#truncateLogContext`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// The type of log to truncate. Valid values are `MYSQL_GENERAL_TABLE` and
     /// `MYSQL_SLOW_TABLE`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub log_type: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -7806,14 +8025,18 @@ pub struct SqlExternalSyncSettingError {
     /// Can be `sql#externalSyncSettingError` or
     /// `sql#externalSyncSettingWarning`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// Identifies the specific error that occurred.
     #[serde(rename = "type")]
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub r#type: crate::model::sql_external_sync_setting_error::SqlExternalSyncSettingErrorType,
 
     /// Additional information about the error encountered.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub detail: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8411,35 +8634,43 @@ pub mod sql_external_sync_setting_error {
 pub struct OnPremisesConfiguration {
     /// The host and port of the on-premises instance in host:port format
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub host_port: std::string::String,
 
     /// This is always `sql#onPremisesConfiguration`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// The username for connecting to on-premises instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub username: std::string::String,
 
     /// The password for connecting to on-premises instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub password: std::string::String,
 
     /// PEM representation of the trusted CA's x509 certificate.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub ca_certificate: std::string::String,
 
     /// PEM representation of the replica's x509 certificate.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub client_certificate: std::string::String,
 
     /// PEM representation of the replica's private key. The corresponsing public
     /// key is encoded in the client's certificate.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub client_key: std::string::String,
 
     /// The dump file to create the Cloud SQL replica.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub dump_file_path: std::string::String,
 
     /// The reference to Cloud SQL instance if the source is Cloud SQL.
@@ -8539,6 +8770,7 @@ impl wkt::message::Message for OnPremisesConfiguration {
 pub struct ReplicaConfiguration {
     /// This is always `sql#replicaConfiguration`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// MySQL specific configuration when replicating from a MySQL on-premises
@@ -8651,11 +8883,13 @@ pub struct SqlInstancesAcquireSsrsLeaseRequest {
     /// a letter. The total length must be 98 characters or less (Example:
     /// instance-id).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Required. Project ID of the project that contains the instance (Example:
     /// project-id).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     /// Required. The request body.
@@ -8716,6 +8950,7 @@ impl wkt::message::Message for SqlInstancesAcquireSsrsLeaseRequest {
 pub struct SqlInstancesAcquireSsrsLeaseResponse {
     /// The unique identifier for this operation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub operation_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8751,10 +8986,12 @@ pub struct SqlInstancesReleaseSsrsLeaseRequest {
     /// must start with a letter. This ID can have a maximum length of 98
     /// characters.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Required. The project ID that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8793,6 +9030,7 @@ impl wkt::message::Message for SqlInstancesReleaseSsrsLeaseRequest {
 pub struct SqlInstancesReleaseSsrsLeaseResponse {
     /// The unique identifier for this operation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub operation_id: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8825,10 +9063,12 @@ impl wkt::message::Message for SqlInstancesReleaseSsrsLeaseResponse {
 pub struct SqlOperationsGetRequest {
     /// Instance operation ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub operation: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8867,19 +9107,23 @@ impl wkt::message::Message for SqlOperationsGetRequest {
 pub struct SqlOperationsListRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Maximum number of operations per response.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::U32>")]
     pub max_results: u32,
 
     /// A previously-returned page token representing part of the larger set of
     /// results to view.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub page_token: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -8930,15 +9174,18 @@ impl wkt::message::Message for SqlOperationsListRequest {
 pub struct OperationsListResponse {
     /// This is always `sql#operationsList`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// List of operation resources.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub items: std::vec::Vec<crate::model::Operation>,
 
     /// The continuation token, used to page through large result sets. Provide
     /// this value in a subsequent request to return the next page of results.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub next_page_token: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9002,10 +9249,12 @@ impl gax::paginator::internal::PageableResponse for OperationsListResponse {
 pub struct SqlOperationsCancelRequest {
     /// Instance operation ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub operation: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9044,6 +9293,7 @@ impl wkt::message::Message for SqlOperationsCancelRequest {
 pub struct AclEntry {
     /// The allowlisted value for the access control list.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub value: std::string::String,
 
     /// The time when this access control entry expires in
@@ -9054,10 +9304,12 @@ pub struct AclEntry {
 
     /// Optional. A label to identify this entry.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// This is always `sql#aclEntry`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9119,14 +9371,18 @@ impl wkt::message::Message for AclEntry {
 #[non_exhaustive]
 pub struct ApiWarning {
     /// Code to uniquely identify the warning type.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub code: crate::model::api_warning::SqlApiWarningCode,
 
     /// The warning message.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub message: std::string::String,
 
     /// The region name for REGION_UNREACHABLE warning.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub region: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9333,12 +9589,15 @@ pub mod api_warning {
 #[non_exhaustive]
 pub struct BackupRetentionSettings {
     /// The unit that 'retained_backups' represents.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub retention_unit: crate::model::backup_retention_settings::RetentionUnit,
 
     /// Depending on the value of retention_unit, this is used to determine
     /// if a backup needs to be deleted.  If retention_unit is 'COUNT', we will
     /// retain this many backups.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
     pub retained_backups: std::option::Option<wkt::Int32Value>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9526,6 +9785,7 @@ pub struct BackupConfiguration {
     /// Start time for the daily backup configuration in UTC timezone in the 24
     /// hour format - `HH:MM`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub start_time: std::string::String,
 
     /// Whether this configuration is enabled.
@@ -9534,6 +9794,7 @@ pub struct BackupConfiguration {
 
     /// This is always `sql#backupConfiguration`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// (MySQL only) Whether binary log is enabled. If backup configuration is
@@ -9547,6 +9808,7 @@ pub struct BackupConfiguration {
 
     /// Location of the backup
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub location: std::string::String,
 
     /// Whether point in time recovery is enabled.
@@ -9560,6 +9822,7 @@ pub struct BackupConfiguration {
     /// The number of days of transaction logs we retain for point in time
     /// restore, from 1-7.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
     pub transaction_log_retention_days: std::option::Option<wkt::Int32Value>,
 
     /// Output only. This value contains the storage location of transactional logs
@@ -9915,7 +10178,7 @@ pub mod backup_configuration {
 pub struct PerformDiskShrinkContext {
     /// The target disk shrink size in GigaBytes.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "serde_with::DisplayFromStr")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I64>")]
     pub target_size_gb: i64,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9948,11 +10211,12 @@ impl wkt::message::Message for PerformDiskShrinkContext {
 pub struct BackupContext {
     /// The identifier of the backup.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "serde_with::DisplayFromStr")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I64>")]
     pub backup_id: i64,
 
     /// This is always `sql#backupContext`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -9991,37 +10255,45 @@ impl wkt::message::Message for BackupContext {
 pub struct Database {
     /// This is always `sql#database`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// The Cloud SQL charset value.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub charset: std::string::String,
 
     /// The Cloud SQL collation value.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub collation: std::string::String,
 
     /// This field is deprecated and will be removed from a future version of the
     /// API.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub etag: std::string::String,
 
     /// The name of the database in the Cloud SQL instance. This does not include
     /// the project ID or instance name.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// The name of the Cloud SQL instance. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// The URI of this resource.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub self_link: std::string::String,
 
     /// The project ID of the project containing the Cloud SQL database. The Google
     /// apps domain is prefixed if applicable.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "std::option::Option::is_none")]
@@ -10159,10 +10431,12 @@ pub mod database {
 pub struct SqlServerDatabaseDetails {
     /// The version of SQL Server with which the database is to be made compatible
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub compatibility_level: i32,
 
     /// The recovery model of a SQL Server database
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub recovery_model: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -10205,12 +10479,14 @@ pub struct DatabaseFlags {
     /// [Configuring Database Flags](https://cloud.google.com/sql/docs/mysql/flags)
     /// in the Cloud SQL documentation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// The value of the flag. Boolean flags are set to `on` for true
     /// and `off` for false. This field must be omitted if the flag
     /// doesn't take a value.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub value: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -10249,6 +10525,7 @@ impl wkt::message::Message for DatabaseFlags {
 pub struct MySqlSyncConfig {
     /// Flags to use for the initial dump.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub initial_sync_flags: std::vec::Vec<crate::model::SyncFlags>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -10287,11 +10564,13 @@ impl wkt::message::Message for MySqlSyncConfig {
 pub struct SyncFlags {
     /// The name of the flag.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// The value of the flag. This field must be omitted if the flag
     /// doesn't take a value.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub value: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -10331,15 +10610,18 @@ pub struct InstanceReference {
     /// The name of the Cloud SQL instance being referenced.
     /// This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// The region of the Cloud SQL instance being referenced.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub region: std::string::String,
 
     /// The project ID of the Cloud SQL instance being referenced.
     /// The default is the same project ID as the instance references it.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -10385,6 +10667,7 @@ impl wkt::message::Message for InstanceReference {
 pub struct DemoteMasterConfiguration {
     /// This is always `sql#demoteMasterConfiguration`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// MySQL specific configuration when replicating from a MySQL on-premises
@@ -10445,28 +10728,34 @@ impl wkt::message::Message for DemoteMasterConfiguration {
 pub struct DemoteMasterMySqlReplicaConfiguration {
     /// This is always `sql#demoteMasterMysqlReplicaConfiguration`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// The username for the replication connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub username: std::string::String,
 
     /// The password for the replication connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub password: std::string::String,
 
     /// PEM representation of the replica's private key. The corresponsing public
     /// key is encoded in the client's certificate. The format of the replica's
     /// private key can be either PKCS #1 or PKCS #8.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub client_key: std::string::String,
 
     /// PEM representation of the replica's x509 certificate.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub client_certificate: std::string::String,
 
     /// PEM representation of the trusted CA's x509 certificate.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub ca_certificate: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -10536,6 +10825,7 @@ pub struct ExportContext {
     /// `fileType` is `SQL` and the filename ends with .gz,
     /// the contents are compressed.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub uri: std::string::String,
 
     /// Databases to be exported. <br /> `MySQL instances:` If
@@ -10551,10 +10841,12 @@ pub struct ExportContext {
     /// instances:` You must specify one database to be exported, and the
     /// `fileType` must be `BAK`.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub databases: std::vec::Vec<std::string::String>,
 
     /// This is always `sql#exportContext`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// Options for exporting data as SQL statements.
@@ -10567,6 +10859,8 @@ pub struct ExportContext {
     pub csv_export_options: std::option::Option<crate::model::export_context::SqlCsvExportOptions>,
 
     /// The file type for the specified uri.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub file_type: crate::model::SqlFileType,
 
     /// Option for export offload.
@@ -10706,25 +11000,30 @@ pub mod export_context {
     pub struct SqlCsvExportOptions {
         /// The select query used to extract the data.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub select_query: std::string::String,
 
         /// Specifies the character that should appear before a data character that
         /// needs to be escaped.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub escape_character: std::string::String,
 
         /// Specifies the quoting character to be used when a data value is quoted.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub quote_character: std::string::String,
 
         /// Specifies the character that separates columns within each row (line) of
         /// the file.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub fields_terminated_by: std::string::String,
 
         /// This is used to separate lines. If a line does not contain all fields,
         /// the rest of the columns are set to their default values.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub lines_terminated_by: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -10797,6 +11096,7 @@ pub mod export_context {
         /// you specify tables, specify one and only one database. For PostgreSQL
         /// instances, you can specify only one table.
         #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
         pub tables: std::vec::Vec<std::string::String>,
 
         /// Export only schemas.
@@ -10810,6 +11110,7 @@ pub mod export_context {
 
         /// Optional. The number of threads to use for parallel export.
         #[serde(skip_serializing_if = "std::option::Option::is_none")]
+        #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
         pub threads: std::option::Option<wkt::Int32Value>,
 
         /// Optional. Whether or not the export should be parallel.
@@ -10965,6 +11266,7 @@ pub mod export_context {
             /// has no effect. If set to any value other than `1`, --set-gtid-purged
             /// is set to OFF.
             #[serde(skip_serializing_if = "std::option::Option::is_none")]
+            #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
             pub master_data: std::option::Option<wkt::Int32Value>,
 
             #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -11085,9 +11387,12 @@ pub mod export_context {
         /// If blank, and the value of the striped field is true,
         /// the number of stripes is automatically chosen.
         #[serde(skip_serializing_if = "std::option::Option::is_none")]
+        #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
         pub stripe_count: std::option::Option<wkt::Int32Value>,
 
         /// Type of this bak file will be export, FULL or DIFF, SQL Server only
+        #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub bak_type: crate::model::BakType,
 
         /// Deprecated: copy_only is deprecated. Use differential_base instead
@@ -11208,6 +11513,7 @@ pub struct ImportContext {
     /// when `fileType` is `SQL`. The instance must have
     /// write permissions to the bucket and read access to the file.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub uri: std::string::String,
 
     /// The target database for the import. If `fileType` is `SQL`, this field
@@ -11215,14 +11521,18 @@ pub struct ImportContext {
     /// overridden by any database specification in the import file. If
     /// `fileType` is `CSV`, one database must be specified.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub database: std::string::String,
 
     /// This is always `sql#importContext`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// The file type for the specified uri.\`SQL`: The file
     /// contains SQL statements. \`CSV`: The file contains CSV data.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub file_type: crate::model::SqlFileType,
 
     /// Options for importing data as CSV.
@@ -11231,6 +11541,7 @@ pub struct ImportContext {
 
     /// The PostgreSQL user for this import operation. PostgreSQL instances only.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub import_user: std::string::String,
 
     /// Import parameters specific to SQL Server .BAK files
@@ -11353,6 +11664,7 @@ pub mod import_context {
     pub struct SqlImportOptions {
         /// Optional. The number of threads to use for parallel import.
         #[serde(skip_serializing_if = "std::option::Option::is_none")]
+        #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
         pub threads: std::option::Option<wkt::Int32Value>,
 
         /// Optional. Whether or not the import should be parallel.
@@ -11519,30 +11831,36 @@ pub mod import_context {
     pub struct SqlCsvImportOptions {
         /// The table to which CSV data is imported.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub table: std::string::String,
 
         /// The columns to which CSV data is imported. If not specified, all columns
         /// of the database table are loaded with CSV data.
         #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
         pub columns: std::vec::Vec<std::string::String>,
 
         /// Specifies the character that should appear before a data character that
         /// needs to be escaped.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub escape_character: std::string::String,
 
         /// Specifies the quoting character to be used when a data value is quoted.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub quote_character: std::string::String,
 
         /// Specifies the character that separates columns within each row (line) of
         /// the file.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub fields_terminated_by: std::string::String,
 
         /// This is used to separate lines. If a line does not contain all fields,
         /// the rest of the columns are set to their default values.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub lines_terminated_by: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -11643,6 +11961,8 @@ pub mod import_context {
         pub recovery_only: std::option::Option<wkt::BoolValue>,
 
         /// Type of the bak content, FULL or DIFF
+        #[serde(skip_serializing_if = "wkt::internal::is_default")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub bak_type: crate::model::BakType,
 
         /// Optional. The timestamp when the import should stop. This timestamp is in
@@ -11656,6 +11976,7 @@ pub mod import_context {
         /// is equivalent to the STOPATMARK keyword and applies to Cloud SQL for SQL
         /// Server only.
         #[serde(skip_serializing_if = "std::string::String::is_empty")]
+        #[serde_as(as = "serde_with::DefaultOnNull<_>")]
         pub stop_at_mark: std::string::String,
 
         #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -11797,16 +12118,19 @@ pub mod import_context {
             /// `gs://bucketName/fileName`. The instance must have
             /// write permissions to the bucket and read access to the file.
             #[serde(skip_serializing_if = "std::string::String::is_empty")]
+            #[serde_as(as = "serde_with::DefaultOnNull<_>")]
             pub cert_path: std::string::String,
 
             /// Path to the Certificate Private Key (.pvk)  in Cloud Storage, in the
             /// form `gs://bucketName/fileName`. The instance must have
             /// write permissions to the bucket and read access to the file.
             #[serde(skip_serializing_if = "std::string::String::is_empty")]
+            #[serde_as(as = "serde_with::DefaultOnNull<_>")]
             pub pvk_path: std::string::String,
 
             /// Password that encrypts the private key
             #[serde(skip_serializing_if = "std::string::String::is_empty")]
+            #[serde_as(as = "serde_with::DefaultOnNull<_>")]
             pub pvk_password: std::string::String,
 
             #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -11869,6 +12193,7 @@ pub struct IpConfiguration {
     /// `/projects/myProject/global/networks/default`. This setting can
     /// be updated, but it cannot be removed after it is set.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub private_network: std::string::String,
 
     /// Use `ssl_mode` instead.
@@ -11887,6 +12212,7 @@ pub struct IpConfiguration {
     /// using the IP. In 'CIDR' notation, also known as 'slash' notation (for
     /// example: `157.197.200.0/24`).
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub authorized_networks: std::vec::Vec<crate::model::AclEntry>,
 
     /// The name of the allocated ip range for the private ip Cloud SQL instance.
@@ -11896,6 +12222,7 @@ pub struct IpConfiguration {
     /// must be 1-63 characters long and match the regular expression
     /// `[a-z]([-a-z0-9]*[a-z0-9])?.`
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub allocated_ip_range: std::string::String,
 
     /// Controls connectivity to private IP instances from Google services,
@@ -11925,6 +12252,8 @@ pub struct IpConfiguration {
     /// connections, while `require_ssl=false` means accept both non-SSL
     /// and SSL connections. In this case, MySQL and PostgreSQL databases respect
     /// `ssl_mode` and accepts only SSL connections.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub ssl_mode: crate::model::ip_configuration::SslMode,
 
     /// PSC settings for this instance.
@@ -12403,6 +12732,7 @@ pub struct PscConfig {
     /// Each consumer project in this list may be represented by a project number
     /// (numeric) or by a project id (alphanumeric).
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub allowed_consumer_projects: std::vec::Vec<std::string::String>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -12462,22 +12792,26 @@ pub struct LocationPreference {
     /// The App Engine application to follow, it must be in the same region as the
     /// Cloud SQL instance. WARNING: Changing this might restart the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     #[deprecated]
     pub follow_gae_application: std::string::String,
 
     /// The preferred Compute Engine zone (for example: us-central1-a,
     /// us-central1-b, etc.). WARNING: Changing this might restart the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub zone: std::string::String,
 
     /// The preferred Compute Engine zone for the secondary/failover
     /// (for example: us-central1-a, us-central1-b, etc.).
     /// To disable this field, set it to 'no_secondary_zone'.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub secondary_zone: std::string::String,
 
     /// This is always `sql#locationPreference`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -12533,21 +12867,26 @@ impl wkt::message::Message for LocationPreference {
 pub struct MaintenanceWindow {
     /// Hour of day - 0 to 23. Specify in the UTC time zone.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
     pub hour: std::option::Option<wkt::Int32Value>,
 
     /// Day of week - `MONDAY`, `TUESDAY`, `WEDNESDAY`, `THURSDAY`, `FRIDAY`,
     /// `SATURDAY`, or `SUNDAY`. Specify in the UTC time zone.
     /// Returned in output as an integer, 1 to 7, where `1` equals Monday.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
     pub day: std::option::Option<wkt::Int32Value>,
 
     /// Maintenance timing settings: `canary`, `stable`, or `week5`.
     /// For more information, see [About maintenance on Cloud SQL
     /// instances](https://cloud.google.com/sql/docs/mysql/maintenance).
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub update_track: crate::model::SqlUpdateTrack,
 
     /// This is always `sql#maintenanceWindow`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -12629,6 +12968,7 @@ pub struct DenyMaintenancePeriod {
     /// the deny maintenance period recurs every year. The date is in format
     /// yyyy-mm-dd i.e., 2020-11-01, or mm-dd, i.e., 11-01
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub start_date: std::string::String,
 
     /// "deny maintenance period" end date. If the year of the end date is empty,
@@ -12636,11 +12976,13 @@ pub struct DenyMaintenancePeriod {
     /// no maintenance interval recurs every year. The date is in format yyyy-mm-dd
     /// i.e., 2020-11-01, or mm-dd, i.e., 11-01
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub end_date: std::string::String,
 
     /// Time in UTC when the "deny maintenance period" starts on start_date and
     /// ends on end_date. The time is in format: HH:mm:SS, i.e., 00:00:00
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub time: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -12686,15 +13028,18 @@ impl wkt::message::Message for DenyMaintenancePeriod {
 pub struct InsightsConfig {
     /// Whether Query Insights feature is enabled.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub query_insights_enabled: bool,
 
     /// Whether Query Insights will record client address when enabled.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub record_client_address: bool,
 
     /// Whether Query Insights will record application tags from query when
     /// enabled.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub record_application_tags: bool,
 
     /// Maximum query length stored in bytes. Default value: 1024 bytes.
@@ -12702,11 +13047,13 @@ pub struct InsightsConfig {
     /// truncated to this value. When unset, query length will be the default
     /// value. Changing query length will restart the database.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
     pub query_string_length: std::option::Option<wkt::Int32Value>,
 
     /// Number of query execution plans captured by Insights per minute
     /// for all queries combined. Default is 5.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
     pub query_plans_per_minute: std::option::Option<wkt::Int32Value>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -12792,40 +13139,48 @@ pub struct MySqlReplicaConfiguration {
     /// begins. This can be accomplished by setting --master-data to 1 when using
     /// mysqldump.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub dump_file_path: std::string::String,
 
     /// The username for the replication connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub username: std::string::String,
 
     /// The password for the replication connection.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub password: std::string::String,
 
     /// Seconds to wait between connect retries. MySQL's default is 60 seconds.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
     pub connect_retry_interval: std::option::Option<wkt::Int32Value>,
 
     /// Interval in milliseconds between replication heartbeats.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
-    #[serde_as(as = "std::option::Option<serde_with::DisplayFromStr>")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I64>")]
     pub master_heartbeat_period: std::option::Option<wkt::Int64Value>,
 
     /// PEM representation of the trusted CA's x509 certificate.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub ca_certificate: std::string::String,
 
     /// PEM representation of the replica's x509 certificate.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub client_certificate: std::string::String,
 
     /// PEM representation of the replica's private key. The corresponsing public
     /// key is encoded in the client's certificate.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub client_key: std::string::String,
 
     /// A list of permissible ciphers to use for SSL encryption.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub ssl_cipher: std::string::String,
 
     /// Whether or not to check the primary instance's Common Name value in the
@@ -12835,6 +13190,7 @@ pub struct MySqlReplicaConfiguration {
 
     /// This is always `sql#mysqlReplicaConfiguration`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -12966,10 +13322,12 @@ impl wkt::message::Message for MySqlReplicaConfiguration {
 pub struct DiskEncryptionConfiguration {
     /// Resource name of KMS key for disk encryption
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kms_key_name: std::string::String,
 
     /// This is always `sql#diskEncryptionConfiguration`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -13008,10 +13366,12 @@ impl wkt::message::Message for DiskEncryptionConfiguration {
 pub struct DiskEncryptionStatus {
     /// KMS key version used to encrypt the Cloud SQL instance resource
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kms_key_version_name: std::string::String,
 
     /// This is always `sql#diskEncryptionStatus`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -13056,10 +13416,13 @@ pub struct IpMapping {
     /// that can accept incoming connections. An `OUTGOING` address is the source
     /// address of connections originating from the instance, if supported.
     #[serde(rename = "type")]
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub r#type: crate::model::SqlIpAddressType,
 
     /// The IP address assigned.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub ip_address: std::string::String,
 
     /// The due time for this IP to be retired in
@@ -13125,16 +13488,21 @@ impl wkt::message::Message for IpMapping {
 pub struct Operation {
     /// This is always `sql#operation`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub target_link: std::string::String,
 
     /// The status of an operation.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub status: crate::model::operation::SqlOperationStatus,
 
     /// The email address of the user who initiated this operation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub user: std::string::String,
 
     /// The time this operation was enqueued in UTC timezone in [RFC
@@ -13178,6 +13546,8 @@ pub struct Operation {
     /// * `DELETE_USER`
     /// * `CREATE_DATABASE`
     /// * `DELETE_DATABASE`
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub operation_type: crate::model::operation::SqlOperationType,
 
     /// The context for import operation, if applicable.
@@ -13196,18 +13566,22 @@ pub struct Operation {
     /// identifier to retrieve the Operations resource that has information about
     /// the operation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Name of the database instance related to this operation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub target_id: std::string::String,
 
     /// The URI of this resource.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub self_link: std::string::String,
 
     /// The project ID of the target instance related to this operation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub target_project: std::string::String,
 
     /// The context for acquire SSRS lease operation, if applicable.
@@ -14059,14 +14433,17 @@ pub mod operation {
 pub struct OperationError {
     /// This is always `sql#operationError`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// Identifies the specific error that occurred.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub code: std::string::String,
 
     /// Additional information about the error encountered.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub message: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -14111,10 +14488,12 @@ impl wkt::message::Message for OperationError {
 pub struct OperationErrors {
     /// This is always `sql#operationErrors`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// The list of errors encountered while processing this operation.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub errors: std::vec::Vec<crate::model::OperationError>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -14158,13 +14537,17 @@ impl wkt::message::Message for OperationErrors {
 pub struct PasswordValidationPolicy {
     /// Minimum number of characters allowed.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
     pub min_length: std::option::Option<wkt::Int32Value>,
 
     /// The complexity of the password.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub complexity: crate::model::password_validation_policy::Complexity,
 
     /// Number of previous passwords that cannot be reused.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I32>")]
     pub reuse_interval: std::option::Option<wkt::Int32Value>,
 
     /// Disallow username as a part of the password.
@@ -14466,6 +14849,7 @@ pub mod password_validation_policy {
 pub struct DataCacheConfig {
     /// Whether data cache is enabled for the instance.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub data_cache_enabled: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -14501,27 +14885,31 @@ pub struct Settings {
     /// use the most recent settingsVersion value for this instance and do not try
     /// to update this value.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
-    #[serde_as(as = "std::option::Option<serde_with::DisplayFromStr>")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I64>")]
     pub settings_version: std::option::Option<wkt::Int64Value>,
 
     /// The App Engine app IDs that can access this instance.
     /// (Deprecated) Applied to First Generation instances only.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     #[deprecated]
     pub authorized_gae_applications: std::vec::Vec<std::string::String>,
 
     /// The tier (or machine type) for this instance, for example
     /// `db-custom-1-3840`. WARNING: Changing this restarts the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub tier: std::string::String,
 
     /// This is always `sql#settings`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// User-provided labels, represented as a dictionary where each label is a
     /// single key value pair.
     #[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]
     pub user_labels: std::collections::HashMap<std::string::String, std::string::String>,
 
     /// Availability type. Potential values:
@@ -14533,22 +14921,28 @@ pub struct Settings {
     ///
     /// For more information, see [Overview of the High Availability
     /// Configuration](https://cloud.google.com/sql/docs/mysql/high-availability).
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub availability_type: crate::model::SqlAvailabilityType,
 
     /// The pricing plan for this instance. This can be either `PER_USE` or
     /// `PACKAGE`. Only `PER_USE` is supported for Second Generation instances.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub pricing_plan: crate::model::SqlPricingPlan,
 
     /// The type of replication this instance uses. This can be either
     /// `ASYNCHRONOUS` or `SYNCHRONOUS`. (Deprecated) This property was only
     /// applicable to First Generation instances.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     #[deprecated]
     pub replication_type: crate::model::SqlReplicationType,
 
     /// The maximum size to which storage capacity can be automatically increased.
     /// The default value is 0, which specifies that there is no limit.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
-    #[serde_as(as = "std::option::Option<serde_with::DisplayFromStr>")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I64>")]
     pub storage_auto_resize_limit: std::option::Option<wkt::Int64Value>,
 
     /// The activation policy specifies when the instance is activated; it is
@@ -14558,6 +14952,8 @@ pub struct Settings {
     ///   connection requests.
     /// * `NEVER`: The instance is off; it is not activated, even if a
     ///   connection request arrives.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub activation_policy: crate::model::settings::SqlActivationPolicy,
 
     /// The settings for IP Management. This allows to enable or disable the
@@ -14580,10 +14976,13 @@ pub struct Settings {
 
     /// The database flags passed to the instance at startup.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub database_flags: std::vec::Vec<crate::model::DatabaseFlags>,
 
     /// The type of data disk: `PD_SSD` (default) or `PD_HDD`. Not used for
     /// First Generation instances.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub data_disk_type: crate::model::SqlDataDiskType,
 
     /// The maintenance window for this instance. This specifies when the instance
@@ -14610,7 +15009,7 @@ pub struct Settings {
 
     /// The size of data disk, in GB. The data disk size minimum is 10GB.
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
-    #[serde_as(as = "std::option::Option<serde_with::DisplayFromStr>")]
+    #[serde_as(as = "std::option::Option<wkt::internal::I64>")]
     pub data_disk_size_gb: std::option::Option<wkt::Int64Value>,
 
     /// Active Directory configuration, relevant only for Cloud SQL for SQL Server.
@@ -14619,10 +15018,12 @@ pub struct Settings {
 
     /// The name of server Instance collation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub collation: std::string::String,
 
     /// Deny maintenance periods
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub deny_maintenance_periods: std::vec::Vec<crate::model::DenyMaintenancePeriod>,
 
     /// Insights configuration, for now relevant only for Postgres.
@@ -14638,6 +15039,8 @@ pub struct Settings {
     pub sql_server_audit_config: std::option::Option<crate::model::SqlServerAuditConfig>,
 
     /// Optional. The edition of the instance.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub edition: crate::model::settings::Edition,
 
     /// Specifies if connections must use Cloud SQL connectors.
@@ -14650,6 +15053,8 @@ pub struct Settings {
     /// this field is not specified when creating a new instance, NOT_REQUIRED is
     /// used. If this field is not specified when patching or updating an existing
     /// instance, it is left unchanged in the instance.
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub connector_enforcement: crate::model::settings::ConnectorEnforcement,
 
     /// Configuration to protect against accidental instance deletion.
@@ -14658,6 +15063,7 @@ pub struct Settings {
 
     /// Server timezone, relevant only for Cloud SQL for SQL Server.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub time_zone: std::string::String,
 
     /// Specifies advanced machine configuration for the instances relevant only
@@ -15603,6 +16009,7 @@ pub mod settings {
 pub struct AdvancedMachineFeatures {
     /// The number of threads per physical core.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub threads_per_core: i32,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -15635,14 +16042,17 @@ impl wkt::message::Message for AdvancedMachineFeatures {
 pub struct SslCert {
     /// This is always `sql#sslCert`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// Serial number, as extracted from the certificate.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub cert_serial_number: std::string::String,
 
     /// PEM representation.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub cert: std::string::String,
 
     /// The time when the certificate was created in [RFC
@@ -15653,6 +16063,7 @@ pub struct SslCert {
 
     /// User supplied name.  Constrained to [a-zA-Z.-_ ]+.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub common_name: std::string::String,
 
     /// The time when the certificate expires in [RFC
@@ -15663,14 +16074,17 @@ pub struct SslCert {
 
     /// Sha1 Fingerprint.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub sha1_fingerprint: std::string::String,
 
     /// Name of the database instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// The URI of this resource.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub self_link: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -15786,6 +16200,7 @@ pub struct SslCertDetail {
     /// The private key for the client cert, in pem format.  Keep private in order
     /// to protect your security.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub cert_private_key: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -15839,10 +16254,12 @@ impl wkt::message::Message for SslCertDetail {
 pub struct SqlActiveDirectoryConfig {
     /// This is always sql#activeDirectoryConfig.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// The name of the domain (e.g., mydomain.com).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub domain: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -15881,10 +16298,12 @@ impl wkt::message::Message for SqlActiveDirectoryConfig {
 pub struct SqlServerAuditConfig {
     /// This is always sql#sqlServerAuditConfig
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// The name of the destination bucket (e.g., gs://mybucket).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub bucket: std::string::String,
 
     /// How long to keep generated audit files.
@@ -16078,14 +16497,17 @@ impl wkt::message::Message for AcquireSsrsLeaseContext {
 pub struct SqlSslCertsDeleteRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     /// Sha1 FingerPrint.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub sha1_fingerprint: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -16132,14 +16554,17 @@ impl wkt::message::Message for SqlSslCertsDeleteRequest {
 pub struct SqlSslCertsGetRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     /// Sha1 FingerPrint.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub sha1_fingerprint: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -16186,10 +16611,12 @@ impl wkt::message::Message for SqlSslCertsGetRequest {
 pub struct SqlSslCertsInsertRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -16248,10 +16675,12 @@ impl wkt::message::Message for SqlSslCertsInsertRequest {
 pub struct SqlSslCertsListRequest {
     /// Cloud SQL instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -16291,6 +16720,7 @@ pub struct SslCertsInsertRequest {
     /// User supplied name.  Must be a distinct name from the other certificates
     /// for this instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub common_name: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -16323,6 +16753,7 @@ impl wkt::message::Message for SslCertsInsertRequest {
 pub struct SslCertsInsertResponse {
     /// This is always `sql#sslCertsInsert`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// The operation to track the ssl certs insert request.
@@ -16423,10 +16854,12 @@ impl wkt::message::Message for SslCertsInsertResponse {
 pub struct SslCertsListResponse {
     /// This is always `sql#sslCertsList`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// List of client certificates for the instance.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub items: std::vec::Vec<crate::model::SslCert>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -16470,6 +16903,7 @@ impl wkt::message::Message for SslCertsListResponse {
 pub struct SqlTiersListRequest {
     /// Project ID of the project for which to list tiers.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -16502,10 +16936,12 @@ impl wkt::message::Message for SqlTiersListRequest {
 pub struct TiersListResponse {
     /// This is always `sql#tiersList`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// List of tiers.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub items: std::vec::Vec<crate::model::Tier>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -16550,26 +16986,29 @@ pub struct Tier {
     /// An identifier for the machine type, for example, `db-custom-1-3840`. For
     /// related information, see [Pricing](/sql/pricing).
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub tier: std::string::String,
 
     /// The maximum RAM usage of this tier in bytes.
     #[serde(rename = "RAM")]
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "serde_with::DisplayFromStr")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I64>")]
     pub ram: i64,
 
     /// This is always `sql#tier`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// The maximum disk size of this tier in bytes.
     #[serde(rename = "DiskQuota")]
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
-    #[serde_as(as = "serde_with::DisplayFromStr")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I64>")]
     pub disk_quota: i64,
 
     /// The applicable regions for this tier.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub region: std::vec::Vec<std::string::String>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -16630,18 +17069,22 @@ impl wkt::message::Message for Tier {
 pub struct SqlUsersDeleteRequest {
     /// Host of the user in the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub host: std::string::String,
 
     /// Database instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Name of the user in the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -16692,18 +17135,22 @@ impl wkt::message::Message for SqlUsersDeleteRequest {
 pub struct SqlUsersGetRequest {
     /// Database instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// User of the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     /// Host of a user of the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub host: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -16753,10 +17200,12 @@ impl wkt::message::Message for SqlUsersGetRequest {
 pub struct SqlUsersInsertRequest {
     /// Database instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -16815,10 +17264,12 @@ impl wkt::message::Message for SqlUsersInsertRequest {
 pub struct SqlUsersListRequest {
     /// Database instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -16856,18 +17307,22 @@ impl wkt::message::Message for SqlUsersListRequest {
 pub struct SqlUsersUpdateRequest {
     /// Optional. Host of the user in the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub host: std::string::String,
 
     /// Database instance ID. This does not include the project ID.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// Name of the user in the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Project ID of the project that contains the instance.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     #[serde(skip_serializing_if = "std::option::Option::is_none")]
@@ -16939,6 +17394,7 @@ impl wkt::message::Message for SqlUsersUpdateRequest {
 pub struct UserPasswordValidationPolicy {
     /// Number of failed login attempts allowed before user get locked.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]
     pub allowed_failed_attempts: i32,
 
     /// Expiration duration after password is updated.
@@ -16947,6 +17403,7 @@ pub struct UserPasswordValidationPolicy {
 
     /// If true, failed login attempts check will be enabled.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub enable_failed_attempts_check: bool,
 
     /// Output only. Read-only password status.
@@ -16956,6 +17413,7 @@ pub struct UserPasswordValidationPolicy {
     /// If true, the user must specify the current password before changing the
     /// password. This flag is supported only for MySQL.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub enable_password_verification: bool,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -17036,6 +17494,7 @@ impl wkt::message::Message for UserPasswordValidationPolicy {
 pub struct PasswordStatus {
     /// If true, user does not have login privileges.
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub locked: bool,
 
     /// The expiration time of the current password.
@@ -17090,20 +17549,24 @@ impl wkt::message::Message for PasswordStatus {
 pub struct User {
     /// This is always `sql#user`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// The password for the user.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub password: std::string::String,
 
     /// This field is deprecated and will be removed from a future version of the
     /// API.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub etag: std::string::String,
 
     /// The name of the user in the Cloud SQL instance. Can be omitted for
     /// `update` because it is already specified in the URL.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub name: std::string::String,
 
     /// Optional. The host from which the user can connect. For `insert`
@@ -17112,23 +17575,28 @@ pub struct User {
     /// cannot be updated after insertion.  For a MySQL instance, it's required;
     /// for a PostgreSQL or SQL Server instance, it's optional.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub host: std::string::String,
 
     /// The name of the Cloud SQL instance. This does not include the project ID.
     /// Can be omitted for `update` because it is already specified on the
     /// URL.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub instance: std::string::String,
 
     /// The project ID of the project containing the Cloud SQL database. The Google
     /// apps domain is prefixed if applicable. Can be omitted for `update` because
     /// it is already specified on the URL.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub project: std::string::String,
 
     /// The user type. It determines the method to authenticate the user during
     /// login. The default is the database's built-in user type.
     #[serde(rename = "type")]
+    #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub r#type: crate::model::user::SqlUserType,
 
     /// User level password validation policy.
@@ -17611,10 +18079,12 @@ pub mod user {
 pub struct SqlServerUserDetails {
     /// If the user has been disabled
     #[serde(skip_serializing_if = "wkt::internal::is_default")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub disabled: bool,
 
     /// The server roles for this user
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub server_roles: std::vec::Vec<std::string::String>,
 
     #[serde(flatten, skip_serializing_if = "serde_json::Map::is_empty")]
@@ -17658,14 +18128,17 @@ impl wkt::message::Message for SqlServerUserDetails {
 pub struct UsersListResponse {
     /// This is always `sql#usersList`.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     pub kind: std::string::String,
 
     /// List of user resources in the instance.
     #[serde(skip_serializing_if = "std::vec::Vec::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]
     pub items: std::vec::Vec<crate::model::User>,
 
     /// Unused.
     #[serde(skip_serializing_if = "std::string::String::is_empty")]
+    #[serde_as(as = "serde_with::DefaultOnNull<_>")]
     #[deprecated]
     pub next_page_token: std::string::String,
 

@@ -568,7 +568,7 @@ mod tests {
         );
 
         assert!(
-            p.on_error(now, 0, Error::serde("err".to_string()))
+            p.on_error(now, 0, Error::ser("err".to_string()))
                 .is_permanent()
         );
     }
@@ -585,8 +585,7 @@ mod tests {
 
     #[test_case::test_case(Error::io("err"))]
     #[test_case::test_case(Error::authentication(CredentialsError::from_msg(true, "err")))]
-    #[test_case::test_case(Error::serde("err"))]
-    #[test_case::test_case(Error::other("err"))]
+    #[test_case::test_case(Error::ser("err"))]
     fn always_continue_error_kind(error: Error) {
         let p = AlwaysContinue;
         let now = std::time::Instant::now();
@@ -710,7 +709,7 @@ mod tests {
 
         let now = std::time::Instant::now();
         let policy = LimitedElapsedTime::custom(mock, Duration::from_secs(60));
-        let rf = policy.on_error(now, 0, Error::other("err".to_string()));
+        let rf = policy.on_error(now, 0, transient_error());
         assert!(rf.is_continue());
     }
 
@@ -733,7 +732,7 @@ mod tests {
         let mut mock = MockPolicy::new();
         mock.expect_on_in_progress()
             .times(1)
-            .returning(|_, _, _| Some(Error::other("inner-error")));
+            .returning(|_, _, _| Some(transient_error()));
 
         let now = std::time::Instant::now();
         let policy = LimitedElapsedTime::custom(mock, Duration::from_secs(60));
@@ -749,18 +748,10 @@ mod tests {
 
         let now = std::time::Instant::now();
         let policy = LimitedElapsedTime::custom(mock, Duration::from_secs(60));
-        let rf = policy.on_error(
-            now - Duration::from_secs(10),
-            1,
-            Error::other("err".to_string()),
-        );
+        let rf = policy.on_error(now - Duration::from_secs(10), 1, transient_error());
         assert!(rf.is_continue());
 
-        let rf = policy.on_error(
-            now - Duration::from_secs(70),
-            1,
-            Error::other("err".to_string()),
-        );
+        let rf = policy.on_error(now - Duration::from_secs(70), 1, transient_error());
         assert!(rf.is_exhausted());
     }
 
@@ -774,18 +765,10 @@ mod tests {
         let now = std::time::Instant::now();
         let policy = LimitedElapsedTime::custom(mock, Duration::from_secs(60));
 
-        let rf = policy.on_error(
-            now - Duration::from_secs(10),
-            1,
-            Error::other("err".to_string()),
-        );
+        let rf = policy.on_error(now - Duration::from_secs(10), 1, transient_error());
         assert!(rf.is_permanent());
 
-        let rf = policy.on_error(
-            now + Duration::from_secs(10),
-            1,
-            Error::other("err".to_string()),
-        );
+        let rf = policy.on_error(now + Duration::from_secs(10), 1, transient_error());
         assert!(rf.is_permanent());
     }
 
@@ -799,18 +782,10 @@ mod tests {
         let now = std::time::Instant::now();
         let policy = LimitedElapsedTime::custom(mock, Duration::from_secs(60));
 
-        let rf = policy.on_error(
-            now - Duration::from_secs(10),
-            1,
-            Error::other("err".to_string()),
-        );
+        let rf = policy.on_error(now - Duration::from_secs(10), 1, transient_error());
         assert!(rf.is_exhausted());
 
-        let rf = policy.on_error(
-            now + Duration::from_secs(10),
-            1,
-            Error::other("err".to_string()),
-        );
+        let rf = policy.on_error(now + Duration::from_secs(10), 1, transient_error());
         assert!(rf.is_exhausted());
     }
 
@@ -852,21 +827,9 @@ mod tests {
 
         let now = std::time::Instant::now();
         let policy = LimitedAttemptCount::custom(mock, 3);
-        assert!(
-            policy
-                .on_error(now, 1, Error::other("err".to_string()))
-                .is_continue()
-        );
-        assert!(
-            policy
-                .on_error(now, 2, Error::other("err".to_string()))
-                .is_continue()
-        );
-        assert!(
-            policy
-                .on_error(now, 3, Error::other("err".to_string()))
-                .is_exhausted()
-        );
+        assert!(policy.on_error(now, 1, transient_error()).is_continue());
+        assert!(policy.on_error(now, 2, transient_error()).is_continue());
+        assert!(policy.on_error(now, 3, transient_error()).is_exhausted());
     }
 
     #[test]
@@ -888,7 +851,7 @@ mod tests {
         let mut mock = MockPolicy::new();
         mock.expect_on_in_progress()
             .times(1)
-            .returning(|_, _, _| Some(Error::other("inner-error")));
+            .returning(|_, _, _| Some(unavailable()));
 
         let now = std::time::Instant::now();
         let policy = LimitedAttemptCount::custom(mock, 5);
@@ -903,10 +866,10 @@ mod tests {
             .returning(|_, _, e| LoopState::Permanent(e));
         let policy = LimitedAttemptCount::custom(mock, 2);
         let now = std::time::Instant::now();
-        let rf = policy.on_error(now, 1, Error::serde("err"));
+        let rf = policy.on_error(now, 1, Error::ser("err"));
         assert!(rf.is_permanent());
 
-        let rf = policy.on_error(now, 1, Error::serde("err"));
+        let rf = policy.on_error(now, 1, Error::ser("err"));
         assert!(rf.is_permanent());
     }
 
@@ -919,10 +882,10 @@ mod tests {
         let policy = LimitedAttemptCount::custom(mock, 2);
         let now = std::time::Instant::now();
 
-        let rf = policy.on_error(now, 1, Error::other("err".to_string()));
+        let rf = policy.on_error(now, 1, transient_error());
         assert!(rf.is_exhausted());
 
-        let rf = policy.on_error(now, 1, Error::other("err".to_string()));
+        let rf = policy.on_error(now, 1, transient_error());
         assert!(rf.is_exhausted());
     }
 
@@ -939,5 +902,14 @@ mod tests {
         assert!(fmt.contains("limit-name"), "{fmt}");
         assert!(fmt.contains("test-value"), "{fmt}");
         assert!(fmt.contains("test-limit"), "{fmt}");
+    }
+
+    fn transient_error() -> Error {
+        use crate::error::rpc::{Code, Status};
+        Error::service(
+            Status::default()
+                .set_code(Code::Unavailable)
+                .set_message("try-again"),
+        )
     }
 }
