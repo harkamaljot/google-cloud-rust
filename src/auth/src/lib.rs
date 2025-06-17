@@ -52,6 +52,8 @@ pub(crate) mod token;
 /// The token cache
 pub(crate) mod token_cache;
 
+pub(crate) mod http;
+
 /// A `Result` alias where the `Err` case is [CredentialsError][errors::CredentialsError].
 pub(crate) type Result<T> = std::result::Result<T, errors::CredentialsError>;
 
