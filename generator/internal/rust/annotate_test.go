@@ -67,13 +67,14 @@ func serviceAnnotationsModel() *api.API {
 	method := &api.Method{
 		Name:         "GetResource",
 		ID:           ".test.v1.ResourceService.GetResource",
+		InputType:    request,
 		InputTypeID:  ".test.v1.Request",
 		OutputTypeID: ".test.v1.Response",
 		PathInfo: &api.PathInfo{
 			Bindings: []*api.PathBinding{
 				{
 					Verb: "GET",
-					PathTemplate: []api.PathSegment{
+					LegacyPathTemplate: []api.LegacyPathSegment{
 						api.NewLiteralPathSegment("/v1/resource"),
 					},
 				},
@@ -83,13 +84,14 @@ func serviceAnnotationsModel() *api.API {
 	emptyMethod := &api.Method{
 		Name:         "DeleteResource",
 		ID:           ".test.v1.ResourceService.DeleteResource",
+		InputType:    request,
 		InputTypeID:  ".test.v1.Request",
 		OutputTypeID: ".google.protobuf.Empty",
 		PathInfo: &api.PathInfo{
 			Bindings: []*api.PathBinding{
 				{
 					Verb: "DELETE",
-					PathTemplate: []api.PathSegment{
+					LegacyPathTemplate: []api.LegacyPathSegment{
 						api.NewLiteralPathSegment("/v1/resource"),
 					},
 				},
@@ -141,6 +143,7 @@ func TestServiceAnnotations(t *testing.T) {
 		Name:              "ResourceService",
 		PackageModuleName: "test::v1",
 		ModuleName:        "resource_service",
+		Incomplete:        true,
 	}
 	if diff := cmp.Diff(wantService, service.Codec, cmpopts.IgnoreFields(serviceAnnotations{}, "Methods")); diff != "" {
 		t.Errorf("mismatch in service annotations (-want, +got)\n:%s", diff)
@@ -207,6 +210,7 @@ func TestServiceAnnotationsPerServiceFeatures(t *testing.T) {
 		PackageModuleName:  "test::v1",
 		ModuleName:         "resource_service",
 		PerServiceFeatures: true,
+		Incomplete:         true,
 	}
 	if diff := cmp.Diff(wantService, service.Codec, cmpopts.IgnoreFields(serviceAnnotations{}, "Methods")); diff != "" {
 		t.Errorf("mismatch in service annotations (-want, +got)\n:%s", diff)
@@ -217,44 +221,15 @@ func TestServiceAnnotationsLROTypes(t *testing.T) {
 	// The default binding we use when services do not have HTTP path
 	// annotations.
 	binding := &api.PathBinding{
-		Verb:            "POST",
-		PathTemplate:    []api.PathSegment{},
-		QueryParameters: map[string]bool{},
+		Verb:               "POST",
+		LegacyPathTemplate: []api.LegacyPathSegment{},
+		QueryParameters:    map[string]bool{},
 	}
 	pathInfo := &api.PathInfo{
 		BodyFieldPath: "*",
 		Bindings:      []*api.PathBinding{binding},
 	}
 
-	service := &api.Service{
-		Name:    "LroService",
-		ID:      ".test.LroService",
-		Package: "test",
-		Methods: []*api.Method{
-			{
-				Name:         "CreateResource",
-				ID:           ".test.LroService.CreateResource",
-				PathInfo:     pathInfo,
-				InputTypeID:  ".test.CreateResourceRequest",
-				OutputTypeID: ".google.longrunning.Operation",
-				OperationInfo: &api.OperationInfo{
-					MetadataTypeID: ".test.OperationMetadata",
-					ResponseTypeID: ".test.Resource",
-				},
-			},
-			{
-				Name:         "DeleteResource",
-				ID:           ".test.LroService.DeleteResource",
-				PathInfo:     pathInfo,
-				InputTypeID:  ".test.DeleteResourceRequest",
-				OutputTypeID: ".google.longrunning.Operation",
-				OperationInfo: &api.OperationInfo{
-					MetadataTypeID: ".test.OperationMetadata",
-					ResponseTypeID: ".google.protobuf.Empty",
-				},
-			},
-		},
-	}
 	create := &api.Message{
 		Name:    "CreateResourceRequest",
 		ID:      ".test.CreateResourceRequest",
@@ -279,6 +254,37 @@ func TestServiceAnnotationsLROTypes(t *testing.T) {
 		Name:    "Empty",
 		ID:      ".google.protobuf.Empty",
 		Package: "google.protobuf",
+	}
+	service := &api.Service{
+		Name:    "LroService",
+		ID:      ".test.LroService",
+		Package: "test",
+		Methods: []*api.Method{
+			{
+				Name:         "CreateResource",
+				ID:           ".test.LroService.CreateResource",
+				PathInfo:     pathInfo,
+				InputType:    create,
+				InputTypeID:  ".test.CreateResourceRequest",
+				OutputTypeID: ".google.longrunning.Operation",
+				OperationInfo: &api.OperationInfo{
+					MetadataTypeID: ".test.OperationMetadata",
+					ResponseTypeID: ".test.Resource",
+				},
+			},
+			{
+				Name:         "DeleteResource",
+				ID:           ".test.LroService.DeleteResource",
+				PathInfo:     pathInfo,
+				InputType:    delete,
+				InputTypeID:  ".test.DeleteResourceRequest",
+				OutputTypeID: ".google.longrunning.Operation",
+				OperationInfo: &api.OperationInfo{
+					MetadataTypeID: ".test.OperationMetadata",
+					ResponseTypeID: ".google.protobuf.Empty",
+				},
+			},
+		},
 	}
 	model := api.NewTestAPI([]*api.Message{create, delete, resource, metadata}, []*api.Enum{}, []*api.Service{service})
 	api.CrossReference(model)
@@ -331,6 +337,7 @@ func TestServiceAnnotationsNameOverrides(t *testing.T) {
 	wantService := &serviceAnnotations{
 		Name:       "Renamed",
 		ModuleName: "renamed",
+		Incomplete: true,
 	}
 	if diff := cmp.Diff(wantService, service.Codec, serviceFilter); diff != "" {
 		t.Errorf("mismatch in service annotations (-want, +got)\n:%s", diff)
@@ -441,7 +448,6 @@ func TestOneOfAnnotations(t *testing.T) {
 		BranchName:         "OneofField",
 		FQMessageName:      "crate::model::Message",
 		DocLines:           nil,
-		Attributes:         []string{`#[serde_as(as = "serde_with::DefaultOnNull<_>")]`},
 		FieldType:          "std::string::String",
 		PrimitiveFieldType: "std::string::String",
 		AddQueryParameter:  `let builder = req.oneof_field().iter().fold(builder, |builder, p| builder.query(&[("oneofField", p)]));`,
@@ -457,7 +463,6 @@ func TestOneOfAnnotations(t *testing.T) {
 		BranchName:         "OneofFieldRepeated",
 		FQMessageName:      "crate::model::Message",
 		DocLines:           nil,
-		Attributes:         []string{`#[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]`},
 		FieldType:          "std::vec::Vec<std::string::String>",
 		PrimitiveFieldType: "std::string::String",
 		AddQueryParameter:  `let builder = req.oneof_field_repeated().iter().fold(builder, |builder, p| builder.query(&[("oneofFieldRepeated", p)]));`,
@@ -473,7 +478,6 @@ func TestOneOfAnnotations(t *testing.T) {
 		BranchName:         "OneofFieldMap",
 		FQMessageName:      "crate::model::Message",
 		DocLines:           nil,
-		Attributes:         []string{`#[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<wkt::internal::I32, wkt::internal::F32>>")]`},
 		FieldType:          "std::collections::HashMap<i32,f32>",
 		PrimitiveFieldType: "std::collections::HashMap<i32,f32>",
 		AddQueryParameter:  `let builder = req.oneof_field_map().map(|p| serde_json::to_value(p).map_err(Error::ser) ).transpose()?.into_iter().fold(builder, |builder, p| { use gaxi::query_parameter::QueryParameter; p.add(builder, "oneofFieldMap") });`,
@@ -494,7 +498,6 @@ func TestOneOfAnnotations(t *testing.T) {
 		BranchName:         "OneofFieldInteger",
 		FQMessageName:      "crate::model::Message",
 		DocLines:           nil,
-		Attributes:         []string{`#[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I64>")]`},
 		FieldType:          "i64",
 		PrimitiveFieldType: "i64",
 		AddQueryParameter:  `let builder = req.oneof_field_integer().iter().fold(builder, |builder, p| builder.query(&[("oneofFieldInteger", p)]));`,
@@ -510,7 +513,6 @@ func TestOneOfAnnotations(t *testing.T) {
 		BranchName:         "OneofFieldBoxed",
 		FQMessageName:      "crate::model::Message",
 		DocLines:           nil,
-		Attributes:         []string{`#[serde_as(as = "std::boxed::Box<wkt::internal::F64>")]`},
 		FieldType:          "std::boxed::Box<>",
 		PrimitiveFieldType: "",
 		AddQueryParameter:  `let builder = req.oneof_field_boxed().map(|p| serde_json::to_value(p).map_err(Error::ser) ).transpose()?.into_iter().fold(builder, |builder, p| { use gaxi::query_parameter::QueryParameter; p.add(builder, "oneofFieldBoxed") });`,
@@ -776,15 +778,11 @@ func TestJsonNameAnnotations(t *testing.T) {
 	annotateModel(model, codec)
 
 	if diff := cmp.Diff(&fieldAnnotations{
-		FieldName:     "parent",
-		SetterName:    "parent",
-		BranchName:    "Parent",
-		FQMessageName: "crate::model::Request",
-		DocLines:      nil,
-		Attributes: []string{
-			`#[serde(skip_serializing_if = "std::string::String::is_empty")]`,
-			`#[serde_as(as = "serde_with::DefaultOnNull<_>")]`,
-		},
+		FieldName:          "parent",
+		SetterName:         "parent",
+		BranchName:         "Parent",
+		FQMessageName:      "crate::model::Request",
+		DocLines:           nil,
 		FieldType:          "std::string::String",
 		PrimitiveFieldType: "std::string::String",
 		AddQueryParameter:  `let builder = builder.query(&[("parent", &req.parent)]);`,
@@ -795,16 +793,11 @@ func TestJsonNameAnnotations(t *testing.T) {
 	}
 
 	if diff := cmp.Diff(&fieldAnnotations{
-		FieldName:     "public_key",
-		SetterName:    "public_key",
-		BranchName:    "PublicKey",
-		FQMessageName: "crate::model::Request",
-		DocLines:      nil,
-		Attributes: []string{
-			`#[serde(rename = "public_key")]`,
-			`#[serde(skip_serializing_if = "std::string::String::is_empty")]`,
-			`#[serde_as(as = "serde_with::DefaultOnNull<_>")]`,
-		},
+		FieldName:          "public_key",
+		SetterName:         "public_key",
+		BranchName:         "PublicKey",
+		FQMessageName:      "crate::model::Request",
+		DocLines:           nil,
 		FieldType:          "std::string::String",
 		PrimitiveFieldType: "std::string::String",
 		AddQueryParameter:  `let builder = builder.query(&[("public_key", &req.public_key)]);`,
@@ -815,15 +808,11 @@ func TestJsonNameAnnotations(t *testing.T) {
 	}
 
 	if diff := cmp.Diff(&fieldAnnotations{
-		FieldName:     "read_time",
-		SetterName:    "read_time",
-		BranchName:    "ReadTime",
-		FQMessageName: "crate::model::Request",
-		DocLines:      nil,
-		Attributes: []string{
-			`#[serde(skip_serializing_if = "wkt::internal::is_default")]`,
-			`#[serde_as(as = "serde_with::DefaultOnNull<wkt::internal::I32>")]`,
-		},
+		FieldName:          "read_time",
+		SetterName:         "read_time",
+		BranchName:         "ReadTime",
+		FQMessageName:      "crate::model::Request",
+		DocLines:           nil,
 		FieldType:          "i32",
 		PrimitiveFieldType: "i32",
 		AddQueryParameter:  `let builder = builder.query(&[("readTime", &req.read_time)]);`,
@@ -834,15 +823,11 @@ func TestJsonNameAnnotations(t *testing.T) {
 	}
 
 	if diff := cmp.Diff(&fieldAnnotations{
-		FieldName:     "optional",
-		SetterName:    "optional",
-		BranchName:    "Optional",
-		FQMessageName: "crate::model::Request",
-		DocLines:      nil,
-		Attributes: []string{
-			`#[serde(skip_serializing_if = "std::option::Option::is_none")]`,
-			`#[serde_as(as = "std::option::Option<wkt::internal::I32>")]`,
-		},
+		FieldName:          "optional",
+		SetterName:         "optional",
+		BranchName:         "Optional",
+		FQMessageName:      "crate::model::Request",
+		DocLines:           nil,
 		FieldType:          "std::option::Option<i32>",
 		PrimitiveFieldType: "i32",
 		AddQueryParameter:  `let builder = req.optional.iter().fold(builder, |builder, p| builder.query(&[("optional", p)]));`,
@@ -853,15 +838,11 @@ func TestJsonNameAnnotations(t *testing.T) {
 	}
 
 	if diff := cmp.Diff(&fieldAnnotations{
-		FieldName:     "repeated",
-		SetterName:    "repeated",
-		BranchName:    "Repeated",
-		FQMessageName: "crate::model::Request",
-		DocLines:      nil,
-		Attributes: []string{
-			`#[serde(skip_serializing_if = "std::vec::Vec::is_empty")]`,
-			`#[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<wkt::internal::I32>>")]`,
-		},
+		FieldName:          "repeated",
+		SetterName:         "repeated",
+		BranchName:         "Repeated",
+		FQMessageName:      "crate::model::Request",
+		DocLines:           nil,
 		FieldType:          "std::vec::Vec<i32>",
 		PrimitiveFieldType: "i32",
 		AddQueryParameter:  `let builder = req.repeated.iter().fold(builder, |builder, p| builder.query(&[("repeated", p)]));`,
@@ -902,15 +883,9 @@ func TestMessageAnnotations(t *testing.T) {
 		RelativeName:      "TestMessage",
 		PackageModuleName: "test::v1",
 		SourceFQN:         "test.v1.TestMessage",
-		MessageAttributes: []string{
-			`#[serde_with::serde_as]`,
-			`#[derive(Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize)]`,
-			`#[serde(default, rename_all = "camelCase")]`,
-			`#[non_exhaustive]`,
-		},
-		DocLines:       []string{"/// A test message."},
-		HasNestedTypes: true,
-		BasicFields:    []*api.Field{},
+		DocLines:          []string{"/// A test message."},
+		HasNestedTypes:    true,
+		BasicFields:       []*api.Field{},
 	}
 	if diff := cmp.Diff(want, message.Codec); diff != "" {
 		t.Errorf("mismatch in message annotations (-want, +got)\n:%s", diff)
@@ -923,15 +898,9 @@ func TestMessageAnnotations(t *testing.T) {
 		RelativeName:      "test_message::NestedMessage",
 		PackageModuleName: "test::v1",
 		SourceFQN:         "test.v1.TestMessage.NestedMessage",
-		MessageAttributes: []string{
-			`#[serde_with::serde_as]`,
-			`#[derive(Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize)]`,
-			`#[serde(default, rename_all = "camelCase")]`,
-			`#[non_exhaustive]`,
-		},
-		DocLines:       []string{"/// A nested message."},
-		HasNestedTypes: false,
-		BasicFields:    []*api.Field{},
+		DocLines:          []string{"/// A nested message."},
+		HasNestedTypes:    false,
+		BasicFields:       []*api.Field{},
 	}
 	if diff := cmp.Diff(want, nested.Codec); diff != "" {
 		t.Errorf("mismatch in nested message annotations (-want, +got)\n:%s", diff)
@@ -1001,28 +970,18 @@ func TestFieldAnnotations(t *testing.T) {
 		RelativeName:      "TestMessage",
 		PackageModuleName: "test",
 		SourceFQN:         "test.TestMessage",
-		MessageAttributes: []string{
-			`#[serde_with::serde_as]`,
-			`#[derive(Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize)]`,
-			`#[serde(default, rename_all = "camelCase")]`,
-			`#[non_exhaustive]`,
-		},
-		DocLines:    []string{"/// A test message."},
-		BasicFields: []*api.Field{singular_field, repeated_field, map_field, boxed_field},
+		DocLines:          []string{"/// A test message."},
+		BasicFields:       []*api.Field{singular_field, repeated_field, map_field, boxed_field},
 	}
 	if diff := cmp.Diff(wantMessage, message.Codec); diff != "" {
 		t.Errorf("mismatch in message annotations (-want, +got)\n:%s", diff)
 	}
 
 	wantField := &fieldAnnotations{
-		FieldName:     "singular_field",
-		SetterName:    "singular_field",
-		BranchName:    "SingularField",
-		FQMessageName: "crate::model::TestMessage",
-		Attributes: []string{
-			`#[serde(skip_serializing_if = "std::string::String::is_empty")]`,
-			`#[serde_as(as = "serde_with::DefaultOnNull<_>")]`,
-		},
+		FieldName:          "singular_field",
+		SetterName:         "singular_field",
+		BranchName:         "SingularField",
+		FQMessageName:      "crate::model::TestMessage",
 		FieldType:          "std::string::String",
 		PrimitiveFieldType: "std::string::String",
 		AddQueryParameter:  `let builder = builder.query(&[("singularField", &req.singular_field)]);`,
@@ -1032,14 +991,10 @@ func TestFieldAnnotations(t *testing.T) {
 	}
 
 	wantField = &fieldAnnotations{
-		FieldName:     "repeated_field",
-		SetterName:    "repeated_field",
-		BranchName:    "RepeatedField",
-		FQMessageName: "crate::model::TestMessage",
-		Attributes: []string{
-			`#[serde(skip_serializing_if = "std::vec::Vec::is_empty")]`,
-			`#[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]`,
-		},
+		FieldName:          "repeated_field",
+		SetterName:         "repeated_field",
+		BranchName:         "RepeatedField",
+		FQMessageName:      "crate::model::TestMessage",
 		FieldType:          "std::vec::Vec<std::string::String>",
 		PrimitiveFieldType: "std::string::String",
 		AddQueryParameter:  `let builder = req.repeated_field.iter().fold(builder, |builder, p| builder.query(&[("repeatedField", p)]));`,
@@ -1049,14 +1004,10 @@ func TestFieldAnnotations(t *testing.T) {
 	}
 
 	wantField = &fieldAnnotations{
-		FieldName:     "map_field",
-		SetterName:    "map_field",
-		BranchName:    "MapField",
-		FQMessageName: "crate::model::TestMessage",
-		Attributes: []string{
-			`#[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]`,
-			`#[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<wkt::internal::I32, wkt::internal::I64>>")]`,
-		},
+		FieldName:          "map_field",
+		SetterName:         "map_field",
+		BranchName:         "MapField",
+		FQMessageName:      "crate::model::TestMessage",
 		FieldType:          "std::collections::HashMap<i32,i64>",
 		PrimitiveFieldType: "std::collections::HashMap<i32,i64>",
 		AddQueryParameter:  `let builder = { use gaxi::query_parameter::QueryParameter; serde_json::to_value(&req.map_field).map_err(Error::ser)?.add(builder, "mapField") };`,
@@ -1072,13 +1023,10 @@ func TestFieldAnnotations(t *testing.T) {
 	}
 
 	wantField = &fieldAnnotations{
-		FieldName:     "boxed_field",
-		SetterName:    "boxed_field",
-		BranchName:    "BoxedField",
-		FQMessageName: "crate::model::TestMessage",
-		Attributes: []string{
-			`#[serde(skip_serializing_if = "std::option::Option::is_none")]`,
-		},
+		FieldName:          "boxed_field",
+		SetterName:         "boxed_field",
+		BranchName:         "BoxedField",
+		FQMessageName:      "crate::model::TestMessage",
 		FieldType:          "std::option::Option<std::boxed::Box<crate::model::TestMessage>>",
 		PrimitiveFieldType: "crate::model::TestMessage",
 		AddQueryParameter:  `let builder = req.boxed_field.as_ref().map(|p| serde_json::to_value(p).map_err(Error::ser) ).transpose()?.into_iter().fold(builder, |builder, v| { use gaxi::query_parameter::QueryParameter; v.add(builder, "boxedField") });`,
@@ -1179,14 +1127,8 @@ func TestEnumFieldAnnotations(t *testing.T) {
 		RelativeName:      "TestMessage",
 		PackageModuleName: "test",
 		SourceFQN:         "test.TestMessage",
-		MessageAttributes: []string{
-			`#[serde_with::serde_as]`,
-			`#[derive(Clone, Debug, Default, PartialEq, serde::Deserialize, serde::Serialize)]`,
-			`#[serde(default, rename_all = "camelCase")]`,
-			`#[non_exhaustive]`,
-		},
-		DocLines:    []string{"/// A test message."},
-		BasicFields: []*api.Field{singular_field, repeated_field, optional_field, null_value_field, map_field},
+		DocLines:          []string{"/// A test message."},
+		BasicFields:       []*api.Field{singular_field, repeated_field, optional_field, null_value_field, map_field},
 	}
 	if diff := cmp.Diff(wantMessage, message.Codec); diff != "" {
 		t.Errorf("mismatch in message annotations (-want, +got)\n:%s", diff)
@@ -1197,7 +1139,6 @@ func TestEnumFieldAnnotations(t *testing.T) {
 		SetterName:         "singular_field",
 		BranchName:         "SingularField",
 		FQMessageName:      "crate::model::TestMessage",
-		Attributes:         []string{`#[serde(skip_serializing_if = "wkt::internal::is_default")]`, `#[serde_as(as = "serde_with::DefaultOnNull<_>")]`},
 		FieldType:          "crate::model::TestEnum",
 		PrimitiveFieldType: "crate::model::TestEnum",
 		AddQueryParameter:  `let builder = builder.query(&[("singularField", &req.singular_field)]);`,
@@ -1208,14 +1149,10 @@ func TestEnumFieldAnnotations(t *testing.T) {
 	}
 
 	wantField = &fieldAnnotations{
-		FieldName:     "repeated_field",
-		SetterName:    "repeated_field",
-		BranchName:    "RepeatedField",
-		FQMessageName: "crate::model::TestMessage",
-		Attributes: []string{
-			`#[serde(skip_serializing_if = "std::vec::Vec::is_empty")]`,
-			`#[serde_as(as = "serde_with::DefaultOnNull<std::vec::Vec<_>>")]`,
-		},
+		FieldName:          "repeated_field",
+		SetterName:         "repeated_field",
+		BranchName:         "RepeatedField",
+		FQMessageName:      "crate::model::TestMessage",
 		FieldType:          "std::vec::Vec<crate::model::TestEnum>",
 		PrimitiveFieldType: "crate::model::TestEnum",
 		AddQueryParameter:  `let builder = req.repeated_field.iter().fold(builder, |builder, p| builder.query(&[("repeatedField", p)]));`,
@@ -1226,13 +1163,10 @@ func TestEnumFieldAnnotations(t *testing.T) {
 	}
 
 	wantField = &fieldAnnotations{
-		FieldName:     "optional_field",
-		SetterName:    "optional_field",
-		BranchName:    "OptionalField",
-		FQMessageName: "crate::model::TestMessage",
-		Attributes: []string{
-			`#[serde(skip_serializing_if = "std::option::Option::is_none")]`,
-		},
+		FieldName:          "optional_field",
+		SetterName:         "optional_field",
+		BranchName:         "OptionalField",
+		FQMessageName:      "crate::model::TestMessage",
 		FieldType:          "std::option::Option<crate::model::TestEnum>",
 		PrimitiveFieldType: "crate::model::TestEnum",
 		AddQueryParameter:  `let builder = req.optional_field.iter().fold(builder, |builder, p| builder.query(&[("optionalField", p)]));`,
@@ -1249,25 +1183,21 @@ func TestEnumFieldAnnotations(t *testing.T) {
 		SetterName:         "null_value_field",
 		BranchName:         "NullValueField",
 		FQMessageName:      "crate::model::TestMessage",
-		Attributes:         []string{`#[serde(skip_serializing_if = "wkt::internal::is_default")]`, `#[serde_as(as = "serde_with::DefaultOnNull<_>")]`},
 		FieldType:          "wkt::NullValue",
 		PrimitiveFieldType: "wkt::NullValue",
 		AddQueryParameter:  `let builder = builder.query(&[("nullValueField", &req.null_value_field)]);`,
 		SkipIfIsDefault:    true,
+		IsWktNullValue:     true,
 	}
 	if diff := cmp.Diff(wantField, null_value_field.Codec); diff != "" {
 		t.Errorf("mismatch in field annotations (-want, +got)\n:%s", diff)
 	}
 
 	wantField = &fieldAnnotations{
-		FieldName:     "map_field",
-		SetterName:    "map_field",
-		BranchName:    "MapField",
-		FQMessageName: "crate::model::TestMessage",
-		Attributes: []string{
-			`#[serde(skip_serializing_if = "std::collections::HashMap::is_empty")]`,
-			`#[serde_as(as = "serde_with::DefaultOnNull<std::collections::HashMap<_, _>>")]`,
-		},
+		FieldName:          "map_field",
+		SetterName:         "map_field",
+		BranchName:         "MapField",
+		FQMessageName:      "crate::model::TestMessage",
 		FieldType:          "std::collections::HashMap<std::string::String,crate::model::TestEnum>",
 		PrimitiveFieldType: "std::collections::HashMap<std::string::String,crate::model::TestEnum>",
 		AddQueryParameter:  `let builder = { use gaxi::query_parameter::QueryParameter; serde_json::to_value(&req.map_field).map_err(Error::ser)?.add(builder, "mapField") };`,
@@ -1314,7 +1244,7 @@ func TestPathInfoAnnotations(t *testing.T) {
 				Bindings: []*api.PathBinding{
 					{
 						Verb: testCase.Verb,
-						PathTemplate: []api.PathSegment{
+						LegacyPathTemplate: []api.LegacyPathSegment{
 							api.NewLiteralPathSegment("/v1/resource"),
 						},
 					},

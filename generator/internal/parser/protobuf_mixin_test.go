@@ -74,10 +74,17 @@ func TestProtobuf_LocationMixin(t *testing.T) {
 			Bindings: []*api.PathBinding{
 				{
 					Verb: "GET",
-					PathTemplate: []api.PathSegment{
+					LegacyPathTemplate: []api.LegacyPathSegment{
 						api.NewLiteralPathSegment("v1"),
 						api.NewFieldPathPathSegment("name"),
 					},
+					PathTemplate: api.NewPathTemplate().
+						WithLiteral("v1").
+						WithVariable(api.NewPathVariable("name").
+							WithLiteral("projects").
+							WithMatch().
+							WithLiteral("locations").
+							WithMatch()),
 					QueryParameters: map[string]bool{},
 				},
 			},
@@ -137,11 +144,17 @@ func TestProtobuf_IAMMixin(t *testing.T) {
 			Bindings: []*api.PathBinding{
 				{
 					Verb: "POST",
-					PathTemplate: []api.PathSegment{
+					LegacyPathTemplate: []api.LegacyPathSegment{
 						api.NewLiteralPathSegment("v1"),
 						api.NewFieldPathPathSegment("resource"),
 						api.NewVerbPathSegment("getIamPolicy"),
 					},
+					PathTemplate: api.NewPathTemplate().
+						WithLiteral("v1").
+						WithVariable(api.NewPathVariable("resource").
+							WithLiteral("services").
+							WithMatch()).
+						WithVerb("getIamPolicy"),
 					QueryParameters: map[string]bool{},
 				},
 			},
@@ -208,10 +221,15 @@ func TestProtobuf_OperationMixin(t *testing.T) {
 			Bindings: []*api.PathBinding{
 				{
 					Verb: "GET",
-					PathTemplate: []api.PathSegment{
+					LegacyPathTemplate: []api.LegacyPathSegment{
 						api.NewLiteralPathSegment("v2"),
 						api.NewFieldPathPathSegment("name"),
 					},
+					PathTemplate: api.NewPathTemplate().
+						WithLiteral("v2").
+						WithVariable(api.NewPathVariable("name").
+							WithLiteral("operations").
+							WithMatch()),
 					QueryParameters: map[string]bool{},
 				},
 			},
@@ -290,10 +308,15 @@ func TestProtobuf_OperationMixinNoEmpty(t *testing.T) {
 			Bindings: []*api.PathBinding{
 				{
 					Verb: "DELETE",
-					PathTemplate: []api.PathSegment{
+					LegacyPathTemplate: []api.LegacyPathSegment{
 						api.NewLiteralPathSegment("v2"),
 						api.NewFieldPathPathSegment("name"),
 					},
+					PathTemplate: api.NewPathTemplate().
+						WithLiteral("v2").
+						WithVariable(api.NewPathVariable("name").
+							WithLiteral("operations").
+							WithMatch()),
 					QueryParameters: map[string]bool{},
 				},
 			},
@@ -369,10 +392,15 @@ func TestProtobuf_DuplicateMixin(t *testing.T) {
 			Bindings: []*api.PathBinding{
 				{
 					Verb: "GET",
-					PathTemplate: []api.PathSegment{
+					LegacyPathTemplate: []api.LegacyPathSegment{
 						api.NewLiteralPathSegment("v1"),
 						api.NewFieldPathPathSegment("name"),
 					},
+					PathTemplate: api.NewPathTemplate().
+						WithLiteral("v1").
+						WithVariable(api.NewPathVariable("name").
+							WithLiteral("operations").
+							WithMatch()),
 					QueryParameters: map[string]bool{},
 				},
 			},

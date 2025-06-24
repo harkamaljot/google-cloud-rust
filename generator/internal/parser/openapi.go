@@ -24,6 +24,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/googleapis/google-cloud-rust/generator/internal/api"
+	"github.com/googleapis/google-cloud-rust/generator/internal/parser/httprule"
 	"github.com/pb33f/libopenapi"
 	"github.com/pb33f/libopenapi/datamodel/high/base"
 	v3 "github.com/pb33f/libopenapi/datamodel/high/v3"
@@ -180,7 +181,14 @@ func makeMethods(a *api.API, model *libopenapi.DocumentModel[v3.Document], packa
 		return methods, nil
 	}
 	for pattern, item := range model.Model.Paths.PathItems.FromOldest() {
-		pathTemplate := makePathTemplate(pattern)
+		pathTemplate, err := httprule.ParseSegments(pattern)
+		if err != nil {
+			return nil, err
+		}
+		legacyPathTemplate, err := httprule.LegacyParseSegments(pattern)
+		if err != nil {
+			return nil, err
+		}
 
 		type NamedOperation struct {
 			Verb      string
@@ -212,9 +220,10 @@ func makeMethods(a *api.API, model *libopenapi.DocumentModel[v3.Document], packa
 			pathInfo := &api.PathInfo{
 				Bindings: []*api.PathBinding{
 					{
-						Verb:            op.Verb,
-						PathTemplate:    pathTemplate,
-						QueryParameters: queryParameters,
+						Verb:               op.Verb,
+						LegacyPathTemplate: legacyPathTemplate,
+						PathTemplate:       pathTemplate,
+						QueryParameters:    queryParameters,
 					},
 				},
 				BodyFieldPath: bodyFieldPath,
@@ -234,28 +243,6 @@ func makeMethods(a *api.API, model *libopenapi.DocumentModel[v3.Document], packa
 		}
 	}
 	return methods, nil
-}
-
-func makePathTemplate(template string) []api.PathSegment {
-	segments := []api.PathSegment{}
-	for idx, component := range strings.Split(template, ":") {
-		if idx != 0 {
-			segments = append(segments, api.PathSegment{Verb: &component})
-			continue
-		}
-		for _, element := range strings.Split(component, "/") {
-			if element == "" {
-				continue
-			}
-			if strings.HasPrefix(element, "{") && strings.HasSuffix(element, "}") {
-				element = element[1 : len(element)-1]
-				segments = append(segments, api.PathSegment{FieldPath: &element})
-				continue
-			}
-			segments = append(segments, api.PathSegment{Literal: &element})
-		}
-	}
-	return segments
 }
 
 // Creates (if needed) the request message for `operation`. Returns the message

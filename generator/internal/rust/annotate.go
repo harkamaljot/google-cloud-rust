@@ -56,6 +56,8 @@ type modelAnnotations struct {
 	DefaultSystemParameters []systemParameter
 	// Enables per-service features
 	PerServiceFeatures bool
+	// If true, at lease one service has a method we cannot wrap (yet).
+	Incomplete bool
 }
 
 // HasServices returns true if there are any services in the model
@@ -86,6 +88,8 @@ type serviceAnnotations struct {
 	PerServiceFeatures bool
 	// If true, there is a handwritten client surface.
 	HasVeneer bool
+	// If true, the service has a method we cannot wrap (yet).
+	Incomplete bool
 }
 
 // If true, this service includes methods that return long-running operations.
@@ -134,10 +138,9 @@ type messageAnnotation struct {
 	// becomes `google::service::v1`.
 	PackageModuleName string
 	// The FQN is the source specification
-	SourceFQN         string
-	MessageAttributes []string
-	DocLines          []string
-	HasNestedTypes    bool
+	SourceFQN      string
+	DocLines       []string
+	HasNestedTypes bool
 	// All the fields except OneOfs.
 	BasicFields []*api.Field
 	// If true, this is a synthetic message, some generation is skipped for
@@ -146,8 +149,6 @@ type messageAnnotation struct {
 	// If set, this message is only enabled when some features are enabled.
 	FeatureGates   []string
 	FeatureGatesOp string
-	// If true, enable test types for generated serde serialization
-	WithGeneratedSerde bool
 }
 
 type methodAnnotation struct {
@@ -155,7 +156,6 @@ type methodAnnotation struct {
 	BuilderName         string
 	DocLines            []string
 	PathInfo            *api.PathInfo
-	PathParams          []*api.Field
 	QueryParams         []*api.Field
 	BodyAccessor        string
 	ServiceNameToPascal string
@@ -251,7 +251,6 @@ type fieldAnnotations struct {
 	// The fully qualified name of the containing message.
 	FQMessageName      string
 	DocLines           []string
-	Attributes         []string
 	FieldType          string
 	PrimitiveFieldType string
 	AddQueryParameter  string
@@ -270,6 +269,9 @@ type fieldAnnotations struct {
 	// If true, this is a `wkt::Value` field, and requires super-extra custom
 	// deserialization.
 	IsWktValue bool
+	// If true, this is a `wkt::NullValue` field, and also requires super-extra
+	// custom deserialization.
+	IsWktNullValue bool
 }
 
 func (a *fieldAnnotations) SkipIfIsEmpty() bool {
@@ -345,12 +347,7 @@ func annotateModel(model *api.API, codec *codec) *modelAnnotations {
 	}
 
 	servicesSubset := language.FilterSlice(model.Services, func(s *api.Service) bool {
-		for _, m := range s.Methods {
-			if codec.generateMethod(m) {
-				return true
-			}
-		}
-		return false
+		return slices.ContainsFunc(s.Methods, func(m *api.Method) bool { return codec.generateMethod(m) })
 	})
 	// The maximum (15) was chosen more or less arbitrarily circa 2025-06. At
 	// the time, only a handful of services exceeded this number of services.
@@ -394,6 +391,9 @@ func annotateModel(model *api.API, codec *codec) *modelAnnotations {
 		IsWktCrate:              model.PackageName == "google.protobuf",
 		DisabledRustdocWarnings: codec.disabledRustdocWarnings,
 		PerServiceFeatures:      codec.perServiceFeatures && len(servicesSubset) > 0,
+		Incomplete: slices.ContainsFunc(model.Services, func(s *api.Service) bool {
+			return slices.ContainsFunc(s.Methods, func(m *api.Method) bool { return !codec.generateMethod(m) })
+		}),
 	}
 
 	codec.addFeatureAnnotations(model, ann)
@@ -513,6 +513,7 @@ func (c *codec) annotateService(s *api.Service, model *api.API) {
 		APITitle:           model.Title,
 		PerServiceFeatures: c.perServiceFeatures,
 		HasVeneer:          c.hasVeneer,
+		Incomplete:         slices.ContainsFunc(s.Methods, func(m *api.Method) bool { return !c.generateMethod(m) }),
 	}
 	s.Codec = ann
 }
@@ -552,11 +553,9 @@ func (c *codec) annotateMessage(m *api.Message, state *api.APIState, sourceSpeci
 		PackageModuleName:  packageToModuleName(m.Package),
 		SourceFQN:          strings.TrimPrefix(m.ID, "."),
 		DocLines:           c.formatDocComments(m.Documentation, m.ID, state, m.Scopes()),
-		MessageAttributes:  messageAttributes(),
 		HasNestedTypes:     language.HasNestedTypes(m),
 		BasicFields:        basicFields,
 		HasSyntheticFields: hasSyntheticFields,
-		WithGeneratedSerde: c.withGeneratedSerde,
 	}
 }
 
@@ -595,8 +594,7 @@ func (c *codec) annotateMethod(m *api.Method, s *api.Service, state *api.APIStat
 		BodyAccessor:        bodyAccessor(m),
 		DocLines:            c.formatDocComments(m.Documentation, m.ID, state, s.Scopes()),
 		PathInfo:            m.PathInfo,
-		PathParams:          language.PathParams(m, state),
-		QueryParams:         language.QueryParams(m, state),
+		QueryParams:         language.QueryParams(m, m.PathInfo.Bindings[0]),
 		ServiceNameToPascal: toPascal(serviceName),
 		ServiceNameToCamel:  toCamel(serviceName),
 		ServiceNameToSnake:  toSnake(serviceName),
@@ -657,9 +655,19 @@ func (c *codec) annotateRoutingAccessors(variant *api.RoutingInfoVariant, m *api
 
 func annotateSegments(segments []string) []string {
 	var ann []string
+	// The model may have multiple consecutive literal segments. We use this
+	// buffer to consolidate them into a single literal segment.
+	literalBuffer := ""
+	flushBuffer := func() {
+		if literalBuffer != "" {
+			ann = append(ann, fmt.Sprintf(`Segment::Literal("%s")`, literalBuffer))
+		}
+		literalBuffer = ""
+	}
 	for index, segment := range segments {
 		switch {
 		case segment == api.RoutingMultiSegmentWildcard:
+			flushBuffer()
 			if len(segments) == 1 {
 				ann = append(ann, "Segment::MultiWildcard")
 			} else if len(segments) != index+1 {
@@ -669,16 +677,18 @@ func annotateSegments(segments []string) []string {
 			}
 		case segment == api.RoutingSingleSegmentWildcard:
 			if index != 0 {
-				ann = append(ann, `Segment::Literal("/")`)
+				literalBuffer += "/"
 			}
+			flushBuffer()
 			ann = append(ann, "Segment::SingleWildcard")
 		default:
 			if index != 0 {
-				ann = append(ann, `Segment::Literal("/")`)
+				literalBuffer += "/"
 			}
-			ann = append(ann, fmt.Sprintf(`Segment::Literal("%s")`, segment))
+			literalBuffer += segment
 		}
 	}
+	flushBuffer()
 	return ann
 }
 
@@ -765,13 +775,13 @@ func (c *codec) annotateField(field *api.Field, message *api.Message, state *api
 		FQMessageName:      fullyQualifiedMessageName(message, c.modulePath, sourceSpecificationPackageName, c.packageMapping),
 		BranchName:         toPascal(field.Name),
 		DocLines:           c.formatDocComments(field.Documentation, field.ID, state, message.Scopes()),
-		Attributes:         fieldAttributes(field, state),
 		FieldType:          fieldType(field, state, false, c.modulePath, sourceSpecificationPackageName, c.packageMapping),
 		PrimitiveFieldType: fieldType(field, state, true, c.modulePath, sourceSpecificationPackageName, c.packageMapping),
 		AddQueryParameter:  addQueryParameter(field),
 		SerdeAs:            c.primitiveSerdeAs(field),
 		SkipIfIsDefault:    field.Typez != api.STRING_TYPE && field.Typez != api.BYTES_TYPE,
 		IsWktValue:         field.Typez == api.MESSAGE_TYPE && field.TypezID == ".google.protobuf.Value",
+		IsWktNullValue:     field.Typez == api.ENUM_TYPE && field.TypezID == ".google.protobuf.NullValue",
 	}
 	if field.Recursive || (field.Typez == api.MESSAGE_TYPE && field.IsOneOf) {
 		ann.IsBoxed = true

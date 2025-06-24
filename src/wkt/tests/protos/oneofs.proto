@@ -17,6 +17,7 @@ package google.rust.sdk.test;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/struct.proto";
+import "google/protobuf/wrappers.proto";
 
 // A message with several interesting `oneof` fields.
 message MessageWithOneOf {
@@ -57,6 +58,8 @@ message MessageWithComplexOneOf {
         TestEnum enum = 9;
         Inner inner = 10;
         google.protobuf.Duration duration = 11;
+        google.protobuf.Value value = 12;
+        google.protobuf.DoubleValue optional_double = 13;
     }
 
     enum TestEnum {

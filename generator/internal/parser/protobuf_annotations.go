@@ -68,7 +68,6 @@ func processRule(httpRule *annotations.HttpRule, state *api.APIState, mID string
 	pathInfo := &api.PathInfo{
 		BodyFieldPath: body,
 	}
-	// TODO(#2090) - remove the duplicates on the top-level binding
 	pathInfo.Bindings = []*api.PathBinding{binding}
 
 	for _, binding := range httpRule.GetAdditionalBindings() {
@@ -107,28 +106,34 @@ func processRuleShallow(httpRule *annotations.HttpRule, state *api.APIState, mID
 		// Most often this happens with streaming RPCs. We will handle any
 		/// errors later in the code generation, maybe by ignoring the RPC.
 		return &api.PathBinding{
-			Verb:            "POST",
-			PathTemplate:    []api.PathSegment{},
-			QueryParameters: map[string]bool{},
+			Verb:               "POST",
+			LegacyPathTemplate: []api.LegacyPathSegment{},
+			QueryParameters:    map[string]bool{},
 		}, "*", nil
 	}
 	pathTemplate, err := httprule.ParseSegments(rawPath)
 	if err != nil {
 		return nil, "", err
 	}
-	queryParameters, err := queryParameters(mID, pathTemplate, httpRule.GetBody(), state)
+	legacyPathTemplate, err := httprule.LegacyParseSegments(rawPath)
+	if err != nil {
+		return nil, "", err
+	}
+	queryParameters, err := queryParameters(mID, legacyPathTemplate, httpRule.GetBody(), state)
 	if err != nil {
 		return nil, "", err
 	}
 
 	return &api.PathBinding{
-		Verb:            verb,
-		PathTemplate:    pathTemplate,
-		QueryParameters: queryParameters,
+		Verb:               verb,
+		LegacyPathTemplate: legacyPathTemplate,
+		PathTemplate:       pathTemplate,
+		QueryParameters:    queryParameters,
 	}, httpRule.GetBody(), nil
 }
 
-func queryParameters(msgID string, pathTemplate []api.PathSegment, body string, state *api.APIState) (map[string]bool, error) {
+// TODO(#2499) - Write this in terms of `api.PathTemplate`
+func queryParameters(msgID string, legacyPathTemplate []api.LegacyPathSegment, body string, state *api.APIState) (map[string]bool, error) {
 	msg, ok := state.MessageByID[msgID]
 	if !ok {
 		return nil, fmt.Errorf("unable to lookup type %s", msgID)
@@ -142,7 +147,7 @@ func queryParameters(msgID string, pathTemplate []api.PathSegment, body string, 
 	for _, field := range msg.Fields {
 		params[field.Name] = true
 	}
-	for _, s := range pathTemplate {
+	for _, s := range legacyPathTemplate {
 		if s.FieldPath != nil {
 			delete(params, *s.FieldPath)
 		}

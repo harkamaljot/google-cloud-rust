@@ -724,12 +724,17 @@ func TestOpenAPI_MakeAPI(t *testing.T) {
 			Bindings: []*api.PathBinding{
 				{
 					Verb: "GET",
-					PathTemplate: []api.PathSegment{
+					LegacyPathTemplate: []api.LegacyPathSegment{
 						api.NewLiteralPathSegment("v1"),
 						api.NewLiteralPathSegment("projects"),
 						api.NewFieldPathPathSegment("project"),
 						api.NewLiteralPathSegment("locations"),
 					},
+					PathTemplate: api.NewPathTemplate().
+						WithLiteral("v1").
+						WithLiteral("projects").
+						WithVariableNamed("project").
+						WithLiteral("locations"),
 					QueryParameters: map[string]bool{
 						"filter":    true,
 						"pageSize":  true,
@@ -750,12 +755,6 @@ func TestOpenAPI_MakeAPI(t *testing.T) {
 	})
 
 	cs := sample.MethodCreate()
-	cs.PathInfo.Bindings[0].PathTemplate = []api.PathSegment{
-		api.NewLiteralPathSegment("v1"),
-		api.NewLiteralPathSegment("projects"),
-		api.NewFieldPathPathSegment("project"),
-		api.NewLiteralPathSegment("secrets"),
-	}
 	checkMethod(t, service, cs.Name, cs)
 
 	asv := sample.MethodAddSecretVersion()
@@ -910,12 +909,17 @@ func TestOpenAPI_Pagination(t *testing.T) {
 					Bindings: []*api.PathBinding{
 						{
 							Verb: "GET",
-							PathTemplate: []api.PathSegment{
+							LegacyPathTemplate: []api.LegacyPathSegment{
 								api.NewLiteralPathSegment("v1"),
 								api.NewLiteralPathSegment("projects"),
 								api.NewFieldPathPathSegment("project"),
 								api.NewLiteralPathSegment("foos"),
 							},
+							PathTemplate: api.NewPathTemplate().
+								WithLiteral("v1").
+								WithLiteral("projects").
+								WithVariableNamed("project").
+								WithLiteral("foos"),
 							QueryParameters: map[string]bool{"pageSize": true, "pageToken": true},
 						},
 					},
@@ -1123,13 +1127,19 @@ func TestOpenAPI_Deprecated(t *testing.T) {
 			Bindings: []*api.PathBinding{
 				{
 					Verb: "GET",
-					PathTemplate: []api.PathSegment{
+					LegacyPathTemplate: []api.LegacyPathSegment{
 						api.NewLiteralPathSegment("v1"),
 						api.NewLiteralPathSegment("projects"),
 						api.NewFieldPathPathSegment("project"),
 						api.NewLiteralPathSegment("rpc"),
 						api.NewLiteralPathSegment("a"),
 					},
+					PathTemplate: api.NewPathTemplate().
+						WithLiteral("v1").
+						WithLiteral("projects").
+						WithVariableNamed("project").
+						WithLiteral("rpc").
+						WithLiteral("a"),
 					QueryParameters: map[string]bool{"filter": true},
 				},
 			},
@@ -1146,13 +1156,19 @@ func TestOpenAPI_Deprecated(t *testing.T) {
 			Bindings: []*api.PathBinding{
 				{
 					Verb: "GET",
-					PathTemplate: []api.PathSegment{
+					LegacyPathTemplate: []api.LegacyPathSegment{
 						api.NewLiteralPathSegment("v1"),
 						api.NewLiteralPathSegment("projects"),
 						api.NewFieldPathPathSegment("project"),
 						api.NewLiteralPathSegment("rpc"),
 						api.NewLiteralPathSegment("b"),
 					},
+					PathTemplate: api.NewPathTemplate().
+						WithLiteral("v1").
+						WithLiteral("projects").
+						WithVariableNamed("project").
+						WithLiteral("rpc").
+						WithLiteral("b"),
 					QueryParameters: map[string]bool{},
 				},
 			},
