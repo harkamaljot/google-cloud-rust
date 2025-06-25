@@ -1191,6 +1191,7 @@ dependencies = [
  "bon",
  "google-cloud-gax",
  "http",
+ "http-body-util",
  "httptest",
  "mockall",
  "mutants",
