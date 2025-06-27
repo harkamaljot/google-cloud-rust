@@ -19,6 +19,7 @@ use super::internal::sts_exchange::{ClientAuthentication, ExchangeTokenRequest, 
 use super::{CacheableResource, Credentials};
 use crate::build_errors::Error as BuilderError;
 use crate::constants::DEFAULT_SCOPE;
+use crate::credentials::external_account_sources::programmatic_sourced::ProgrammaticSourcedCredentials;
 use crate::credentials::subject_token::SubjectTokenProvider;
 use crate::errors::{CredentialsError, SubjectTokenProviderError};
 use crate::headers_util::build_cacheable_headers;
@@ -72,7 +73,21 @@ struct ExternalAccountFile {
     client_id: Option<String>,
     client_secret: Option<String>,
     scopes: Option<Vec<String>>,
-    credential_source: Option<CredentialSourceFile>,
+    credential_source: CredentialSourceFile,
+}
+
+/// A representation of a [external account config file], except credential_source as programmatic credential
+/// should not have it.
+///
+/// [external account config file]: https://google.aip.dev/auth/4117#configuration-file-generation-and-usage
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct ProgrammaticAccountFile {
+    audience: String,
+    subject_token_type: String,
+    token_url: String,
+    client_id: Option<String>,
+    client_secret: Option<String>,
+    scopes: Option<Vec<String>>,
 }
 
 impl From<ExternalAccountFile> for ExternalAccountConfig {
@@ -90,6 +105,7 @@ impl From<ExternalAccountFile> for ExternalAccountConfig {
             client_secret: config.client_secret,
             subject_token_type: config.subject_token_type,
             token_url: config.token_url,
+            credential_source: config.credential_source.into(),
             scopes: scope,
         }
     }
@@ -124,6 +140,7 @@ struct ExternalAccountConfig {
     client_id: Option<String>,
     client_secret: Option<String>,
     scopes: Vec<String>,
+    credential_source: CredentialSource,
 }
 
 #[derive(Debug, Clone)]
@@ -133,6 +150,7 @@ enum CredentialSource {
     Executable(ExecutableSourcedCredentials),
     File {},
     Aws {},
+    Programmatic(ProgrammaticSourcedCredentials)
 }
 
 impl ExternalAccountConfig {
@@ -230,6 +248,9 @@ fn make_credentials(
         )),
         CredentialSource::Executable(source) => Ok(
             ExternalAccountConfig::make_credentials_from_source(source, config, quota_project_id),
+        ),
+        CredentialSource::Programmatic(source) => Ok(
+            ExternalAccountConfig::make_credentials_from_source(source, config, quota_project_id)
         ),
         CredentialSource::File { .. } => {
             unimplemented!("file sourced credential not supported yet")

@@ -179,3 +179,31 @@ pub trait SubjectTokenProvider: std::fmt::Debug + Send + Sync {
     /// Asynchronously fetches the third-party subject token.
     fn subject_token(&self) -> impl Future<Output = Result<SubjectToken, Self::Error>> + Send;
 }
+
+pub(crate) mod dynamic {
+    use super::{SubjectToken, SubjectTokenProviderError};
+
+    /// A type-erased subject token provider.
+    #[async_trait::async_trait]
+    pub trait SubjectTokenProvider: std::fmt::Debug + Send + Sync + Clone {
+        /// Asynchronously fetches the third-party subject token.
+        /// The error is boxed to handle its dynamic size.
+        async fn subject_token(
+            &self,
+        ) -> Result<SubjectToken, Box<dyn SubjectTokenProviderError + Send + Sync>>;
+    }
+
+    #[async_trait::async_trait]
+    impl<T> SubjectTokenProvider for T
+    where
+        T: super::SubjectTokenProvider,
+        T::Error: Send + Sync + 'static,
+    {
+        async fn subject_token(
+            &self,
+        ) -> Result<SubjectToken, Box<dyn SubjectTokenProviderError + Send + Sync>> {
+            let result = self.subject_token().await;
+            result.map_err(|e| Box::new(e) as Box<dyn SubjectTokenProviderError + Send + Sync>)
+        }
+    }
+}

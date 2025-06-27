@@ -12,6 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub mod executable_sourced;
-pub mod programmatic_sourced;
-pub mod url_sourced;
+use crate::credentials::subject_token::{dynamic::SubjectTokenProvider, SubjectToken};
+use crate::errors::SubjectTokenProviderError;
+
+#[derive(Debug, Clone)]
+pub(crate) struct ProgrammaticSourcedCredentials {
+    pub subject_token_provider: Box<dyn SubjectTokenProvider>,
+}
+
+#[async_trait::async_trait]
+impl SubjectTokenProvider for ProgrammaticSourcedCredentials {
+    async fn subject_token(&self) -> Result<SubjectToken, Box<dyn SubjectTokenProviderError + Send + Sync>> {
+        return self.subject_token_provider.subject_token().await;
+    }
+}
