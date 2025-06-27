@@ -31,6 +31,7 @@ pub(crate) struct ReqwestClient {
     retry_policy: Option<Arc<dyn RetryPolicy>>,
     backoff_policy: Option<Arc<dyn BackoffPolicy>>,
     retry_throttler: SharedRetryThrottler,
+    error_message: String,
 }
 
 pub(crate) struct Builder {
@@ -39,6 +40,7 @@ pub(crate) struct Builder {
     retry_policy: Option<Arc<dyn RetryPolicy>>,
     backoff_policy: Option<Arc<dyn BackoffPolicy>>,
     retry_throttler: SharedRetryThrottler,
+    error_message: String,
 }
 
 impl Builder {
@@ -50,6 +52,7 @@ impl Builder {
             retry_policy: None,
             backoff_policy: None,
             retry_throttler: Arc::new(Mutex::new(AdaptiveThrottler::default())),
+            error_message: None,
         }
     }
 
@@ -68,6 +71,11 @@ impl Builder {
         self
     }
 
+    pub(crate) fn with_error_message(mut self, error_message: String) -> Self {
+        self.error_message = error_message;
+        self
+    }
+
     pub(crate) fn build(self) -> ReqwestClient {
         ReqwestClient {
             inner: self.inner,
@@ -75,6 +83,7 @@ impl Builder {
             retry_policy: self.retry_policy,
             backoff_policy: self.backoff_policy,
             retry_throttler: self.retry_throttler,
+            error_message: self.error_message,
         }
     }
 }
@@ -93,7 +102,7 @@ impl ReqwestClient {
         &self,
         mut builder: reqwest::RequestBuilder,
         body: Option<I>,
-    ) -> CredentialResult<Response<O>> {
+    ) -> CredentialResult<O> {
         if let Some(body) = body {
             builder = builder.json(&body);
         }
@@ -108,7 +117,7 @@ impl ReqwestClient {
         &self,
         builder: reqwest::RequestBuilder,
         retry_policy: Arc<dyn RetryPolicy>,
-    ) -> CredentialResult<Response<O>> {
+    ) -> CredentialResult<O> {
         let throttler = self.retry_throttler.clone();
         let backoff = self.get_backoff_policy();
         let this = self.clone();
@@ -127,24 +136,23 @@ impl ReqwestClient {
         &self,
         mut builder: reqwest::RequestBuilder,
         remaining_time: Option<std::time::Duration>,
-    ) -> CredentialResult<Response<O>> {
+    ) -> CredentialResult<O> {
         if let Some(remaining_time) = remaining_time {
             builder = builder.timeout(remaining_time);
         }
 
-        let response = builder.send().await.map_err(Self::map_send_error)?;
+        let response = builder.send().await.map_err(|e| crate::errors::from_http_error(e, &self.error_message))?;
 
         if !response.status().is_success() {
-            return self::to_http_error(response).await;
+            let err = crate::errors::from_http_response(response, &self.error_message).await;
+            return Err(err);
         }
-        self::to_http_response(response).await
-    }
-
-    fn map_send_error(err: reqwest::Error) -> GaxError {
-        match err {
-            e if e.is_timeout() => GaxError::timeout(e),
-            e => GaxError::io(e),
-        }
+        response.json::<O>().await.map_err(|e| {
+            // Decoding errors are not transient. Typically they indicate a badly
+            // configured MDS endpoint, or DNS redirecting the request to a random
+            // server, e.g., ISPs that redirect unknown services to HTTP.
+            CredentialsError::from_source(!e.is_decode(), e)
+        })
     }
 
     pub(crate) fn get_backoff_policy(&self) -> Arc<dyn BackoffPolicy> {
@@ -152,48 +160,6 @@ impl ReqwestClient {
             .clone()
             .unwrap_or_else(|| Arc::new(ExponentialBackoff::default()))
     }
-}
-
-pub async fn to_http_error<O>(response: reqwest::Response) -> Result<O> {
-    let status_code = response.status().as_u16();
-    let response = http::Response::from(response);
-    let (parts, body) = response.into_parts();
-
-    let body = http_body_util::BodyExt::collect(body)
-        .await
-        .map_err(GaxError::io)?
-        .to_bytes();
-
-    let error = match gax::error::rpc::Status::try_from(&body) {
-        Ok(status) => {
-            GaxError::service_with_http_metadata(status, Some(status_code), Some(parts.headers))
-        }
-        Err(_) => GaxError::http(status_code, parts.headers, body),
-    };
-    Err(error)
-}
-
-async fn to_http_response<O: serde::de::DeserializeOwned + Default>(
-    response: reqwest::Response,
-) -> Result<Response<O>> {
-    // 204 No Content has no body and throws EOF error if we try to parse with serde::json
-    let no_content_status = response.status() == reqwest::StatusCode::NO_CONTENT;
-    let response = http::Response::from(response);
-    let (parts, body) = response.into_parts();
-
-    let body = http_body_util::BodyExt::collect(body)
-        .await
-        .map_err(GaxError::io)?;
-
-    let response = match body.to_bytes() {
-        content if (content.is_empty() && no_content_status) => O::default(),
-        content => serde_json::from_slice::<O>(&content).map_err(GaxError::deser)?,
-    };
-
-    Ok(Response::from_parts(
-        Parts::new().set_headers(parts.headers),
-        response,
-    ))
 }
 
 #[derive(serde::Serialize, Default)]
