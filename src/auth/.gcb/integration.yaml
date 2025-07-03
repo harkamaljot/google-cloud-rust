@@ -39,3 +39,12 @@ steps:
       #!/usr/bin/env bash
       set -e
       cargo test --features run-integration-tests -p auth-integration-tests
+  - id: 'Run workload identity integration tests'
+    name: 'rust:1.85-bookworm'
+    env:
+    - GOOGLE_WORKLOAD_IDENTITY_SERVICE_ACCOUNT=${_GOOGLE_WORKLOAD_IDENTITY_SERVICE_ACCOUNT}
+    - GOOGLE_WORKLOAD_IDENTITY_OIDC_AUDIENCE=${_GOOGLE_WORKLOAD_IDENTITY_OIDC_AUDIENCE}
+    script: |
+      #!/usr/bin/env bash
+      set -e
+      cargo test run_workload_ --features run-integration-tests --features run-byoid-integration-tests -p auth-integration-tests

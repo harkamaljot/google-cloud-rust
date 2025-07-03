@@ -47,12 +47,24 @@ module "api_key_test" {
   project = var.project
 }
 
+# Set up for the workload identity integration test.
+module "workload_identity_test" {
+  source  = "./workload_identity_test"
+  project = var.project
+}
+
 # Create the GCB resources, connection, triggers, etc.
 module "triggers" {
-  depends_on     = [module.service_account_test, module.api_key_test]
-  source         = "./triggers"
-  project        = var.project
-  region         = var.region
-  sa_adc_secret  = module.service_account_test.adc_secret
-  api_key_secret = module.api_key_test.secret
+  depends_on = [
+    module.service_account_test,
+    module.api_key_test,
+    module.workload_identity_test
+  ]
+  source                    = "./triggers"
+  project                   = var.project
+  region                    = var.region
+  sa_adc_secret             = module.service_account_test.adc_secret
+  api_key_secret            = module.api_key_test.secret
+  workload_identity_sa      = module.workload_identity_test.service_account_email
+  workload_identity_aud     = module.workload_identity_test.audience
 }

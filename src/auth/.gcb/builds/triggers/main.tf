@@ -16,6 +16,8 @@ variable "project" {}
 variable "region" {}
 variable "sa_adc_secret" {}
 variable "api_key_secret" {}
+variable "workload_identity_sa" {}
+variable "workload_identity_aud" {}
 
 # This is used to retrieve the project number. The project number is embedded in
 # certain P4 (Per-product per-project) service accounts.
@@ -185,6 +187,10 @@ resource "google_cloudbuild_trigger" "pull-request" {
   tags     = ["pull-request", "name:${each.key}"]
 
   service_account = data.google_service_account.integration-test-runner.id
+  substitutions = {
+    _GOOGLE_WORKLOAD_IDENTITY_SERVICE_ACCOUNT = var.workload_identity_sa
+    _GOOGLE_WORKLOAD_IDENTITY_OIDC_AUDIENCE   = var.workload_identity_aud
+  }
 
   repository_event_config {
     repository = google_cloudbuildv2_repository.main.id
@@ -205,6 +211,10 @@ resource "google_cloudbuild_trigger" "post-merge" {
   tags     = ["post-merge", "push", "name:${each.key}"]
 
   service_account = data.google_service_account.integration-test-runner.id
+  substitutions = {
+    _GOOGLE_WORKLOAD_IDENTITY_SERVICE_ACCOUNT = var.workload_identity_sa
+    _GOOGLE_WORKLOAD_IDENTITY_OIDC_AUDIENCE   = var.workload_identity_aud
+  }
 
   repository_event_config {
     repository = google_cloudbuildv2_repository.main.id
