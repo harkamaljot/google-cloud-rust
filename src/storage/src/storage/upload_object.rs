@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use super::client::*;
 use super::*;
 use futures::stream::unfold;
 use std::collections::VecDeque;
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
 mod buffered;
 mod unbuffered;
@@ -25,7 +28,8 @@ pub struct UploadObject<T> {
     resource: crate::model::Object,
     spec: crate::model::WriteObjectSpec,
     params: Option<crate::model::CommonObjectRequestParams>,
-    payload: InsertPayload<T>,
+    // We need `Arc<Mutex<>>` because this is re-used in retryable uploads.
+    payload: Arc<Mutex<InsertPayload<T>>>,
 }
 
 impl<T> UploadObject<T> {
@@ -571,7 +575,7 @@ impl<T> UploadObject<T> {
                 .set_name(object),
             spec: crate::model::WriteObjectSpec::new(),
             params: None,
-            payload: payload.into(),
+            payload: Arc::new(Mutex::new(payload.into())),
         }
     }
 
@@ -626,7 +630,7 @@ impl<T> UploadObject<T> {
             );
 
         let builder = self.apply_preconditions(builder);
-        let builder = apply_customer_supplied_encryption_headers(builder, self.params.clone());
+        let builder = apply_customer_supplied_encryption_headers(builder, &self.params);
         let builder = self.inner.apply_auth_headers(builder).await?;
         let builder = builder.json(&v1::insert_body(&self.resource));
         Ok(builder)
@@ -679,14 +683,14 @@ async fn handle_start_resumable_upload_response(response: reqwest::Response) -> 
 
 #[cfg(test)]
 mod tests {
+    use super::client::tests::{create_key_helper, test_inner_client};
     use super::*;
-    use crate::client::tests::create_key_helper;
-    use crate::client::tests::test_inner_client;
     use crate::model::WriteObjectSpec;
     use gax::retry_policy::RetryPolicyExt;
     use httptest::{Expectation, Server, matchers::*, responders::status_code};
     use serde_json::{Value, json};
     use std::collections::BTreeMap;
+    use std::sync::Arc;
 
     type Result = anyhow::Result<()>;
 

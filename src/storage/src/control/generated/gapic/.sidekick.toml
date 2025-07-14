@@ -43,7 +43,11 @@ included-ids = """\
 [codec]
 copyright-year            = '2025'
 template-override         = 'templates/grpc-client'
-package-name-override     = 'google-cloud-storage-control'
+package-name-override     = 'google-cloud-storage'
 name-overrides            = '.google.storage.v2.Storage=StorageControl'
 include-grpc-only-methods = 'true'
 has-veneer                = 'true'
+internal-types            = """\
+    .google.storage.v2.ReadObjectRequest,\
+    .google.storage.v2.WriteObjectSpec\
+    """
